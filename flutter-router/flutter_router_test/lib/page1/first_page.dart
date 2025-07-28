@@ -22,8 +22,11 @@ class FirstPage extends StatelessWidget
             ),
             ElevatedButton(
               child: Text('page2'),
-              onPressed: () => Navigator.of(context).pushNamed('/page2/secoundpage')
-              ),
+              onPressed: ()
+              {
+                Navigator.of(context).pushNamed('/page2/secoundpage');
+              }
+            ),
             BackButton(onPressed: () => Navigator.pop(context))
           ]
         ),

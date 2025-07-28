@@ -24,10 +24,10 @@ class SecoundPage extends StatelessWidget
               child: Text('page1'),
               onPressed: () 
               {
-                Navigator.of(context).pushAndRemoveUntil(predicate)
-                 Navigator.of(context).pushNamed('/page1/firstpage');
-                 },
-              ),
+                Navigator.of(context).popUntil((Route<dynamic> x)=>x.isFirst);
+                Navigator.of(context).pushNamed('/page1/firstpage');
+              },
+            ),
             BackButton(onPressed: () => Navigator.pop(context))
           ],
         ),
