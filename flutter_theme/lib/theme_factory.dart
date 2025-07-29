@@ -11,14 +11,18 @@ class ThemeFactory
   }
 
   ThemeData darkTheme(){
-    return ThemeData.dark().copyWith(
-      primaryColor: Colors.green
+    return ThemeData(
+      primarySwatch: Colors.green,
+      brightness: Brightness.light,
+      useMaterial3: false
     );
   }
 
   ThemeData lightTheme(){
-    return ThemeData.light().copyWith(
-      primaryColor: Colors.brown
+    return ThemeData(
+      primarySwatch: Colors.brown,
+      brightness: Brightness.light,
+      useMaterial3: false
     );
   }
 }
