@@ -13,7 +13,7 @@ class ThemeFactory
   ThemeData darkTheme(){
     return ThemeData(
       primarySwatch: Colors.green,
-      brightness: Brightness.light,
+      brightness: Brightness.dark,
       useMaterial3: false
     );
   }

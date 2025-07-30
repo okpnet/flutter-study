@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_theme/theme_factory.dart';
@@ -5,7 +7,12 @@ import 'package:flutter_theme/theme_factory.dart';
 final themeModeProvider = StateProvider<ThemeMode>((ref) => ThemeMode.system);
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    //大概これをわすれて、No Prover scoped エラーがでる
+    ProviderScope(
+      child: const MyApp()
+    )
+  );
 }
 
 class MyApp extends ConsumerWidget {
@@ -16,7 +23,7 @@ class MyApp extends ConsumerWidget {
   Widget build(BuildContext context,WidgetRef ref) {
     return MaterialApp(
       title: 'Flutter Demo',
-      themeMode: ThemeMode.system,
+      themeMode: ref.watch(themeModeProvider),
       darkTheme: ThemeFactory().darkTheme(),
       theme: ThemeFactory().lightTheme(),
       home: const MyHomePage(title: 'Flutter Demo Home Page'),
@@ -24,7 +31,7 @@ class MyApp extends ConsumerWidget {
   }
 }
 
-class MyHomePage extends StatefulWidget {
+class MyHomePage extends ConsumerStatefulWidget {
   const MyHomePage({super.key, required this.title});
 
   // This widget is the home page of your application. It is stateful, meaning
@@ -39,10 +46,10 @@ class MyHomePage extends StatefulWidget {
   final String title;
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  ConsumerState<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MyHomePageState extends ConsumerState<MyHomePage> {
   int _counter = 0;
 
   void _incrementCounter() {
@@ -100,6 +107,14 @@ class _MyHomePageState extends State<MyHomePage> {
               '$_counter',
               style: Theme.of(context).textTheme.headlineMedium,
             ),
+            OutlinedButton(
+              onPressed: (){
+                final currentmode=ref.read(themeModeProvider);
+                final value=currentmode == ThemeMode.light ? ThemeMode.dark :
+                  currentmode == ThemeMode.dark ? ThemeMode.system : ThemeMode.light;
+                ref.read(themeModeProvider.notifier).state=value;
+              },
+              child: const Text('change mode')),
           ],
         ),
       ),
