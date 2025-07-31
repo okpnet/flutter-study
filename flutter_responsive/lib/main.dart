@@ -97,7 +97,9 @@ class _MyHomePageState extends State<MyHomePage> {
         // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
       ),
-      body: Center(
+      body:
+      SingleChildScrollView(
+        child:Center(
         // Center is a layout widget. It takes a single child and positions it
         // in the middle of the parent.
         child: Column(
@@ -121,19 +123,20 @@ class _MyHomePageState extends State<MyHomePage> {
               '$itemLen',
               style: Theme.of(context).textTheme.headlineMedium,
             ),
-            ResponsiveRowColumn(
-              layout: ResponsiveRowColumnType.COLUMN,
-              columnCrossAxisAlignment: CrossAxisAlignment.center,
-              columnMainAxisAlignment: MainAxisAlignment.spaceBetween,
-              columnMainAxisSize: MainAxisSize.max,
-              children: [],
-              )
-              columnFit: FlexFit.loose,
-              rowFit: FlexFit.tight,
-              child: Expanded(
-                  child: Container(color: Colors.lime)
-                ),
-              ),
+            Center(
+              child: Row(
+                children: [
+                  Flexible(
+                    flex: 1,
+                    child: Container(
+                      color: Colors.yellow,
+                    ),
+                  ),
+                  Flexible(
+                    flex: 3,
+                    child: Container(
+                      color: Colors.blue,
+                      child: 
             ResponsiveGridView.builder(
                   itemCount: itemLen,
                   padding: const EdgeInsets.all(8.0),
@@ -147,8 +150,21 @@ class _MyHomePageState extends State<MyHomePage> {
                   itemBuilder: (BuildContext context, int index) =>
                       Container(color: Colors.grey),
                 ),
+                    ),
+                  ),
+                  Flexible(
+                    flex: 1,
+                    child: Container(
+                      color: Colors.red,
+                    ),
+                  )
+                ],
+              )
+            ),
+
           ],
         ),
+      ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _incrementCounter,
