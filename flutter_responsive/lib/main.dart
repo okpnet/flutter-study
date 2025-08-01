@@ -100,68 +100,51 @@ class _MyHomePageState extends State<MyHomePage> {
       body:
       SingleChildScrollView(
         child:Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text('You have pushed the button this many times:'),
-            Text(
-              '$itemLen',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-            Center(
-              child: Row(
-                children: [
-                  Flexible(
-                    flex: 1,
-                    child: Container(
-                      color: Colors.yellow,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              const Text('You have pushed the button this many times:'),
+              Text(
+                '$itemLen',
+                style: Theme.of(context).textTheme.headlineMedium,
+              ),
+              Center(
+                child: Row(
+                  children: [
+                    Flexible(
+                      flex: 1,
+                      child: Container(
+                        color: Colors.yellow,
+                        ),
                     ),
-                  ),
-                  Flexible(
-                    flex: 3,
-                    child: Container(
-                      color: Colors.blue,
-                      child: 
-            ResponsiveGridView.builder(
-                  itemCount: itemLen,
-                  padding: const EdgeInsets.all(8.0),
-                  shrinkWrap: true,
-                  gridDelegate: const ResponsiveGridDelegate(
-                      minCrossAxisExtent: 250,
-                      maxCrossAxisExtent: 550,
-                      crossAxisSpacing: 50,
-                      mainAxisSpacing: 50,
+                    Flexible(
+                      flex: 3,
+                      child: Container(
+                        color: Colors.blue,
+                        child:ResponsiveGridView.builder(
+                          itemCount: itemLen,
+                          padding: const EdgeInsets.all(8.0),
+                          shrinkWrap: true,
+                          gridDelegate: const ResponsiveGridDelegate(
+                            minCrossAxisExtent: 250,
+                            maxCrossAxisExtent: 550,
+                            crossAxisSpacing: 50,
+                            mainAxisSpacing: 50,
+                          ),
+                          itemBuilder: (BuildContext context, int index) =>
+                            Container(color: Colors.grey),
+                        ),
                       ),
-                  itemBuilder: (BuildContext context, int index) =>
-                      Container(color: Colors.grey),
-                ),
                     ),
-                  ),
-                  Flexible(
-                    flex: 1,
-                    child: Container(
-                      color: Colors.red,
-                    ),
-                  )
+                    Flexible(
+                      flex: 1,
+                      child: Container(
+                        color: Colors.red,
+                      ),
+                  ) 
                 ],
               )
             ),
-
           ],
         ),
       ),
