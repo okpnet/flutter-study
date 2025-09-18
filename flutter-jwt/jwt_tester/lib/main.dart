@@ -1,4 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+final tokenProvider=FutureProvider<String?>((ref) async{
+
+});
 
 void main() {
   runApp(const MyApp());
