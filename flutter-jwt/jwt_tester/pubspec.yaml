@@ -37,6 +37,7 @@ dependencies:
   flutter_riverpod: ^3.0.0
   http: ^1.5.0
   shared_preferences: ^2.5.3
+  flutter_dotenv: ^6.0.0
 
 dev_dependencies:
   flutter_test:
@@ -90,3 +91,6 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+  assets:
+    - .env
+    - ca/fullchain.pem

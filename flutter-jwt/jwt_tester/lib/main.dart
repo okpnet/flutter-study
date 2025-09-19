@@ -1,21 +1,28 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:jwt_tester/login_page.dart';
+import 'package:jwt_tester/home_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 final tokenProvider=FutureProvider<String?>((ref) async{
-
+  SharedPreferences prefs=await SharedPreferences.getInstance();
+  return prefs.getString('token');
 });
 
-void main() {
-  runApp(const MyApp());
+void main() async{
+  await dotenv.load(fileName: '.env');
+  runApp(ProviderScope(child:const MyApp()));
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends ConsumerWidget {
   const MyApp({super.key});
 
   // This widget is the root of your application.
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context,WidgetRef ref) {
+    final tokenAsyncValue=ref.watch(tokenProvider);
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
@@ -36,7 +43,11 @@ class MyApp extends StatelessWidget {
         // tested with just a hot reload.
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: tokenAsyncValue.when(
+        data: (token)=>token==null ? const LoginPage() : const HomePage(),
+        error: (e,stack)=> Text('Error: $e'),
+        loading: ()=>const CircularProgressIndicator(),
+      ),
     );
   }
 }

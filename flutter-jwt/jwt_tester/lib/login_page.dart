@@ -1,8 +1,21 @@
+import 'dart:io';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:http/io_client.dart';
 import 'package:jwt_tester/home_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter/services.dart' show rootBundle;
+import 'package:jwt_tester/jwt_client.dart' as jwt_client;
+
+Future<HttpClient> createSecureHtpClient() async{
+  final context=SecurityContext(withTrustedRoots: false);
+  final certBytes=await rootBundle.load('ca/fullchain.pem');
+  context.setTrustedCertificatesBytes(certBytes.buffer.asUint8List());
+  final client=HttpClient(context: context);
+  return client;
+}
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -17,20 +30,28 @@ class _LoginPageState extends State<LoginPage> {
   bool _isLoading = false;
   String? _errorMessage;
 
+
+
   Future<void> login() async{
     setState(() {
       _isLoading = true;
       _errorMessage = null;
     });
 
-    final response=await http.post(
-      Uri.parse(  'https://yourapi.com/login'),
-      headers: {'Content-Type':'application/json'},
+    try{
+    final String uri=dotenv.get('JWT_URL');
+    final response=await jwt_client.securePost(
+      Uri.parse(uri),
+      certPath: 'ca/fullchain.pem',
+      headers: {'Content-Type':'application/x-www-form-urlencoded'},
       body: jsonEncode({
         'username':_usernameController.text,
-        'password':_passwordController.text
+        'password':_passwordController.text,
+        'grant_type':'password',
+        'client_id':'qual-app'
       })
     );
+
     //response status code check
     if(response.statusCode==200){
       final Map<String,dynamic> responseData=jsonDecode(response.body);
@@ -60,9 +81,16 @@ class _LoginPageState extends State<LoginPage> {
         );
       }else{
         print('Login Error : Unexpected response format.');
+        _isLoading=false;
       }
     }else{
       print('HTTP Error: ${response.statusCode}');
+      _isLoading=false;
+    }
+    }finally{
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
