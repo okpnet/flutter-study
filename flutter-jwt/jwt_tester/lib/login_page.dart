@@ -44,15 +44,18 @@ class _LoginPageState extends State<LoginPage> {
       Uri.parse(uri),
       certPath: 'ca/fullchain.pem',
       headers: {'Content-Type':'application/x-www-form-urlencoded'},
-      body: jsonEncode({
+      body: Uri(queryParameters: {
         'username':_usernameController.text,
         'password':_passwordController.text,
         'grant_type':'password',
         'client_id':'qual-app'
-      })
+      }).query,
     );
 
     //response status code check
+    //state 401 is user none {"error":"invalid_grant","error_description":"Invalid user credentials"} 
+    //state 401 is name or passwpowrd verifoed {"error":"invalid_grant","error_description":"Invalid user credentials"}
+    //success 200 
     if(response.statusCode==200){
       final Map<String,dynamic> responseData=jsonDecode(response.body);
       print("Response Data: $responseData");
