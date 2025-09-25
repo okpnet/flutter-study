@@ -8,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:jwt_tester/jwt_client.dart' as jwt_client;
+import 'package:openid_client/openid_client.dart';
 
 Future<HttpClient> createSecureHtpClient() async{
   final context=SecurityContext(withTrustedRoots: false);
@@ -40,6 +41,19 @@ class _LoginPageState extends State<LoginPage> {
 
     try{
     final String uri=dotenv.get('JWT_URL');
+
+
+    // final clientSecret=await jwt_client.securePost(
+    //   Uri.parse(uri),
+    //   certPath: 'ca/fullchain.pem',
+    //   headers: {'Content-Type':'application/x-www-form-urlencoded'},
+    //   body: Uri(queryParameters: {
+    //     'client_id':'qual-app',
+    //     'client_secret':'qual-secret',
+    //     'grant_type':'client_credentials'
+    //   }).query,
+    // );
+
     final response=await jwt_client.securePost(
       Uri.parse(uri),
       certPath: 'ca/fullchain.pem',
@@ -53,6 +67,8 @@ class _LoginPageState extends State<LoginPage> {
     );
 
     //response status code check
+    //state 400 is client error {"error":"invalid_grant","error_description":"Account is not fully set up"}
+    // If the response is 400, that probably no email.
     //state 401 is user none {"error":"invalid_grant","error_description":"Invalid user credentials"} 
     //state 401 is name or passwpowrd verifoed {"error":"invalid_grant","error_description":"Invalid user credentials"}
     //success 200 
