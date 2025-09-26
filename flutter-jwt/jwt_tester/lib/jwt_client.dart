@@ -22,7 +22,7 @@ String generateCodeChallenge(String verifier) {
 }
 
 
-Future<Result<Credential>> authenticateWithPKCE(Uri url,String? certPath) async{
+Future<Result<Credential>> authenticateWithPKCE(Uri url,String? certPath,String challenge) async{
   try{
     final contextResult=await createSecurityContext(certPath);
     if(contextResult.isError || !contextResult.hasValue){
@@ -40,9 +40,6 @@ Future<Result<Credential>> authenticateWithPKCE(Uri url,String? certPath) async{
         }
     }
 
-    final verifier = generateCodeVerifier();
-    final challenge = generateCodeChallenge(verifier);
-
     final authenticator=Authenticator(
       client, 
       scopes: ['openid','profile','email','offline_access'],
@@ -56,31 +53,45 @@ Future<Result<Credential>> authenticateWithPKCE(Uri url,String? certPath) async{
         },
     );
     final credential=await authenticator.authorize();
-    await closeInAppWebView();
+    //await closeInAppWebView();
     return Result(value: credential);
   }catch(e){
     return Result<Credential>(error: Exception('Authentication failed: $e'));
   }
 }
 
-Future<http.Response> securePost(Uri url, {Map<String, String>? headers, Object? body,String? certPath}) async {
+Future<http.Response> securePost(Uri url, {Map<String, String>? headers, Map<String, String>? body,String? certPath}) async {
+  final verifier = generateCodeVerifier();
+  final challenge = generateCodeChallenge(verifier);
   //url=JWT_URL='https://qmspi.local:8443/realms/pms'
   final contextResult=await createSecurityContext(certPath);
   if(contextResult.isError || !contextResult.hasValue){
     throw Exception('Failed to create SecurityContext: ${contextResult.error}');
   }
 
-  final auth=await authenticateWithPKCE(url,certPath);
-  if(auth.isError || !auth.hasValue){
-    throw Exception('Authentication failed: ${auth.error}');
+  final authResult=await authenticateWithPKCE(url,certPath,challenge);
+  if(authResult.isError || !authResult.hasValue){
+    throw Exception('Authentication failed: ${authResult.error}');
   }
+
+  final response=await authResult.value!.getTokenResponse();
+  final addBodys={
+        "grant_type":"authorization_code",
+        "code":response['code'],
+        "redirect_uri":"http://localhost:4000/callback",
+        "client_id":"qual-app",
+        "code_verifier":verifier,
+        if(body != null) ...body,
+      };
+  final addurl= url.toString()+"/protocol/openid-connect/token";
   final ioClient=IOClient(HttpClient(context: contextResult.value));
-  final token=auth.value!.getTokenResponse().toString();
-  final addHeaders={
-    'Authorization': 'Bearer $token)',
-    if (headers != null) ...headers,
-  };
-  return ioClient.post(url, headers: addHeaders, body: body);
+
+  return ioClient.post(
+    Uri.parse(addurl),
+    headers: headers,
+    body: Uri(
+      queryParameters: addBodys).query
+    );
 }
 
 Future<Result<SecurityContext>> createSecurityContext(String? certPath) async{

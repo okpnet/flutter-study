@@ -58,12 +58,8 @@ class _LoginPageState extends State<LoginPage> {
       Uri.parse(uri),
       certPath: 'ca/fullchain.pem',
       headers: {'Content-Type':'application/x-www-form-urlencoded'},
-      body: Uri(queryParameters: {
-        'username':_usernameController.text,
-        'password':_passwordController.text,
-        'grant_type':'password',
-        'client_id':'qual-app'
-      }).query,
+      body: {
+      },
     );
 
     //response status code check
