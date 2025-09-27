@@ -1,6 +1,5 @@
 import 'pkce_model.dart';
 import 'token_model.dart';
-import 'events/auth_event.dart';
 
 class AuthStateModel {
   PKCEModel pkce;
@@ -10,5 +9,4 @@ class AuthStateModel {
 
   bool get isAuthenticated => token != null && !token!.isExpired;
 
-  void applyEvent(AuthEvent event) =>event.apply(this);
 }

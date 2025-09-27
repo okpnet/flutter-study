@@ -2,14 +2,9 @@ import 'auth_event.dart';
 import '../auth_state_model.dart';
 import '../token_model.dart';
 
-class AuthCompleteEvent implements AuthEvent {
-  final TokenModel token;
+class AuthCompleteEvent extends AuthEvent {
 
-  AuthCompleteEvent(this.token);
-
-  @override
-  void apply(AuthStateModel state) {
+  AuthCompleteEvent(TokenModel token, AuthStateModel state) : super(state) {
     state.token = token;
-    // PKCEはそのまま
   }
 }

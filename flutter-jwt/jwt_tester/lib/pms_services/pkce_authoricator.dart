@@ -1,30 +1,35 @@
+import 'dart:async';
+
+import 'package:jwt_tester/pms_services/extends/auth_event_factory.dart';
+import 'package:jwt_tester/pms_services/pkce_config.dart';
 import 'package:openid_client/openid_client_io.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'models/auth_state_model.dart';
 import 'models/token_model.dart';
 import 'url_config.dart';
-import 'models/events/auth_start_event.dart';
-import 'models/events/auth_complete_event.dart';
-
+import 'models/events/auth_event.dart';
 class PkceAuthenticator {
-  final UrlConfig config;
+  final UrlConfig urlConfig;
+  final PkceConfig pkceConfig;
   final AuthStateModel state;
+  final StreamSink<AuthEvent> authEventStream;
 
   PkceAuthenticator({
-    required this.config,
+    required this.urlConfig,
+    required this.pkceConfig,
     required this.state,
+    required this.authEventStream,
   });
 
   /// 認証開始（ログイン）
   Future<void> login() async {
     // 認証開始イベント（ログアウトにも使用可能）
-    state.applyEvent(AuthStartEvent());
-
+    authEventStream.add(AuthEventFactory.start(state));
     final pkce = state.pkce;
 
     // 認可サーバーの発見とクライアント構築
-    final issuer = await Issuer.discover(config.authUrl);
-    final client = Client(issuer, 'qual-app');
+    final issuer = await Issuer.discover(urlConfig.authUrl);
+    final client = Client(issuer, pkceConfig.clientId);
 
     // ブラウザ起動関数
     Future<void> launch(String url) async {
@@ -36,14 +41,14 @@ class PkceAuthenticator {
     // 認証フロー開始
     final authenticator = Authenticator(
       client,
-      scopes: ['openid', 'profile', 'email', 'offline_access'],
-      redirectUri: config.redirectUrl,
-      port: config.redirectUrl.port,
+      scopes: pkceConfig.scopes,
+      redirectUri: urlConfig.redirectUrl,
+      port: urlConfig.redirectUrl.port,
       urlLancher: launch,
       prompt: 'login',
       additionalParameters: {
         'code_challenge': pkce.challenge,
-        'code_challenge_method': 'S256',
+        'code_challenge_method': pkceConfig.challengeMethod,
       },
     );
 
@@ -58,6 +63,6 @@ class PkceAuthenticator {
     );
 
     // 認証完了イベント
-    state.applyEvent(AuthCompleteEvent(token));
+    authEventStream.add(AuthEventFactory.complete(token, state));
   }
 }
