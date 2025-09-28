@@ -2,11 +2,11 @@
 
 import '../models/auth_state_model.dart';
 import '../models/token_model.dart';
-import '../pkce_authoricator.dart';
+import 'pkce_authoricate_provider.dart';
 import 'token_provider.dart';
 
 class PkceTokenProvider implements TokenProvider {
-  final PkceAuthenticator authenticator;
+  final PkceAuthenticatorProver authenticator;
   final AuthStateModel state;
 
   PkceTokenProvider({

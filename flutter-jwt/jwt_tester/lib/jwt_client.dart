@@ -81,7 +81,7 @@ Future<http.Response> securePost(Uri url, {Map<String, String>? headers, Map<Str
         "redirect_uri":"http://localhost:4000/callback",
         "client_id":"qual-app",
         "code_verifier":verifier,
-        if(body != null) ...body,
+
       };
   final addurl= url.toString()+"/protocol/openid-connect/token";
   final ioClient=IOClient(HttpClient(context: contextResult.value));
