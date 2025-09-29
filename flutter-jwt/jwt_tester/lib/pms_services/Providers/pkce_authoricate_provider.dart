@@ -87,16 +87,16 @@ class PkceAuthenticatorProver {
     switch (response.statusCode) {
       case 200:
         // トークンモデル構築
-        final token = TokenModel(
-          accessToken: response['access_token'],
-          refreshToken: response['refresh_token'],
-          expiresAt: DateTime.now().add(
-            Duration(seconds: tokenResponse['expires_in']),
-          ),
-        );
+        // final token = TokenModel(
+        //   accessToken: response['access_token'],
+        //   refreshToken: response['refresh_token'],
+        //   expiresAt: DateTime.now().add(
+        //     Duration(seconds: tokenResponse['expires_in']),
+        //   ),
+        // );
 
         // 認証完了イベント
-        authEventStream?.add(AuthEventFactory.complete(token, state));
+        // authEventStream?.add(AuthEventFactory.complete(token, state));
         break;
       case 400:
         //認証失敗
