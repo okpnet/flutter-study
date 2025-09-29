@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:http/io_client.dart';
+import 'package:jwt_tester/pms_services/Providers/pkce_url_config.dart';
 import '../providers/post_provider.dart';
 import '../extends/auth_event_factory.dart';
 import '../models/events/auth_fail_event.dart';
@@ -8,12 +10,10 @@ import 'package:openid_client/openid_client_io.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../models/auth_state_model.dart';
 import '../models/token_model.dart';
-import '../url_config.dart';
 import '../models/events/auth_event.dart';
-import 'post_provider.dart' hide PostProvider;
 
 class PkceAuthenticatorProver {
-  final UrlConfig urlConfig;
+  final PkceUrlConfig urlConfig;
   final PkceConfig pkceConfig;
   final AuthStateModel state;
   final StreamSink<AuthEvent>? authEventStream;
@@ -34,7 +34,8 @@ class PkceAuthenticatorProver {
     final pkce = state.pkce;
 
     // 認可サーバーの発見とクライアント構築
-    final issuer = await Issuer.discover(urlConfig.authUrl);
+    final ioClient=urlConfig.securityContext == null ? null : IOClient(HttpClient(context: urlConfig.securityContext));
+    final issuer = await Issuer.discover(urlConfig.authUrl,httpClient: ioClient);
     final client = Client(issuer, pkceConfig.clientId);
 
     // ブラウザ起動関数
