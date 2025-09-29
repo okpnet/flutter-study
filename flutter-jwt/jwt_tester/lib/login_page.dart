@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/io_client.dart';
 import 'package:jwt_tester/home_page.dart';
-import 'package:jwt_tester/pms_services/Providers/pkce_authoricate_provider.dart';
+import 'package:jwt_tester/pms_services/providers/pkce_authoricate_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter/services.dart' show rootBundle;

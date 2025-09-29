@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:http/io_client.dart';
-import 'package:jwt_tester/pms_services/Providers/pkce_url_config.dart';
-import '../providers/post_provider.dart';
+import 'package:jwt_tester/pms_services/providers/pkce_url_config.dart';
+import 'post_provider.dart';
 import '../extends/auth_event_factory.dart';
 import '../models/events/auth_fail_event.dart';
 import '../pkce_config.dart';
@@ -34,13 +34,21 @@ class PkceAuthenticatorProver {
     final pkce = state.pkce;
 
     // 認可サーバーの発見とクライアント構築
-    final ioClient=urlConfig.securityContext == null ? null : IOClient(HttpClient(context: urlConfig.securityContext));
-    final issuer = await Issuer.discover(urlConfig.authUrl,httpClient: ioClient);
+    final ioClient = urlConfig.securityContext == null
+        ? null
+        : IOClient(HttpClient(context: urlConfig.securityContext));
+    final issuer = await Issuer.discover(
+      urlConfig.authUrl,
+      httpClient: ioClient,
+    );
     final client = Client(issuer, pkceConfig.clientId);
 
     // ブラウザ起動関数
     Future<void> launch(String url) async {
-      if (!await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication)) {
+      if (!await launchUrl(
+        Uri.parse(url),
+        mode: LaunchMode.externalApplication,
+      )) {
         throw Exception('Could not launch $url');
       }
     }
@@ -61,30 +69,30 @@ class PkceAuthenticatorProver {
 
     final credential = await authenticator.authorize();
     final tokenResponse = await credential.getTokenResponse();
-    final addBodys={
-        "grant_type":"authorization_code",
-        "code":tokenResponse['code'],
-        "redirect_uri":urlConfig.redirectUrl.query,
-        "client_id":pkceConfig.clientId,
-        "code_verifier":pkce.verifier,
-      };
+    final addBodys = {
+      "grant_type": "authorization_code",
+      "code": tokenResponse['code'],
+      "redirect_uri": urlConfig.redirectUrl.query,
+      "client_id": pkceConfig.clientId,
+      "code_verifier": pkce.verifier,
+    };
 
-    final response=await postProvider.post(
+    final response = await postProvider.post(
       url: urlConfig.tokenUrl,
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
+      headers: {'Content-Type': 'application/x-www-form-urlencoded'},
       body: Uri(queryParameters: addBodys).query,
       context: context,
     );
 
-    switch(response.statusCode){
+    switch (response.statusCode) {
       case 200:
         // トークンモデル構築
         final token = TokenModel(
           accessToken: response['access_token'],
           refreshToken: response['refresh_token'],
-          expiresAt: DateTime.now().add(Duration(seconds: tokenResponse['expires_in'])),
+          expiresAt: DateTime.now().add(
+            Duration(seconds: tokenResponse['expires_in']),
+          ),
         );
 
         // 認証完了イベント
