@@ -8,5 +8,4 @@ class AuthStateModel {
   AuthStateModel({required this.pkce, this.token});
 
   bool get isAuthenticated => token != null && !token!.isExpired;
-
 }

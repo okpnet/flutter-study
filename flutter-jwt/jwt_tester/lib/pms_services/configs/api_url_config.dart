@@ -1,9 +1,9 @@
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
-import 'package:jwt_tester/pms_services/extends/convert_helper.dart';
-
+import '../extends/convert_helper.dart';
 import 'base_url_config.dart';
+
 
 class ApiUrlConfig extends BaseUrlConfig {
   @override final String baseUrl;

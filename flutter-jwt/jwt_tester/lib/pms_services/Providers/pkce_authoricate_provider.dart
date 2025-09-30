@@ -1,47 +1,46 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'package:http/io_client.dart';
-import 'package:jwt_tester/pms_services/providers/pkce_url_config.dart';
 import 'post_provider.dart';
 import '../extends/auth_event_factory.dart';
-import '../models/events/auth_fail_event.dart';
-import '../pkce_config.dart';
 import 'package:openid_client/openid_client_io.dart';
 import 'package:url_launcher/url_launcher.dart';
-import '../models/auth_state_model.dart';
-import '../models/token_model.dart';
-import '../models/events/auth_event.dart';
+import '../models/pms_model.dart';
+import '../models/events/pms_event.dart';
+import '../configs/pms_config.dart';
 
 class PkceAuthenticatorProver {
   final PkceUrlConfig urlConfig;
-  final PkceConfig pkceConfig;
   final AuthStateModel state;
-  final StreamSink<AuthEvent>? authEventStream;
+  final StreamController<AuthEvent> _authEventStream =
+      StreamController<AuthEvent>();
   final PostProvider postProvider;
+  Stream<AuthEvent> get stream => _authEventStream.stream;
+  StreamSink<AuthEvent> get streamSink => _authEventStream;
 
   PkceAuthenticatorProver({
     required this.urlConfig,
-    required this.pkceConfig,
     required this.state,
-    this.authEventStream,
     required this.postProvider,
   });
 
   /// 認証開始（ログイン）
-  Future<void> login({SecurityContext? context}) async {
+  Future<void> login() async {
     // 認証開始イベント（ログアウトにも使用可能）
-    authEventStream?.add(AuthEventFactory.start(state));
+    _authEventStream.add(AuthEventFactory.start(state));
     final pkce = state.pkce;
 
     // 認可サーバーの発見とクライアント構築
-    final ioClient = urlConfig.securityContext == null
-        ? null
-        : IOClient(HttpClient(context: urlConfig.securityContext));
+    final securityContext = urlConfig.securityContext;
+    final ioClient = urlConfig.isSecurityContextAvailable
+        ? IOClient(HttpClient(context: securityContext))
+        : null;
     final issuer = await Issuer.discover(
       urlConfig.authUrl,
       httpClient: ioClient,
     );
-    final client = Client(issuer, pkceConfig.clientId);
+    final client = Client(issuer, urlConfig.pkceConfig.clientId);
 
     // ブラウザ起動関数
     Future<void> launch(String url) async {
@@ -56,14 +55,14 @@ class PkceAuthenticatorProver {
     // 認証フロー開始
     final authenticator = Authenticator(
       client,
-      scopes: pkceConfig.scopes,
+      scopes: urlConfig.pkceConfig.scopes,
       redirectUri: urlConfig.redirectUrl,
       port: urlConfig.redirectUrl.port,
       urlLancher: launch,
       prompt: 'login',
       additionalParameters: {
         'code_challenge': pkce.challenge,
-        'code_challenge_method': pkceConfig.challengeMethod,
+        'code_challenge_method': urlConfig.pkceConfig.challengeMethod,
       },
     );
 
@@ -72,8 +71,8 @@ class PkceAuthenticatorProver {
     final addBodys = {
       "grant_type": "authorization_code",
       "code": tokenResponse['code'],
-      "redirect_uri": urlConfig.redirectUrl.query,
-      "client_id": pkceConfig.clientId,
+      "redirect_uri": urlConfig.redirectUrl.toString(),
+      "client_id": urlConfig.pkceConfig.clientId,
       "code_verifier": pkce.verifier,
     };
 
@@ -81,26 +80,35 @@ class PkceAuthenticatorProver {
       url: urlConfig.tokenUrl,
       headers: {'Content-Type': 'application/x-www-form-urlencoded'},
       body: Uri(queryParameters: addBodys).query,
-      context: context,
+      context: urlConfig.securityContext,
     );
-
+    final responseBody=jsonDecode(response.body);
     switch (response.statusCode) {
       case 200:
         // トークンモデル構築
-        // final token = TokenModel(
-        //   accessToken: response['access_token'],
-        //   refreshToken: response['refresh_token'],
-        //   expiresAt: DateTime.now().add(
-        //     Duration(seconds: tokenResponse['expires_in']),
-        //   ),
-        // );
+        
+        final token = TokenModel(
+          accessToken: responseBody['access_token'],
+          refreshToken: responseBody['refresh_token'],
+          idToken: responseBody['id_token'],
+          tokenype: responseBody['token_type'],
+          claims: {},//キーがhttps://hasura.io/jwt/claimsこうなので取得方法を検討
+          expiresAt: DateTime.now().add(
+            Duration(seconds: responseBody['expires_in'] as int),
+          ),
+        );
 
         // 認証完了イベント
-        // authEventStream?.add(AuthEventFactory.complete(token, state));
+        _authEventStream.add(AuthEventFactory.complete(token, state));
         break;
       case 400:
         //認証失敗
-        authEventStream?.add(AuthFailEvent(state));
+        _authEventStream.add(
+          AuthFailEvent(state,
+            errorCode:  responseBody['error'],
+            description: responseBody['error_description']
+            )
+          );
         break;
     }
   }

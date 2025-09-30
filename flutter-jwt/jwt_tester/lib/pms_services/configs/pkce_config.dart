@@ -12,4 +12,16 @@ class PkceConfig {
   Map<String, String> get additionalParameters => {
     'code_challenge_method': challengeMethod,
   };
+
+  Map<String, dynamic> toMap()=>{
+    'clientId':clientId,
+    'challengeMethod':challengeMethod,
+    'scopes':scopes
+  };
+
+  static PkceConfig fromMap(Map<String, dynamic> map) =>PkceConfig(
+    clientId: map['clientId'] as String,
+    challengeMethod: map['challengeMethod'] as String,
+    scopes: List<String>.from(map['scopes'])
+    );
 }

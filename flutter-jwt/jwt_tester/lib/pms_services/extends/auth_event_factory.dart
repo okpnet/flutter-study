@@ -1,9 +1,5 @@
-import '../models/events/auth_complete_event.dart';
-import '../models/events/auth_start_event.dart';
-import '../models/events/auth_expired_event.dart';
-import '../models/events/auth_event.dart';
-import '../models/auth_state_model.dart';
-import '../models/token_model.dart';
+import '../models/pms_model.dart';
+import '../models/events/pms_event.dart';
 
 /// 認証イベントを生成するファクトリークラス。
 /// 認証処理の各段階（開始、完了、有効期限切れ）に対応したイベントを生成する。

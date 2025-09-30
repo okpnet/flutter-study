@@ -96,3 +96,4 @@ flutter:
   assets:
     - .env
     - ca/fullchain.pem
+    - assets/pkce_url.json
