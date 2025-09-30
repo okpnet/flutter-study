@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:isolate';
+import 'package:http/http.dart' show Response;
 import 'package:http/io_client.dart';
 import 'post_provider.dart';
 import '../extends/auth_event_factory.dart';
@@ -82,17 +84,65 @@ class PkceAuthenticatorProver {
       body: Uri(queryParameters: addBodys).query,
       context: urlConfig.securityContext,
     );
-    final responseBody=jsonDecode(response.body);
+
+    await Isolate.spawn(_responseObservable, response);
+  }
+
+  Future<void> refreshTokenIfNeeded() async {
+    if (state.token?.isExpired ?? true) {
+      await _refreshToken();
+    }
+  }
+
+Future<void> logout() async {
+  final idToken = state.token?.idToken;
+  final redirectUri = urlConfig.redirectUrl;
+
+  if (idToken != null) {
+    final logoutUrl = Uri.parse(
+      '${urlConfig.authUrl}/protocol/openid-connect/logout'
+      '?id_token_hint=$idToken'
+      '&post_logout_redirect_uri=$redirectUri',
+    );
+
+    await launchUrl(logoutUrl, mode: LaunchMode.externalApplication);
+  }
+
+  state.token = null;
+  _authEventStream.add(AuthEventFactory.logout(state));
+}
+  Future<void> _refreshToken() async {
+    final currentToken = state.token;
+    if (currentToken == null || currentToken.refreshToken == null) return;
+
+    final body = {
+      "grant_type": "refresh_token",
+      "refresh_token": currentToken.refreshToken!,
+      "client_id": urlConfig.pkceConfig.clientId,
+    };
+
+    final response = await postProvider.post(
+      url: urlConfig.tokenUrl,
+      headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+      body: Uri(queryParameters: body).query,
+      context: urlConfig.securityContext,
+    );
+
+    await Isolate.spawn(_responseObservable, response);
+  }
+
+  void _responseObservable(Response response) {
+    final responseBody = jsonDecode(response.body);
     switch (response.statusCode) {
       case 200:
         // トークンモデル構築
-        
+
         final token = TokenModel(
           accessToken: responseBody['access_token'],
           refreshToken: responseBody['refresh_token'],
           idToken: responseBody['id_token'],
           tokenype: responseBody['token_type'],
-          claims: {},//キーがhttps://hasura.io/jwt/claimsこうなので取得方法を検討
+          claims: {}, //キーがhttps://hasura.io/jwt/claimsこうなので取得方法を検討
           expiresAt: DateTime.now().add(
             Duration(seconds: responseBody['expires_in'] as int),
           ),
@@ -104,11 +154,12 @@ class PkceAuthenticatorProver {
       case 400:
         //認証失敗
         _authEventStream.add(
-          AuthFailEvent(state,
-            errorCode:  responseBody['error'],
-            description: responseBody['error_description']
-            )
-          );
+          AuthFailEvent(
+            state,
+            errorCode: responseBody['error'],
+            description: responseBody['error_description'],
+          ),
+        );
         break;
     }
   }

@@ -9,7 +9,7 @@ abstract class BaseUrlConfig{
 
   ByteData? get certData;
 
-  Uri getUri(String path) => Uri.parse('$baseUrl$path');
+  Uri getUri(List<String> paths) => Uri.parse(baseUrl + paths.join());
   /// シリアライズ用
   Map<String, dynamic> toMap(){
     final certList = certData?.buffer.asUint8List();

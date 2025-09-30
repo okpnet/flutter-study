@@ -18,6 +18,11 @@ class TokenModel {
     this.tokenype,
     this.claims
   });
+bool get hasRefreshToken => refreshToken != null && refreshToken!.isNotEmpty;
+
+Duration get timeUntilExpiry => expiresAt.difference(DateTime.now());
+
+bool get isExpiringSoon => timeUntilExpiry.inSeconds < 60;
 
   bool get isExpired => DateTime.now().isAfter(expiresAt);
 }
