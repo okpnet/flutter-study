@@ -1,10 +1,9 @@
-
-
 import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:jwt_tester/pms_services/models/events/auth_logout_event.dart';
 import 'pms_services/providers/pms_provider.dart';
 
 Future<HttpClient> createSecureHtpClient() async {
@@ -27,6 +26,66 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _passwordController = TextEditingController();
   bool _isLoading = false;
   String? _errorMessage;
+  String token="";
+
+  final authModel = AuthStateModel(pkce: PKCEModel.generate());
+
+  Future<void> refresh() async{
+    final pkceUrlJson = await rootBundle.loadString(
+      'assets/pkce_url.json',
+    ); //アセットから
+    final pkceUrlMap = jsonDecode(pkceUrlJson) as Map<String, dynamic>;
+    final conf = PkceUrlConfig.fromMap(pkceUrlMap);
+    final provider = PkceAuthenticatorProver(
+      urlConfig: conf,
+      state: authModel,
+      postProvider: HttpPostProvider(),
+    );
+
+      provider.stream.listen((e) {
+        switch (e) {
+          case AuthCompleteEvent a:
+            print('refresh成功: ${a.tokenStr}');
+            setState(() {
+              token = a.tokenStr;
+            });
+
+            break;
+          case AuthFailEvent _:
+            print('失敗');
+            break;
+        }
+      });
+    await provider.forcceRefreshToken();
+  }
+
+  Future<void> logout() async {
+    final pkceUrlJson = await rootBundle.loadString(
+      'assets/pkce_url.json',
+    ); //アセットから
+    final pkceUrlMap = jsonDecode(pkceUrlJson) as Map<String, dynamic>;
+    final conf = PkceUrlConfig.fromMap(pkceUrlMap);
+    final provider = PkceAuthenticatorProver(
+      urlConfig: conf,
+      state: authModel,
+      postProvider: HttpPostProvider(),
+    );
+
+    provider.stream.listen((e) {
+      switch (e) {
+        case AuthLogoutEvent _:
+          print('ログアウト');
+          setState(() {
+            token="";
+          });
+          break;
+        case AuthFailEvent _:
+          print('失敗');
+          break;
+      }
+    });
+    await provider.logout();
+  }
 
   Future<void> login() async {
     setState(() {
@@ -35,12 +94,11 @@ class _LoginPageState extends State<LoginPage> {
     });
 
     try {
-      final pkceUrlJson=await rootBundle.loadString('assets/pkce_url.json');//アセットから
-      final pkceUrlMap=jsonDecode(pkceUrlJson) as Map<String,dynamic>;
+      final pkceUrlJson = await rootBundle.loadString(
+        'assets/pkce_url.json',
+      ); //アセットから
+      final pkceUrlMap = jsonDecode(pkceUrlJson) as Map<String, dynamic>;
       final conf = PkceUrlConfig.fromMap(pkceUrlMap);
-
-      final authModel = AuthStateModel(pkce: PKCEModel.generate());
-
       final provider = PkceAuthenticatorProver(
         urlConfig: conf,
         state: authModel,
@@ -50,10 +108,14 @@ class _LoginPageState extends State<LoginPage> {
       provider.stream.listen((e) {
         switch (e) {
           case AuthStartEvent _:
-            print('開始');
+            print('login開始');
             break;
           case AuthCompleteEvent a:
             print('成功: ${a.tokenStr}');
+            setState(() {
+              token = a.tokenStr;
+            });
+
             break;
           case AuthFailEvent _:
             print('失敗');
@@ -69,7 +131,6 @@ class _LoginPageState extends State<LoginPage> {
       //state 401 is user none {"error":"invalid_grant","error_description":"Invalid user credentials"}
       //state 401 is name or passwpowrd verifoed {"error":"invalid_grant","error_description":"Invalid user credentials"}
       //success 200
-
     } finally {
       setState(() {
         _isLoading = false;
@@ -86,6 +147,7 @@ class _LoginPageState extends State<LoginPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            token.isEmpty ? Text( "no token") :Text(token),
             TextField(
               controller: _usernameController,
               decoration: const InputDecoration(labelText: 'Username'),
@@ -101,7 +163,9 @@ class _LoginPageState extends State<LoginPage> {
             const SizedBox(height: 20),
             _isLoading
                 ? const CircularProgressIndicator()
-                : ElevatedButton(onPressed: login, child: const Text('Login')),
+                : Row(
+                  children: [ ElevatedButton(onPressed: login, child: const Text('Login')), ElevatedButton(onPressed: logout, child: const Text('Logout')), ElevatedButton(onPressed: refresh, child: const Text('Refresh'))],
+                )
           ],
         ),
       ),

@@ -1,9 +1,8 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
-import 'dart:isolate';
 import 'package:http/http.dart' show Response;
 import 'package:http/io_client.dart';
+import 'package:jwt_tester/pms_services/extends/convert_helper.dart';
 import 'post_provider.dart';
 import '../extends/auth_event_factory.dart';
 import 'package:openid_client/openid_client_io.dart';
@@ -85,7 +84,7 @@ class PkceAuthenticatorProver {
       context: urlConfig.securityContext,
     );
 
-    await Isolate.spawn(_responseObservable, response);
+    _responseObservable(response);
   }
 
   Future<void> refreshTokenIfNeeded() async {
@@ -94,23 +93,29 @@ class PkceAuthenticatorProver {
     }
   }
 
-Future<void> logout() async {
-  final idToken = state.token?.idToken;
-  final redirectUri = urlConfig.redirectUrl;
-
-  if (idToken != null) {
-    final logoutUrl = Uri.parse(
-      '${urlConfig.authUrl}/protocol/openid-connect/logout'
-      '?id_token_hint=$idToken'
-      '&post_logout_redirect_uri=$redirectUri',
-    );
-
-    await launchUrl(logoutUrl, mode: LaunchMode.externalApplication);
+  Future<void> forcceRefreshToken() async{
+    await _refreshToken();
   }
 
-  state.token = null;
-  _authEventStream.add(AuthEventFactory.logout(state));
-}
+  Future<void> logout() async {
+    if(state.token == null || state.token?.refreshToken == null) return;
+
+    final addBodys = {
+      "refresh_token": state.token?.refreshToken,
+      "client_id": urlConfig.pkceConfig.clientId,
+      //"client_secret": "",//PKCEでログインしているので不要
+    };
+
+    final response = await postProvider.post(
+      url: urlConfig.logoutUrl,
+      headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+      body: Uri(queryParameters: addBodys).query,
+      context: urlConfig.securityContext,
+    );
+    
+    _responseObservable(response);
+  }
+
   Future<void> _refreshToken() async {
     final currentToken = state.token;
     if (currentToken == null || currentToken.refreshToken == null) return;
@@ -128,15 +133,14 @@ Future<void> logout() async {
       context: urlConfig.securityContext,
     );
 
-    await Isolate.spawn(_responseObservable, response);
+    _responseObservable(response);
   }
 
   void _responseObservable(Response response) {
-    final responseBody = jsonDecode(response.body);
+    final responseBody =ConvertHelper.jsonSafeDecode(response.body);
     switch (response.statusCode) {
       case 200:
         // トークンモデル構築
-
         final token = TokenModel(
           accessToken: responseBody['access_token'],
           refreshToken: responseBody['refresh_token'],
@@ -150,6 +154,11 @@ Future<void> logout() async {
 
         // 認証完了イベント
         _authEventStream.add(AuthEventFactory.complete(token, state));
+        break;
+      case 204:
+        //ログアウト
+        state.token = null;
+        _authEventStream.add(AuthEventFactory.logout(state));
         break;
       case 400:
         //認証失敗

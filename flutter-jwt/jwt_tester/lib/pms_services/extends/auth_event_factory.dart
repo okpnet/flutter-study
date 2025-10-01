@@ -1,3 +1,5 @@
+import 'package:jwt_tester/pms_services/models/events/auth_logout_event.dart';
+
 import '../models/pms_model.dart';
 import '../models/events/pms_event.dart';
 
@@ -16,4 +18,7 @@ class AuthEventFactory {
   /// 認証有効期限切れイベントを生成する。
   /// [state] 現在の認証状態モデル
   static AuthEvent expired(AuthStateModel state) => AuthExpiredEvent(state);
+  ///
+  ///
+  static AuthEvent logout(AuthStateModel state)=>AuthLogoutEvent(state);
 }
