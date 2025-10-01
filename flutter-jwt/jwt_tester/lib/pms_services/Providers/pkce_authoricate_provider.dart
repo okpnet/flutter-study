@@ -155,6 +155,9 @@ class PkceAuthenticatorProver {
         // 認証完了イベント
         _authEventStream.add(AuthEventFactory.complete(token, state));
         break;
+      case 201:
+        //ユーザーレジスター
+        break;
       case 204:
         //ログアウト
         state.token = null;
