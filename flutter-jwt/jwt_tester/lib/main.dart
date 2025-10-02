@@ -17,7 +17,7 @@ final tokenProvider = FutureProvider<String?>((ref) async {
 final getit = GetIt.instance;
 
 void main() async {
-  await dotenv.load(fileName: '.env');
+  // await dotenv.load(fileName: '.env');
   runApp(ProviderScope(child: const MyApp()));
   final pkceUrlJson = await rootBundle.loadString(
     'assets/pkce_url.json',

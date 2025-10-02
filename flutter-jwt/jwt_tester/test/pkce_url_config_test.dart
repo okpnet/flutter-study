@@ -13,7 +13,7 @@ void main() async {
     final certByts = await rootBundle.load('ca/fullchain.pem'); //アセットから
 
     final conf = PkceUrlConfig(
-      baseUrl: 'https://keycloak.com',
+      baseUrl: 'https://okp-04.local:8443/realms/pms',
       redirectPath: 'http://localhost:4000/callback',
       apiPath: '/protocol/openid-connect/',
       pkceConfig: PkceConfig(clientId: 'app'),

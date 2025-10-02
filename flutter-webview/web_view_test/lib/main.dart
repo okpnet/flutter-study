@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:web_view_test/google_page.dart';
 
 void main() {
   runApp(const MyApp());
+  WidgetsFlutterBinding.ensureInitialized();
 }
 
 class MyApp extends StatelessWidget {
@@ -109,6 +111,7 @@ class _MyHomePageState extends State<MyHomePage> {
               '$_counter',
               style: Theme.of(context).textTheme.headlineMedium,
             ),
+            GooglePage()
           ],
         ),
       ),
