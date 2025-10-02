@@ -3,7 +3,9 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:jwt_tester/main.dart';
 import 'package:jwt_tester/pms_services/models/events/auth_logout_event.dart';
+import 'package:jwt_tester/pms_services/models/token_model_extension.dart';
 import 'pms_services/providers/pms_provider.dart';
 
 Future<HttpClient> createSecureHtpClient() async {
@@ -31,23 +33,15 @@ class _LoginPageState extends State<LoginPage> {
   final authModel = AuthStateModel(pkce: PKCEModel.generate());
 
   Future<void> refresh() async{
-    final pkceUrlJson = await rootBundle.loadString(
-      'assets/pkce_url.json',
-    ); //アセットから
-    final pkceUrlMap = jsonDecode(pkceUrlJson) as Map<String, dynamic>;
-    final conf = PkceUrlConfig.fromMap(pkceUrlMap);
-    final provider = PkceAuthenticatorProver(
-      urlConfig: conf,
-      state: authModel,
-      postProvider: HttpPostProvider(),
-    );
+    
+    final provider = getit<PkceAuthenticatorProvider>();
 
       provider.stream.listen((e) {
         switch (e) {
           case AuthCompleteEvent a:
-            print('refresh成功: ${a.tokenStr}');
+            print('refresh成功: ${a.tokenModel.accessToken}');
             setState(() {
-              token = a.tokenStr;
+              token = a.tokenModel.accessToken;
             });
 
             break;
@@ -60,16 +54,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<void> logout() async {
-    final pkceUrlJson = await rootBundle.loadString(
-      'assets/pkce_url.json',
-    ); //アセットから
-    final pkceUrlMap = jsonDecode(pkceUrlJson) as Map<String, dynamic>;
-    final conf = PkceUrlConfig.fromMap(pkceUrlMap);
-    final provider = PkceAuthenticatorProver(
-      urlConfig: conf,
-      state: authModel,
-      postProvider: HttpPostProvider(),
-    );
+    final provider = getit<PkceAuthenticatorProvider>();
 
     provider.stream.listen((e) {
       switch (e) {
@@ -94,16 +79,7 @@ class _LoginPageState extends State<LoginPage> {
     });
 
     try {
-      final pkceUrlJson = await rootBundle.loadString(
-        'assets/pkce_url.json',
-      ); //アセットから
-      final pkceUrlMap = jsonDecode(pkceUrlJson) as Map<String, dynamic>;
-      final conf = PkceUrlConfig.fromMap(pkceUrlMap);
-      final provider = PkceAuthenticatorProver(
-        urlConfig: conf,
-        state: authModel,
-        postProvider: HttpPostProvider(),
-      );
+      final provider = getit<PkceAuthenticatorProvider>();
 
       provider.stream.listen((e) {
         switch (e) {
@@ -111,11 +87,12 @@ class _LoginPageState extends State<LoginPage> {
             print('login開始');
             break;
           case AuthCompleteEvent a:
-            print('成功: ${a.tokenStr}');
+            print('成功: ${a.tokenModel.accessToken}');
             setState(() {
-              token = a.tokenStr;
+              final userInfo=a.tokenModel.extractUserInfo();
+              token = jsonEncode(userInfo.toMap());
+              print(token);
             });
-
             break;
           case AuthFailEvent _:
             print('失敗');

@@ -2,16 +2,12 @@ import 'dart:async';
 import 'dart:io';
 import 'package:http/http.dart' show Response;
 import 'package:http/io_client.dart';
-import 'package:jwt_tester/pms_services/extends/convert_helper.dart';
-import 'post_provider.dart';
-import '../extends/auth_event_factory.dart';
 import 'package:openid_client/openid_client_io.dart';
 import 'package:url_launcher/url_launcher.dart';
-import '../models/pms_model.dart';
-import '../models/events/pms_event.dart';
-import '../configs/pms_config.dart';
-
-class PkceAuthenticatorProver {
+import '../extends/convert_helper.dart';
+import '../extends/auth_event_factory.dart';
+import 'pms_provider.dart';
+class PkceAuthenticatorProvider {
   final PkceUrlConfig urlConfig;
   final AuthStateModel state;
   final StreamController<AuthEvent> _authEventStream =
@@ -20,11 +16,23 @@ class PkceAuthenticatorProver {
   Stream<AuthEvent> get stream => _authEventStream.stream;
   StreamSink<AuthEvent> get streamSink => _authEventStream;
 
-  PkceAuthenticatorProver({
+  PkceAuthenticatorProvider({
     required this.urlConfig,
     required this.state,
     required this.postProvider,
   });
+
+  factory PkceAuthenticatorProvider.create(
+    String pkceUrljsonSource,
+    AuthStateModel state,
+  ) {
+    var configMap = PkceUrlConfig.fromJsonString(pkceUrljsonSource);
+    return PkceAuthenticatorProvider(
+      urlConfig: configMap,
+      state: state,
+      postProvider: HttpPostProvider(),
+    );
+  }
 
   /// 認証開始（ログイン）
   Future<void> login() async {
@@ -47,7 +55,7 @@ class PkceAuthenticatorProver {
     Future<void> launch(String url) async {
       if (!await launchUrl(
         Uri.parse(url),
-        mode: LaunchMode.externalApplication,
+        mode: LaunchMode.inAppBrowserView,
       )) {
         throw Exception('Could not launch $url');
       }
@@ -93,12 +101,12 @@ class PkceAuthenticatorProver {
     }
   }
 
-  Future<void> forcceRefreshToken() async{
+  Future<void> forcceRefreshToken() async {
     await _refreshToken();
   }
 
   Future<void> logout() async {
-    if(state.token == null || state.token?.refreshToken == null) return;
+    if (state.token == null || state.token?.refreshToken == null) return;
 
     final addBodys = {
       "refresh_token": state.token?.refreshToken,
@@ -112,7 +120,7 @@ class PkceAuthenticatorProver {
       body: Uri(queryParameters: addBodys).query,
       context: urlConfig.securityContext,
     );
-    
+
     _responseObservable(response);
   }
 
@@ -137,7 +145,7 @@ class PkceAuthenticatorProver {
   }
 
   void _responseObservable(Response response) {
-    final responseBody =ConvertHelper.jsonSafeDecode(response.body);
+    final responseBody = ConvertHelper.jsonSafeDecode(response.body);
     switch (response.statusCode) {
       case 200:
         // トークンモデル構築
@@ -154,9 +162,6 @@ class PkceAuthenticatorProver {
 
         // 認証完了イベント
         _authEventStream.add(AuthEventFactory.complete(token, state));
-        break;
-      case 201:
-        //ユーザーレジスター
         break;
       case 204:
         //ログアウト

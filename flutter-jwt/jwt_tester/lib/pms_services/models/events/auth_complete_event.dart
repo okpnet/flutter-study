@@ -1,11 +1,10 @@
 import 'auth_event.dart';
-import '../auth_state_model.dart';
-import '../token_model.dart';
+import '../pms_model.dart';
 
 class AuthCompleteEvent extends AuthEvent {
-  late final String tokenStr;
+  late final TokenModel tokenModel;
   AuthCompleteEvent(TokenModel token, AuthStateModel state) : super(state) {
     state.token = token;
-    tokenStr=token.accessToken;
+    tokenModel=token;
   }
 }

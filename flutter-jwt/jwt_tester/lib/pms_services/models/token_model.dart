@@ -1,5 +1,3 @@
-
-
 class TokenModel {
   final String accessToken;
   final String? refreshToken;
@@ -7,7 +5,7 @@ class TokenModel {
   final String? sessionState;
   final String? idToken;
   final DateTime expiresAt;
-  final Map<String,String>? claims;
+  final Map<String, String>? claims;
 
   TokenModel({
     required this.accessToken,
@@ -16,13 +14,13 @@ class TokenModel {
     this.idToken,
     this.sessionState,
     this.tokenype,
-    this.claims
+    this.claims,
   });
-bool get hasRefreshToken => refreshToken != null && refreshToken!.isNotEmpty;
+  bool get hasRefreshToken => refreshToken != null && refreshToken!.isNotEmpty;
 
-Duration get timeUntilExpiry => expiresAt.difference(DateTime.now());
+  Duration get timeUntilExpiry => expiresAt.difference(DateTime.now());
 
-bool get isExpiringSoon => timeUntilExpiry.inSeconds < 60;
+  bool get isExpiringSoon => timeUntilExpiry.inSeconds < 60;
 
   bool get isExpired => DateTime.now().isAfter(expiresAt);
 }

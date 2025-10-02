@@ -50,4 +50,9 @@ class PkceUrlConfig extends BaseUrlConfig {
       certData: ConvertHelper.convertByteData(map['certData']),
       pkceConfig: PkceConfig.fromMap(map['pkceConfig'])
     );
+
+  static PkceUrlConfig fromJsonString(String source){
+    final map = ConvertHelper.jsonSafeDecode(source);
+    return PkceUrlConfig.fromMap(map);
+  }
 }

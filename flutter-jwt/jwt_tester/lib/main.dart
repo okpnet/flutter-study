@@ -1,19 +1,28 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:get_it/get_it.dart';
 import 'package:jwt_tester/login_page.dart';
 import 'package:jwt_tester/home_page.dart';
+import 'package:jwt_tester/servic_extends.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-final tokenProvider=FutureProvider<String?>((ref) async{
-  SharedPreferences prefs=await SharedPreferences.getInstance();
+final tokenProvider = FutureProvider<String?>((ref) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
   return prefs.getString('token');
 });
 
-void main() async{
+final getit = GetIt.instance;
+
+void main() async {
   await dotenv.load(fileName: '.env');
-  runApp(ProviderScope(child:const MyApp()));
+  runApp(ProviderScope(child: const MyApp()));
+  final pkceUrlJson = await rootBundle.loadString(
+    'assets/pkce_url.json',
+  ); //アセットから
+  getit.addPmsService(pkceUrlJson);
 }
 
 class MyApp extends ConsumerWidget {
@@ -21,8 +30,8 @@ class MyApp extends ConsumerWidget {
 
   // This widget is the root of your application.
   @override
-  Widget build(BuildContext context,WidgetRef ref) {
-    final tokenAsyncValue=ref.watch(tokenProvider);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final tokenAsyncValue = ref.watch(tokenProvider);
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
@@ -44,9 +53,9 @@ class MyApp extends ConsumerWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
       home: tokenAsyncValue.when(
-        data: (token)=>token==null ? const LoginPage() : const HomePage(),
-        error: (e,stack)=> Text('Error: $e'),
-        loading: ()=>const CircularProgressIndicator(),
+        data: (token) => token == null ? const LoginPage() : const HomePage(),
+        error: (e, stack) => Text('Error: $e'),
+        loading: () => const CircularProgressIndicator(),
       ),
     );
   }
