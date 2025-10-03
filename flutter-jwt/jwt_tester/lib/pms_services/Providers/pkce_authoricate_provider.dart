@@ -55,7 +55,7 @@ class PkceAuthenticatorProvider {
     Future<void> launch(String url) async {
       if (!await launchUrl(
         Uri.parse(url),
-        mode: LaunchMode.inAppBrowserView,
+        mode: LaunchMode.externalApplication,
       )) {
         throw Exception('Could not launch $url');
       }

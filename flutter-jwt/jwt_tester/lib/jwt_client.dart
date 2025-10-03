@@ -43,7 +43,7 @@ Future<Result<Credential>> authenticateWithPKCE(Uri url,String? certPath,String 
     final authenticator=Authenticator(
       client, 
       scopes: ['openid','profile','email','offline_access'],
-      redirectUri: Uri.parse('http://localhost:4000/callback'),
+      redirectUri: Uri.parse('jwt-tester://auth/callback'),
       port: 4000,
       urlLancher: urlLauncher,
       prompt: 'login',
