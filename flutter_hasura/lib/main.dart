@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:web_view_test/google_page.dart';
 
 void main() {
-  
   runApp(const MyApp());
 }
 
@@ -105,8 +103,12 @@ class _MyHomePageState extends State<MyHomePage> {
           // action in the IDE, or press "p" in the console), to see the
           // wireframe for each widget.
           mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[Expanded(child: GooglePage()),
-
+          children: <Widget>[
+            const Text('You have pushed the button this many times:'),
+            Text(
+              '$_counter',
+              style: Theme.of(context).textTheme.headlineMedium,
+            ),
           ],
         ),
       ),
