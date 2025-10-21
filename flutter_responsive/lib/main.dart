@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_responsive/login_page.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 void main() {
   runApp(const MyApp());
@@ -71,7 +72,7 @@ class _MyHomePageState extends State<MyHomePage> {
       // so that the display can reflect the updated values. If we changed
       // _counter without calling setState(), then the build method would not be
       // called again, and so nothing would appear to happen.
-      _counter++;
+      Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginPage()));
     });
   }
 
@@ -114,13 +115,22 @@ class _MyHomePageState extends State<MyHomePage> {
                     Flexible(
                       flex: 1,
                       child: Container(
-                        color: Colors.yellow,
-                        ),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.blueAccent),
+                          color: Colors.green,
+                          ),
+                          child: const Center(
+                              child: Text('Sidebar'),
+                            ),
+                      ),
                     ),
                     Flexible(
                       flex: 3,
                       child: Container(
-                        color: Colors.blue,
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.blueAccent),
+                          color: Colors.yellow,
+                          ),
                         child:ResponsiveGridView.builder(
                           itemCount: itemLen,
                           padding: const EdgeInsets.all(8.0),
@@ -139,7 +149,10 @@ class _MyHomePageState extends State<MyHomePage> {
                     Flexible(
                       flex: 1,
                       child: Container(
-                        color: Colors.red,
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.blueAccent),
+                          color: Colors.red,
+                        ),
                       ),
                   ) 
                 ],
