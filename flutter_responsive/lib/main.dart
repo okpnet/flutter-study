@@ -1,36 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_responsive/login_page.dart';
+import 'package:flutter_responsive/themes/custom_theme_provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import 'package:responsive_framework/responsive_framework.dart';
 void main() {
-  runApp(const MyApp());
+  //runApp(const MyApp());
+  runApp(
+    const ProviderScope(
+      child: MyApp(),
+    ),
+  );
 }
 
-class MyApp extends StatelessWidget {
+final themeprovider=CustomThemeProvider();
+class MyApp extends ConsumerWidget  {
   const MyApp({super.key});
 
   // This widget is the root of your application.
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final model=themeprovider.getModel(ref);
     return MaterialApp(
       title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-      ),
+      theme: model.lightTheme,
+      darkTheme: model.darkTheme,
+      themeMode: model.mode,
       home: const MyHomePage(title: 'Flutter Demo Home Page'),
       builder: (context,child)=>ResponsiveBreakpoints.builder(
         child: child!, 
@@ -44,7 +39,7 @@ class MyApp extends StatelessWidget {
   } 
 }
 
-class MyHomePage extends StatefulWidget {
+class MyHomePage extends ConsumerStatefulWidget {
   const MyHomePage({super.key, required this.title});
 
   // This widget is the home page of your application. It is stateful, meaning
@@ -59,10 +54,10 @@ class MyHomePage extends StatefulWidget {
   final String title;
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  MyHomePageState createState() => MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class MyHomePageState extends ConsumerState<MyHomePage> {
   int _counter = 0;
 
   void _incrementCounter() {
@@ -80,22 +75,8 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     final itemLen=ResponsiveBreakpoints.of(context).isMobile ? 1 :
       ResponsiveBreakpoints.of(context).isTablet ? 3 :5;
-
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Scaffold(
-      
       appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
       ),
       body:
@@ -131,19 +112,38 @@ class _MyHomePageState extends State<MyHomePage> {
                           border: Border.all(color: Colors.blueAccent),
                           color: Colors.yellow,
                           ),
-                        child:ResponsiveGridView.builder(
-                          itemCount: itemLen,
-                          padding: const EdgeInsets.all(8.0),
-                          shrinkWrap: true,
-                          gridDelegate: const ResponsiveGridDelegate(
-                            minCrossAxisExtent: 250,
-                            maxCrossAxisExtent: 550,
-                            crossAxisSpacing: 50,
-                            mainAxisSpacing: 50,
-                          ),
-                          itemBuilder: (BuildContext context, int index) =>
-                            Container(color: Colors.grey),
-                        ),
+                        child:Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            spacing: 16,
+                            children: [
+                              ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(5)
+                                    )
+                                  ),
+                                  onPressed: () {
+                                    themeprovider.setSystemTheme(ref);
+                                  }, 
+                                  child: const Text("System theme")
+                                ),
+                              ElevatedButton(
+                                  onPressed: () {
+                                    themeprovider.setLightTheme(ref);
+                                  }, 
+                                  child: const Text("Light theme")
+                                ),
+                                ElevatedButton(
+                                  style: ButtonStyle(),
+                                  onPressed: () {
+                                    themeprovider.setDarkThmeme(ref);
+                                  }, 
+                                  child: const Text("Dark theme")
+                                ),
+                            ],)
+                        )
                       ),
                     ),
                     Flexible(
