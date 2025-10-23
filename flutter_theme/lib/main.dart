@@ -1,10 +1,11 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_theme/modules/theme_module.dart';
 import 'package:flutter_theme/theme_factory.dart';
 
-final themeModeProvider = StateProvider<ThemeMode>((ref) => ThemeMode.system);
+//final themeModeProvider = StateProvider<ThemeMode>((ref) => ThemeMode.system);
+final themeModule=ThemeModule();
 
 void main() {
   runApp(
@@ -23,7 +24,8 @@ class MyApp extends ConsumerWidget {
   Widget build(BuildContext context,WidgetRef ref) {
     return MaterialApp(
       title: 'Flutter Demo',
-      themeMode: ref.watch(themeModeProvider),
+      //themeMode: ref.watch(themeModeProvider),
+      themeMode: themeModule.getMode(ref),
       darkTheme: ThemeFactory().darkTheme(),
       theme: ThemeFactory().lightTheme(),
       home: const MyHomePage(title: 'Flutter Demo Home Page'),
@@ -65,43 +67,31 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
+    var provider=ref.watch(themeModeProvider);
     return Scaffold(
       //Appバーのバックグラウンドカラー設定を削除しないとthemeが反映されない
       appBar: AppBar(
-        
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
-        //backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
       ),
       body: Center(
         // Center is a layout widget. It takes a single child and positions it
         // in the middle of the parent.
         child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            Text(provider.toString()),
+            ElevatedButton(
+              onPressed: ()=>ref.read(themeModeProvider.notifier).state=ThemeMode.system, 
+              child: const Text("system")
+            ),
+            ElevatedButton(
+              onPressed: ()=>ref.read(themeModeProvider.notifier).state=ThemeMode.light, 
+              child: const Text("light")
+            ),
+            ElevatedButton(
+              onPressed: ()=>ref.read(themeModeProvider.notifier).state=ThemeMode.dark, 
+              child: const Text("dark")
+            ),
             const Text('You have pushed the button this many times:'),
             Text(
               '$_counter',
