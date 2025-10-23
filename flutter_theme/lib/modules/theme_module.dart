@@ -10,6 +10,7 @@ class ThemeModule {
     final model= ref.watch(themeModelProvider);
     return model.mode;
   });
+
   late StateProvider<CustomThemeModel> themeModelProvider= StateProvider<CustomThemeModel>((ref)=>CustomThemeModel());
 
   String getModeNam(WidgetRef ref){
