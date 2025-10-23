@@ -4,8 +4,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_theme/modules/theme_module.dart';
 import 'package:flutter_theme/theme_factory.dart';
 
-//final themeModeProvider = StateProvider<ThemeMode>((ref) => ThemeMode.system);
-final themeModule=ThemeModule();
+final providers=ThemeModule();
+//final themeModeProvider =providers.stateProvider ;//StateProvider<ThemeMode>((ref) => ThemeMode.system);
+//final themeModule=ThemeModule();
 
 void main() {
   runApp(
@@ -24,8 +25,8 @@ class MyApp extends ConsumerWidget {
   Widget build(BuildContext context,WidgetRef ref) {
     return MaterialApp(
       title: 'Flutter Demo',
-      //themeMode: ref.watch(themeModeProvider),
-      themeMode: themeModule.getMode(ref),
+      themeMode: ref.watch(providers.stateProvider),
+      //themeMode: themeModule.getMode(ref),
       darkTheme: ThemeFactory().darkTheme(),
       theme: ThemeFactory().lightTheme(),
       home: const MyHomePage(title: 'Flutter Demo Home Page'),
@@ -67,7 +68,7 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    //var provider=ref.watch(themeModeProvider);
+    //var mode=ref.watch(themeModeProvider);
     return Scaffold(
       //Appバーのバックグラウンドカラー設定を削除しないとthemeが反映されない
       appBar: AppBar(
@@ -79,17 +80,17 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(themeModule.getMode(ref).toString()),
+            Text(providers.getModeNam(ref)),//mode.toString()),
             ElevatedButton(
-              onPressed: ()=>themeModule.changeStateToSystemMode(ref), 
+              onPressed: ()=>providers.changeStateToSystemMode(ref),//ref.read(themeModeProvider.notifier).state=ThemeMode.system, 
               child: const Text("system")
             ),
             ElevatedButton(
-              onPressed: ()=>themeModule.changeStateToLightMode(ref), 
+              onPressed: ()=>providers.changeStateToLightMode(ref),//ref.read(themeModeProvider.notifier).state=ThemeMode.light, 
               child: const Text("light")
             ),
             ElevatedButton(
-              onPressed: ()=>themeModule.changeStateToDarkMode(ref), 
+              onPressed: ()=>providers.changeStateToDarkMode(ref),//ref.read(themeModeProvider.notifier).state=ThemeMode.dark, 
               child: const Text("dark")
             ),
             const Text('You have pushed the button this many times:'),
