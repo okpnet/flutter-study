@@ -67,7 +67,7 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    var provider=ref.watch(themeModeProvider);
+    //var provider=ref.watch(themeModeProvider);
     return Scaffold(
       //Appバーのバックグラウンドカラー設定を削除しないとthemeが反映されない
       appBar: AppBar(
@@ -79,17 +79,17 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(provider.toString()),
+            Text(themeModule.getMode(ref).toString()),
             ElevatedButton(
-              onPressed: ()=>ref.read(themeModeProvider.notifier).state=ThemeMode.system, 
+              onPressed: ()=>themeModule.changeStateToSystemMode(ref), 
               child: const Text("system")
             ),
             ElevatedButton(
-              onPressed: ()=>ref.read(themeModeProvider.notifier).state=ThemeMode.light, 
+              onPressed: ()=>themeModule.changeStateToLightMode(ref), 
               child: const Text("light")
             ),
             ElevatedButton(
-              onPressed: ()=>ref.read(themeModeProvider.notifier).state=ThemeMode.dark, 
+              onPressed: ()=>themeModule.changeStateToDarkMode(ref), 
               child: const Text("dark")
             ),
             const Text('You have pushed the button this many times:'),
@@ -97,14 +97,7 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
               '$_counter',
               style: Theme.of(context).textTheme.headlineMedium,
             ),
-            OutlinedButton(
-              onPressed: (){
-                final currentmode=ref.read(themeModeProvider);
-                final value=currentmode == ThemeMode.light ? ThemeMode.dark :
-                  currentmode == ThemeMode.dark ? ThemeMode.system : ThemeMode.light;
-                ref.read(themeModeProvider.notifier).state=value;
-              },
-              child: const Text('change mode')),
+
           ],
         ),
       ),
