@@ -14,26 +14,20 @@ class CustomThemeEventHandler extends StateNotifier<CustomTehemeModel>{
 }
 
 class CustomThemeProvider {
-  late final StateNotifierProvider<CustomThemeEventHandler,CustomTehemeModel> themeProvider;
-
-  CustomThemeProvider(){
-    themeProvider=StateNotifierProvider<CustomThemeEventHandler,CustomTehemeModel>((ref){
-      return CustomThemeEventHandler();
-    });
-  }
   
-  CustomTehemeModel getModel(WidgetRef ref){
-    final provider=ref.watch(themeProvider.notifier);
-    return provider.model;
-  }
+  static CustomTehemeModel getModel(WidgetRef ref)=>ref.watch(CustomThemeProvider.themeProvider);
+  
+  static final themeProvider=StateNotifierProvider<CustomThemeEventHandler,CustomTehemeModel>((ref)=>CustomThemeEventHandler());
 
-  void setLightTheme(WidgetRef ref)=>_changeThme(ref, ThemeMode.light);
+  static ThemeMode watchMode(WidgetRef ref)=>ref.watch(themeProvider.select((theme)=>theme.mode));
 
-  void setDarkThmeme(WidgetRef ref)=>_changeThme(ref, ThemeMode.dark);
+  static void setLightTheme(WidgetRef ref)=>_changeThme(ref, ThemeMode.light);
 
-  void setSystemTheme(WidgetRef ref)=>_changeThme(ref, ThemeMode.system);
+  static void setDarkThmeme(WidgetRef ref)=>_changeThme(ref, ThemeMode.dark);
 
-  void _changeThme(WidgetRef ref,ThemeMode changedMode){
+  static void setSystemTheme(WidgetRef ref)=>_changeThme(ref, ThemeMode.system);
+
+  static void _changeThme(WidgetRef ref,ThemeMode changedMode){
     final provider=ref.read(themeProvider.notifier);
     provider.changeTheme(changedMode);
   }

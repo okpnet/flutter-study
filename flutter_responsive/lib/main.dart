@@ -20,12 +20,11 @@ class MyApp extends ConsumerWidget  {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final model=themeprovider.getModel(ref);
     return MaterialApp(
       title: 'Flutter Demo',
-      theme: model.lightTheme,
-      darkTheme: model.darkTheme,
-      themeMode: model.mode,
+      theme: CustomThemeProvider.getModel(ref).lightTheme,
+      darkTheme: CustomThemeProvider.getModel(ref).darkTheme,
+      themeMode: CustomThemeProvider.watchMode(ref),
       home: const MyHomePage(title: 'Flutter Demo Home Page'),
       builder: (context,child)=>ResponsiveBreakpoints.builder(
         child: child!, 
@@ -125,20 +124,20 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
                                     )
                                   ),
                                   onPressed: () {
-                                    themeprovider.setSystemTheme(ref);
+                                    CustomThemeProvider.setSystemTheme(ref);
                                   }, 
                                   child: const Text("System theme")
                                 ),
                               ElevatedButton(
                                   onPressed: () {
-                                    themeprovider.setLightTheme(ref);
+                                    CustomThemeProvider.setLightTheme(ref);
                                   }, 
                                   child: const Text("Light theme")
                                 ),
                                 ElevatedButton(
                                   style: ButtonStyle(),
                                   onPressed: () {
-                                    themeprovider.setDarkThmeme(ref);
+                                    CustomThemeProvider.setDarkThmeme(ref);
                                   }, 
                                   child: const Text("Dark theme")
                                 ),
