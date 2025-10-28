@@ -7,7 +7,7 @@ part 'custom_theme_model.g.dart';
 @freezed
 class CustomThemeModel with _$CustomThemeModel{
   const factory CustomThemeModel({
-    required ThemeMode mode,
+    @Default(ThemeMode.system) required ThemeMode mode,
   })= _CustomThemeModel;
 
   factory CustomThemeModel.fromJson(Map<String,dynamic> json)=>_$CustomThemeModel(json);
