@@ -13,9 +13,9 @@ part of 'custom_theme_model.dart';
 T _$identity<T>(T value) => value;
 
 /// @nodoc
-mixin _$CustomThemeModel implements DiagnosticableTreeMixin {
+mixin _$CustomThemeModel {
 
- ThemeMode get mode;
+ String get themeName; set themeName(String value); bool get isDarkMode; set isDarkMode(bool value);
 /// Create a copy of CustomThemeModel
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,25 +25,12 @@ $CustomThemeModelCopyWith<CustomThemeModel> get copyWith => _$CustomThemeModelCo
   /// Serializes this CustomThemeModel to a JSON map.
   Map<String, dynamic> toJson();
 
-@override
-void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-  properties
-    ..add(DiagnosticsProperty('type', 'CustomThemeModel'))
-    ..add(DiagnosticsProperty('mode', mode));
-}
+
+
 
 @override
-bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is CustomThemeModel&&(identical(other.mode, mode) || other.mode == mode));
-}
-
-@JsonKey(includeFromJson: false, includeToJson: false)
-@override
-int get hashCode => Object.hash(runtimeType,mode);
-
-@override
-String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
-  return 'CustomThemeModel(mode: $mode)';
+String toString() {
+  return 'CustomThemeModel(themeName: $themeName, isDarkMode: $isDarkMode)';
 }
 
 
@@ -54,7 +41,7 @@ abstract mixin class $CustomThemeModelCopyWith<$Res>  {
   factory $CustomThemeModelCopyWith(CustomThemeModel value, $Res Function(CustomThemeModel) _then) = _$CustomThemeModelCopyWithImpl;
 @useResult
 $Res call({
- ThemeMode mode
+ String themeName, bool isDarkMode
 });
 
 
@@ -71,10 +58,11 @@ class _$CustomThemeModelCopyWithImpl<$Res>
 
 /// Create a copy of CustomThemeModel
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? mode = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? themeName = null,Object? isDarkMode = null,}) {
   return _then(_self.copyWith(
-mode: null == mode ? _self.mode : mode // ignore: cast_nullable_to_non_nullable
-as ThemeMode,
+themeName: null == themeName ? _self.themeName : themeName // ignore: cast_nullable_to_non_nullable
+as String,isDarkMode: null == isDarkMode ? _self.isDarkMode : isDarkMode // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 
@@ -159,10 +147,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( ThemeMode mode)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String themeName,  bool isDarkMode)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _CustomThemeModel() when $default != null:
-return $default(_that.mode);case _:
+return $default(_that.themeName,_that.isDarkMode);case _:
   return orElse();
 
 }
@@ -180,10 +168,10 @@ return $default(_that.mode);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( ThemeMode mode)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String themeName,  bool isDarkMode)  $default,) {final _that = this;
 switch (_that) {
 case _CustomThemeModel():
-return $default(_that.mode);case _:
+return $default(_that.themeName,_that.isDarkMode);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -200,10 +188,10 @@ return $default(_that.mode);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( ThemeMode mode)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String themeName,  bool isDarkMode)?  $default,) {final _that = this;
 switch (_that) {
 case _CustomThemeModel() when $default != null:
-return $default(_that.mode);case _:
+return $default(_that.themeName,_that.isDarkMode);case _:
   return null;
 
 }
@@ -214,11 +202,12 @@ return $default(_that.mode);case _:
 /// @nodoc
 @JsonSerializable()
 
-class _CustomThemeModel with DiagnosticableTreeMixin implements CustomThemeModel {
-  const _CustomThemeModel({required this.mode});
+class _CustomThemeModel implements CustomThemeModel {
+   _CustomThemeModel({required this.themeName, required this.isDarkMode});
   factory _CustomThemeModel.fromJson(Map<String, dynamic> json) => _$CustomThemeModelFromJson(json);
 
-@override final  ThemeMode mode;
+@override  String themeName;
+@override  bool isDarkMode;
 
 /// Create a copy of CustomThemeModel
 /// with the given fields replaced by the non-null parameter values.
@@ -230,25 +219,12 @@ _$CustomThemeModelCopyWith<_CustomThemeModel> get copyWith => __$CustomThemeMode
 Map<String, dynamic> toJson() {
   return _$CustomThemeModelToJson(this, );
 }
-@override
-void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-  properties
-    ..add(DiagnosticsProperty('type', 'CustomThemeModel'))
-    ..add(DiagnosticsProperty('mode', mode));
-}
+
+
 
 @override
-bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CustomThemeModel&&(identical(other.mode, mode) || other.mode == mode));
-}
-
-@JsonKey(includeFromJson: false, includeToJson: false)
-@override
-int get hashCode => Object.hash(runtimeType,mode);
-
-@override
-String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
-  return 'CustomThemeModel(mode: $mode)';
+String toString() {
+  return 'CustomThemeModel(themeName: $themeName, isDarkMode: $isDarkMode)';
 }
 
 
@@ -259,7 +235,7 @@ abstract mixin class _$CustomThemeModelCopyWith<$Res> implements $CustomThemeMod
   factory _$CustomThemeModelCopyWith(_CustomThemeModel value, $Res Function(_CustomThemeModel) _then) = __$CustomThemeModelCopyWithImpl;
 @override @useResult
 $Res call({
- ThemeMode mode
+ String themeName, bool isDarkMode
 });
 
 
@@ -276,10 +252,11 @@ class __$CustomThemeModelCopyWithImpl<$Res>
 
 /// Create a copy of CustomThemeModel
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? mode = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? themeName = null,Object? isDarkMode = null,}) {
   return _then(_CustomThemeModel(
-mode: null == mode ? _self.mode : mode // ignore: cast_nullable_to_non_nullable
-as ThemeMode,
+themeName: null == themeName ? _self.themeName : themeName // ignore: cast_nullable_to_non_nullable
+as String,isDarkMode: null == isDarkMode ? _self.isDarkMode : isDarkMode // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 
