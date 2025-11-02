@@ -6,9 +6,7 @@ class ThemeFactory
 
   factory ThemeFactory()=>_instance;
 
-  ThemeFactory._internal(){
-
-  }
+  ThemeFactory._internal();
 
   ThemeData darkTheme(){
     return ThemeData(
