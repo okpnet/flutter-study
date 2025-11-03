@@ -14,6 +14,7 @@ class CustomThemeModelMapper extends ClassMapperBase<CustomThemeModel> {
   static CustomThemeModelMapper ensureInitialized() {
     if (_instance == null) {
       MapperContainer.globals.use(_instance = CustomThemeModelMapper._());
+      CustomThemeOptionMapper.ensureInitialized();
     }
     return _instance!;
   }
@@ -21,6 +22,15 @@ class CustomThemeModelMapper extends ClassMapperBase<CustomThemeModel> {
   @override
   final String id = 'CustomThemeModel';
 
+  static CustomThemeOption _$selectedOption(CustomThemeModel v) =>
+      v.selectedOption;
+  static const Field<CustomThemeModel, CustomThemeOption> _f$selectedOption =
+      Field(
+        'selectedOption',
+        _$selectedOption,
+        opt: true,
+        def: CustomThemeOption.system,
+      );
   static bool _$isDark(CustomThemeModel v) => v.isDark;
   static const Field<CustomThemeModel, bool> _f$isDark = Field(
     'isDark',
@@ -30,10 +40,16 @@ class CustomThemeModelMapper extends ClassMapperBase<CustomThemeModel> {
   );
 
   @override
-  final MappableFields<CustomThemeModel> fields = const {#isDark: _f$isDark};
+  final MappableFields<CustomThemeModel> fields = const {
+    #selectedOption: _f$selectedOption,
+    #isDark: _f$isDark,
+  };
 
   static CustomThemeModel _instantiate(DecodingData data) {
-    return CustomThemeModel(isDark: data.dec(_f$isDark));
+    return CustomThemeModel(
+      selectedOption: data.dec(_f$selectedOption),
+      isDark: data.dec(_f$isDark),
+    );
   }
 
   @override
@@ -98,7 +114,7 @@ extension CustomThemeModelValueCopy<$R, $Out>
 
 abstract class CustomThemeModelCopyWith<$R, $In extends CustomThemeModel, $Out>
     implements ClassCopyWith<$R, $In, $Out> {
-  $R call({bool? isDark});
+  $R call({CustomThemeOption? selectedOption, bool? isDark});
   CustomThemeModelCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(
     Then<$Out2, $R2> t,
   );
@@ -113,11 +129,17 @@ class _CustomThemeModelCopyWithImpl<$R, $Out>
   late final ClassMapperBase<CustomThemeModel> $mapper =
       CustomThemeModelMapper.ensureInitialized();
   @override
-  $R call({bool? isDark}) =>
-      $apply(FieldCopyWithData({if (isDark != null) #isDark: isDark}));
+  $R call({CustomThemeOption? selectedOption, bool? isDark}) => $apply(
+    FieldCopyWithData({
+      if (selectedOption != null) #selectedOption: selectedOption,
+      if (isDark != null) #isDark: isDark,
+    }),
+  );
   @override
-  CustomThemeModel $make(CopyWithData data) =>
-      CustomThemeModel(isDark: data.get(#isDark, or: $value.isDark));
+  CustomThemeModel $make(CopyWithData data) => CustomThemeModel(
+    selectedOption: data.get(#selectedOption, or: $value.selectedOption),
+    isDark: data.get(#isDark, or: $value.isDark),
+  );
 
   @override
   CustomThemeModelCopyWith<$R2, CustomThemeModel, $Out2> $chain<$R2, $Out2>(
