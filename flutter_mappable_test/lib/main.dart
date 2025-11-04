@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mappable_test/custom_theme_model.dart';
 import 'package:flutter_mappable_test/custom_theme_option.dart';
+import 'package:flutter_mappable_test/theme_factory.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final themeProvider=StateProvider((ref)=>CustomThemeModel());
@@ -12,14 +13,16 @@ void main() {
   );
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends ConsumerWidget {
   const MyApp({super.key});
 
   // This widget is the root of your application.
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context,WidgetRef ref) async {
     return MaterialApp(
       title: 'Flutter Demo',
+      themeMode: ThemeMode.system,
+      darkTheme:await ThemeFactory.createDarkThemeData(ref.watch(themeProvider).selectedOption),
       theme: ThemeData(
         // This is the theme of your application.
         //
@@ -113,15 +116,25 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             const Text('You have pushed the button this many times:'),
-            Expanded(child: Row(
-              children: [
-                RadioListTile(
-                  value: CustomThemeOption.system,
-                  title:const Text('System'),
-                  onChanged: (value) => ref..read(themeProvider.notifier).state.selectedOption=value!,
-                  ),
-              ],
-            )),
+            RadioGroup(
+              groupValue: ref.watch(themeProvider).selectedOption,
+              onChanged: (v) => ref.read(themeProvider.notifier).state=CustomThemeModel().copyWith(selectedOption: v),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  RadioListTile(
+                    value: CustomThemeOption.system,
+                    title:const Text('System'),
+                    subtitle: const Text('Follow system theme'),
+                    ),
+                  RadioListTile(
+                    value: CustomThemeOption.pink,
+                    title:const Text('Pink'),
+                    subtitle: const Text('Follow pink theme'),
+                    ),
+                ],
+              )
+            ),
             Text(
               '$_counter',
               style: Theme.of(context).textTheme.headlineMedium,

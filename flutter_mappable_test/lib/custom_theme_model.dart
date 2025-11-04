@@ -1,4 +1,5 @@
 import 'package:dart_mappable/dart_mappable.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_mappable_test/custom_theme_option.dart';
 
 part 'custom_theme_model.mapper.dart';
