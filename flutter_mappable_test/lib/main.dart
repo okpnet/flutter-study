@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mappable_test/custom_theme_model.dart';
+import 'package:flutter_mappable_test/custom_theme_option.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final themeProvider=StateProvider((ref)=>CustomThemeModel());
@@ -112,6 +113,15 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             const Text('You have pushed the button this many times:'),
+            Expanded(child: Row(
+              children: [
+                RadioListTile(
+                  value: CustomThemeOption.system,
+                  title:const Text('System'),
+                  onChanged: (value) => ref..read(themeProvider.notifier).state.selectedOption=value!,
+                  ),
+              ],
+            )),
             Text(
               '$_counter',
               style: Theme.of(context).textTheme.headlineMedium,
