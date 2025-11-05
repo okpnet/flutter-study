@@ -10,10 +10,8 @@ final themeDataProvider=StateProvider((ref)=>PairThemeData(
   light: ThemeData.light(),
   dark: ThemeData.dark(),
 ));
-final themeChangeProvider=FutureProvider<PairThemeData>((ref) async {
-  final themeModel=ref.watch(themeProvider);
-  final themeData=await ThemeFactory.createThemeData(themeModel.selectedOption);
-  ref.read(themeDataProvider.notifier).state=themeData;
+final themeChangeProvider=FutureProvider.family<PairThemeData,CustomThemeOption>((ref,option) async {
+  final themeData=await ThemeFactory.createThemeData(option);
   return themeData;
 });
 
@@ -24,14 +22,27 @@ void main() {
     )
   );
 }
-
-class MyApp extends ConsumerWidget {
+//ConsumerWidget=>
+class MyApp extends ConsumerStatefulWidget {
   const MyApp({super.key});
-  
-  
   @override
-  Widget build(BuildContext context,WidgetRef ref) {
+  MyAppstate createState() => MyAppstate();
+}
+
+class MyAppstate extends ConsumerState<MyApp> {
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   ref.listen(themeProvider, (prev,next) async{
+  //     final themeData=await ThemeFactory.createThemeData(next.selectedOption);
+  //     ref.read(themeDataProvider.notifier).state=themeData;
+  //   });
+  // }
+  @override
+  Widget build(BuildContext context) {
     final themeData = ref.watch(themeDataProvider);
+        final themeoption=ref.watch(themeProvider).selectedOption;
+    final themeDataAsync=ref.watch(themeChangeProvider(themeoption));
     return MaterialApp(
       title: 'Flutter Demo',
       themeMode: ThemeMode.system,
@@ -76,7 +87,8 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final themeDataAsync=ref.watch(themeChangeProvider);
+    final themeoption=ref.watch(themeProvider).selectedOption;
+    final themeDataAsync=ref.watch(themeChangeProvider(themeoption));
     return Scaffold(
       appBar: AppBar(
         // TRY THIS: Try changing the color here to a specific color (to
