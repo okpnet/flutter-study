@@ -2,9 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mappable_test/custom_theme_model.dart';
 import 'package:flutter_mappable_test/custom_theme_option.dart';
 import 'package:flutter_mappable_test/theme_factory.dart';
+import 'package:flutter_mappable_test/themes/pair_theme_data.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final themeProvider=StateProvider((ref)=>CustomThemeModel());
+final themeDataProvider=StateProvider((ref)=>PairThemeData(
+  light: ThemeData.light(),
+  dark: ThemeData.dark(),
+));
+final themeChangeProvider=FutureProvider<PairThemeData>((ref) async {
+  final themeModel=ref.watch(themeProvider);
+  final themeData=await ThemeFactory.createThemeData(themeModel.selectedOption);
+  ref.read(themeDataProvider.notifier).state=themeData;
+  return themeData;
+});
+
 void main() {
   runApp(
     const ProviderScope(
@@ -15,32 +27,15 @@ void main() {
 
 class MyApp extends ConsumerWidget {
   const MyApp({super.key});
-
   // This widget is the root of your application.
   @override
-  Widget build(BuildContext context,WidgetRef ref) async {
+  Widget build(BuildContext context,WidgetRef ref) {
+    final themeData = ref.watch(themeDataProvider);
     return MaterialApp(
       title: 'Flutter Demo',
       themeMode: ThemeMode.system,
-      darkTheme:await ThemeFactory.createDarkThemeData(ref.watch(themeProvider).selectedOption),
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-      ),
+      darkTheme: themeData.dark,
+      theme: themeData.light,
       home: const MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
@@ -80,12 +75,7 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
+    final themeDataAsync=ref.watch(themeChangeProvider);
     return Scaffold(
       appBar: AppBar(
         // TRY THIS: Try changing the color here to a specific color (to
@@ -96,51 +86,50 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
         // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
       ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text('You have pushed the button this many times:'),
-            RadioGroup(
-              groupValue: ref.watch(themeProvider).selectedOption,
-              onChanged: (v) => ref.read(themeProvider.notifier).state=CustomThemeModel().copyWith(selectedOption: v),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  RadioListTile(
-                    value: CustomThemeOption.system,
-                    title:const Text('System'),
-                    subtitle: const Text('Follow system theme'),
-                    ),
-                  RadioListTile(
-                    value: CustomThemeOption.pink,
-                    title:const Text('Pink'),
-                    subtitle: const Text('Follow pink theme'),
-                    ),
-                ],
-              )
+      body:  themeDataAsync.maybeWhen(
+          loading: ()=> const Center(child: CircularProgressIndicator()),
+          orElse: () => const Center(child: Text('Error loading theme')),
+          data: (data) => Center(
+            child:  Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                const Text('You have pushed the button this many times:'),
+                RadioGroup(
+                  groupValue: ref.watch(themeProvider).selectedOption,
+                  onChanged: (v) => ref.read(themeProvider.notifier).state=CustomThemeModel().copyWith(selectedOption: v),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      RadioListTile(
+                        value: CustomThemeOption.system,
+                        title:const Text('System'),
+                        subtitle: const Text('Follow system theme'),
+                        ),
+                      RadioListTile(
+                        value: CustomThemeOption.pink,
+                        title:const Text('Pink'),
+                        subtitle: const Text('Follow pink theme'),
+                        ),
+                      RadioListTile(
+                        value: CustomThemeOption.blue,
+                        title: const Text('Blue'),
+                        subtitle: const Text('Follow blue theme'),
+                      ),
+                      RadioListTile(
+                        value: CustomThemeOption.green,
+                        title: const Text('Green'),
+                        subtitle: const Text('Follow green theme'),
+                      ),
+                    ],
+                  )
+                ),
+                Text(
+                  '$_counter',
+                  style: Theme.of(context).textTheme.headlineMedium,
+                ),
+              ],
             ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
-        ),
+          )
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _incrementCounter,
