@@ -5,6 +5,11 @@ import 'package:flutter_mappable_test/theme_factory.dart';
 import 'package:flutter_mappable_test/themes/pair_theme_data.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+PairThemeData currentThemeData=PairThemeData(
+  light: ThemeData.light(),
+  dark: ThemeData.dark(),
+);
+
 final themeProvider=StateProvider((ref)=>CustomThemeModel());
 final themeDataProvider=StateProvider((ref)=>PairThemeData(
   light: ThemeData.light(),
@@ -40,15 +45,25 @@ class MyAppstate extends ConsumerState<MyApp> {
   // }
   @override
   Widget build(BuildContext context) {
-    final themeData = ref.watch(themeDataProvider);
-        final themeoption=ref.watch(themeProvider).selectedOption;
+    final themeoption=ref.watch(themeProvider).selectedOption;
     final themeDataAsync=ref.watch(themeChangeProvider(themeoption));
+
+    final themeModel=themeDataAsync.maybeWhen(
+      data: (data) => currentThemeData=data,
+      orElse: () => currentThemeData,
+    );
+
     return MaterialApp(
       title: 'Flutter Demo',
       themeMode: ThemeMode.system,
-      darkTheme: themeData.dark,
-      theme: themeData.light,
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      darkTheme: themeModel.dark,
+      theme: themeModel.light,
+      home: themeDataAsync.maybeWhen(
+        loading: ()=> const Scaffold(
+          body: Center(child: CircularProgressIndicator()),
+          ),
+        orElse: ()=>
+      const MyHomePage(title: 'Flutter Demo Home Page')),
     );
   }
 }
