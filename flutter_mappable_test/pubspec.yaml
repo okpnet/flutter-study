@@ -37,6 +37,7 @@ dependencies:
   dart_mappable: ^4.6.1
   json_theme: ^9.0.3
   flutter_riverpod: ^2.6.1
+  shared_preferences: ^2.5.3
 
 dev_dependencies:
   flutter_test:
