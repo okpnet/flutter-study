@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_mappable_test/themes/pair_theme_data.dart';
+import 'package:flutter_mappable_test/themes/pairs/pair_theme_data.dart';
 import 'package:json_theme/json_theme.dart';
 import 'custom_theme_option.dart';
 import 'gen/assets.gen.dart';
