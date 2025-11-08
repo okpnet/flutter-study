@@ -14,7 +14,6 @@ class CustomThemeModelMapper extends ClassMapperBase<CustomThemeModel> {
   static CustomThemeModelMapper ensureInitialized() {
     if (_instance == null) {
       MapperContainer.globals.use(_instance = CustomThemeModelMapper._());
-      CustomThemeOptionMapper.ensureInitialized();
     }
     return _instance!;
   }
@@ -22,15 +21,13 @@ class CustomThemeModelMapper extends ClassMapperBase<CustomThemeModel> {
   @override
   final String id = 'CustomThemeModel';
 
-  static CustomThemeOption _$selectedOption(CustomThemeModel v) =>
-      v.selectedOption;
-  static const Field<CustomThemeModel, CustomThemeOption> _f$selectedOption =
-      Field(
-        'selectedOption',
-        _$selectedOption,
-        opt: true,
-        def: CustomThemeOption.system,
-      );
+  static InvalidType _$selectedOption(CustomThemeModel v) => v.selectedOption;
+  static const Field<CustomThemeModel, InvalidType> _f$selectedOption = Field(
+    'selectedOption',
+    _$selectedOption,
+    opt: true,
+    def: CustomThemeOption.system,
+  );
   static bool _$isDark(CustomThemeModel v) => v.isDark;
   static const Field<CustomThemeModel, bool> _f$isDark = Field(
     'isDark',
@@ -114,7 +111,7 @@ extension CustomThemeModelValueCopy<$R, $Out>
 
 abstract class CustomThemeModelCopyWith<$R, $In extends CustomThemeModel, $Out>
     implements ClassCopyWith<$R, $In, $Out> {
-  $R call({CustomThemeOption? selectedOption, bool? isDark});
+  $R call({InvalidType? selectedOption, bool? isDark});
   CustomThemeModelCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(
     Then<$Out2, $R2> t,
   );
@@ -129,7 +126,7 @@ class _CustomThemeModelCopyWithImpl<$R, $Out>
   late final ClassMapperBase<CustomThemeModel> $mapper =
       CustomThemeModelMapper.ensureInitialized();
   @override
-  $R call({CustomThemeOption? selectedOption, bool? isDark}) => $apply(
+  $R call({InvalidType? selectedOption, bool? isDark}) => $apply(
     FieldCopyWithData({
       if (selectedOption != null) #selectedOption: selectedOption,
       if (isDark != null) #isDark: isDark,

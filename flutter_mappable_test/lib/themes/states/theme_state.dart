@@ -1,6 +1,6 @@
 import 'package:dart_mappable/dart_mappable.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_mappable_test/custom_theme_option.dart';
+import 'package:flutter_mappable_test/options/custom_theme_option.dart';
 import 'package:flutter_mappable_test/theme_factory.dart';
 import 'package:flutter_mappable_test/themes/pairs/pair_theme_data.dart';
 

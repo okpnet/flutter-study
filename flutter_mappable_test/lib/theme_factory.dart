@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_mappable_test/themes/pairs/pair_theme_data.dart';
 import 'package:json_theme/json_theme.dart';
-import 'custom_theme_option.dart';
+import 'options/custom_theme_option.dart';
 import 'gen/assets.gen.dart';
 class ThemeFactory {
 

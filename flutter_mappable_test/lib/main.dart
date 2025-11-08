@@ -1,49 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mappable_test/custom_theme_model.dart';
-import 'package:flutter_mappable_test/custom_theme_option.dart';
+import 'package:flutter_mappable_test/options/custom_theme_option.dart';
 import 'package:flutter_mappable_test/theme_factory.dart';
 import 'package:flutter_mappable_test/themes/pairs/pair_theme_data.dart';
+import 'package:flutter_mappable_test/themes/states/theme_state.dart';
+import 'package:flutter_mappable_test/themes/theme_state_notifier.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-PairThemeData currentThemeData=PairThemeData(
-  light: ThemeData.light(),
-  dark: ThemeData.dark(),
-);
 
-final themeProvider=StateProvider((ref)=>CustomThemeModel());
-final themeDataProvider=StateProvider((ref)=>PairThemeData(
-  light: ThemeData.light(),
-  dark: ThemeData.dark(),
-));
-final themeChangeProvider=FutureProvider.family<PairThemeData,CustomThemeOption>((ref,option) async {
-  final themeData=await ThemeFactory.createThemeData(option);
-  return themeData;
-});
 
 void main() {
+  final themeState=ThemeState(themePath: {});
+
   runApp(
-    const ProviderScope(
+    ProviderScope(
+      overrides: [
+        themeStateNotifierProvider.overrideWith((ref)=>ThemeStateNotifier(themeState)),
+      ],
       child:MyApp(),
     )
   );
 }
 //ConsumerWidget=>
-class MyApp extends ConsumerStatefulWidget {
+class MyApp extends HookConsumerWidget {
   const MyApp({super.key});
-  @override
-  MyAppstate createState() => MyAppstate();
-}
 
-class MyAppstate extends ConsumerState<MyApp> {
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   ref.listen(themeProvider, (prev,next) async{
-  //     final themeData=await ThemeFactory.createThemeData(next.selectedOption);
-  //     ref.read(themeDataProvider.notifier).state=themeData;
-  //   });
-  // }
-  @override
+@override
   Widget build(BuildContext context) {
     final themeoption=ref.watch(themeProvider).selectedOption;
     final themeDataAsync=ref.watch(themeChangeProvider(themeoption));
@@ -52,20 +35,36 @@ class MyAppstate extends ConsumerState<MyApp> {
       data: (data) => currentThemeData=data,
       orElse: () => currentThemeData,
     );
-
-    return MaterialApp(
-      title: 'Flutter Demo',
-      themeMode: ThemeMode.system,
-      darkTheme: themeModel.dark,
-      theme: themeModel.light,
-      home: themeDataAsync.maybeWhen(
-        loading: ()=> const Scaffold(
-          body: Center(child: CircularProgressIndicator()),
-          ),
-        orElse: ()=>
-      const MyHomePage(title: 'Flutter Demo Home Page')),
-    );
+    return FutureBuilder(
+      future: Future.delayed(const Duration(seconds: 0)),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const MaterialApp(
+            home: Scaffold(
+              body: Center(child: CircularProgressIndicator()),
+            ),
+          );
+        }else{
+          return MaterialApp(
+                title: 'Flutter Demo',
+                themeMode: ThemeMode.system,
+                darkTheme: themeModel.dark,
+                theme: themeModel.light,
+                home: themeDataAsync.maybeWhen(
+                  loading: ()=> const Scaffold(
+                    body: Center(child: CircularProgressIndicator()),
+                    ),
+                  orElse: ()=>
+                const MyHomePage(title: 'Flutter Demo Home Page')),
+              );
+        }
+      });
   }
+}
+
+class MyAppstate extends ConsumerState<MyApp> {
+
+
 }
 
 class MyHomePage extends ConsumerStatefulWidget {
