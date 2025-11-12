@@ -6,8 +6,7 @@ import 'package:flutter_mappable_test/themes/pairs/pair_theme_data.dart';
 import 'package:flutter_mappable_test/themes/states/theme_state.dart';
 import 'package:flutter_mappable_test/themes/theme_state_notifier.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
-
+import 'package:flutter_hooks/flutter_hooks.dart';
 
 
 void main() {
@@ -23,11 +22,11 @@ void main() {
   );
 }
 //ConsumerWidget=>
-class MyApp extends HookConsumerWidget {
+class MyApp extends ConsumerStatefulWidget {
   const MyApp({super.key});
 
 @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context,WidgetRef ref) {
     final themeoption=ref.watch(themeProvider).selectedOption;
     final themeDataAsync=ref.watch(themeChangeProvider(themeoption));
 
@@ -60,11 +59,6 @@ class MyApp extends HookConsumerWidget {
         }
       });
   }
-}
-
-class MyAppstate extends ConsumerState<MyApp> {
-
-
 }
 
 class MyHomePage extends ConsumerStatefulWidget {

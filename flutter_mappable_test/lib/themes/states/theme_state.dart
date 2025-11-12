@@ -7,7 +7,7 @@ import 'package:flutter_mappable_test/themes/pairs/pair_theme_data.dart';
 part 'theme_state.mapper.dart';
 
 @MappableClass()
-class ThemeState {
+class ThemeState with ThemeStateMappable {
   PairThemeData currentThemeData=PairThemeData(
     light: ThemeData.light(),
      dark: ThemeData.dark()
