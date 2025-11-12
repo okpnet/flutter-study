@@ -22,20 +22,14 @@ void main() {
   );
 }
 //ConsumerWidget=>
-class MyApp extends ConsumerStatefulWidget {
+class MyApp extends ConsumerWidget {
   const MyApp({super.key});
-
-@override
+  @override
   Widget build(BuildContext context,WidgetRef ref) {
-    final themeoption=ref.watch(themeProvider).selectedOption;
-    final themeDataAsync=ref.watch(themeChangeProvider(themeoption));
-
-    final themeModel=themeDataAsync.maybeWhen(
-      data: (data) => currentThemeData=data,
-      orElse: () => currentThemeData,
-    );
+    final provider=ref.watch(themeStateNotifierProvider.notifier);
+    final themeModel=ref.watch(themeStateNotifierProvider);
     return FutureBuilder(
-      future: Future.delayed(const Duration(seconds: 0)),
+      future: provider.initialize(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const MaterialApp(
@@ -47,19 +41,15 @@ class MyApp extends ConsumerStatefulWidget {
           return MaterialApp(
                 title: 'Flutter Demo',
                 themeMode: ThemeMode.system,
-                darkTheme: themeModel.dark,
-                theme: themeModel.light,
-                home: themeDataAsync.maybeWhen(
-                  loading: ()=> const Scaffold(
-                    body: Center(child: CircularProgressIndicator()),
-                    ),
-                  orElse: ()=>
-                const MyHomePage(title: 'Flutter Demo Home Page')),
-              );
+                darkTheme: themeModel.currentTheme.dark,
+                theme: themeModel.currentTheme.light,
+                home: const MyHomePage(title: 'Flutter Demo Home Page')
+                );
         }
       });
   }
 }
+
 
 class MyHomePage extends ConsumerStatefulWidget {
   const MyHomePage({super.key, required this.title});
