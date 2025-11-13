@@ -1,16 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_mappable_test/custom_theme_model.dart';
 import 'package:flutter_mappable_test/options/custom_theme_option.dart';
-import 'package:flutter_mappable_test/theme_factory.dart';
-import 'package:flutter_mappable_test/themes/pairs/pair_theme_data.dart';
 import 'package:flutter_mappable_test/themes/states/theme_state.dart';
 import 'package:flutter_mappable_test/themes/theme_state_notifier.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
 
 
 void main() {
-  final themeState=ThemeState(themePath: {});
+  final themeState=ThemeState(themePath: {},selectedOption: CustomThemeOption.system);
 
   runApp(
     ProviderScope(
@@ -21,15 +17,29 @@ void main() {
     )
   );
 }
-//ConsumerWidget=>
-class MyApp extends ConsumerWidget {
-  const MyApp({super.key});
+
+class MyApp extends ConsumerStatefulWidget {
+  const MyApp({super .key});
+
   @override
-  Widget build(BuildContext context,WidgetRef ref) {
+  ConsumerState<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends ConsumerState<MyApp> {
+  late Future<void> _initFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _initFuture = ref.read(themeStateNotifierProvider.notifier).initialize();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final provider=ref.watch(themeStateNotifierProvider.notifier);
     final themeModel=ref.watch(themeStateNotifierProvider);
     return FutureBuilder(
-      future: provider.initialize(),
+      future: _initFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const MaterialApp(
@@ -49,6 +59,39 @@ class MyApp extends ConsumerWidget {
       });
   }
 }
+//ConsumerWidget=>
+// class MyApp extends ConsumerWidget {
+//   const MyApp({super.key});
+//   @override
+//   void initState() {
+//     super.initState();
+
+//   }
+//   @override
+//   Widget build(BuildContext context,WidgetRef ref) {
+//     final provider=ref.watch(themeStateNotifierProvider.notifier);
+//     final themeModel=ref.watch(themeStateNotifierProvider);
+//     return FutureBuilder(
+//       future: provider.initialize(),
+//       builder: (context, snapshot) {
+//         if (snapshot.connectionState == ConnectionState.waiting) {
+//           return const MaterialApp(
+//             home: Scaffold(
+//               body: Center(child: CircularProgressIndicator()),
+//             ),
+//           );
+//         }else{
+//           return MaterialApp(
+//                 title: 'Flutter Demo',
+//                 themeMode: ThemeMode.system,
+//                 darkTheme: themeModel.currentTheme.dark,
+//                 theme: themeModel.currentTheme.light,
+//                 home: const MyHomePage(title: 'Flutter Demo Home Page')
+//                 );
+//         }
+//       });
+//   }
+// }
 
 
 class MyHomePage extends ConsumerStatefulWidget {

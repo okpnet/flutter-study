@@ -4,10 +4,10 @@ import 'package:flutter_mappable_test/options/custom_theme_option.dart';
 import 'package:flutter_mappable_test/theme_factory.dart';
 import 'package:flutter_mappable_test/themes/pairs/pair_theme_data.dart';
 
-part 'theme_state.mapper.dart';
+//part 'theme_state.mapper.dart';
 
-@MappableClass()
-class ThemeState with ThemeStateMappable {
+//@MappableClass()
+class ThemeState {//with ThemeStateMappable {
   PairThemeData currentThemeData=PairThemeData(
     light: ThemeData.light(),
      dark: ThemeData.dark()
@@ -19,7 +19,9 @@ class ThemeState with ThemeStateMappable {
 
   Map<CustomThemeOption,String> themePath;
 
-  ThemeState({required this.themePath});
+  ThemeState({required this.themePath,required this.selectedOption});
+
+  factory ThemeState.initial() => ThemeState(themePath: {},selectedOption: CustomThemeOption.system);
 
   Future<void> changeTheme(CustomThemeOption option) async{
     selectedOption=option;

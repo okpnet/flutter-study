@@ -1,4 +1,6 @@
 
+import 'dart:nativewrappers/_internal/vm/lib/ffi_native_type_patch.dart';
+
 import 'package:flutter_mappable_test/gen/assets.gen.dart';
 import 'package:flutter_mappable_test/options/custom_theme_option.dart';
 import 'package:flutter_mappable_test/themes/states/theme_state.dart';
@@ -8,7 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 final themeStateNotifierProvider =
     StateNotifierProvider<ThemeStateNotifier, ThemeState>(
-        (ref) => ThemeStateNotifier(ThemeState(themePath: {})));
+        (ref) => ThemeStateNotifier(ThemeState.initial()));
 
 class ThemeStateNotifier extends StateNotifier<ThemeState> {
   /// デフォルトのテーマパス
@@ -24,7 +26,7 @@ class ThemeStateNotifier extends StateNotifier<ThemeState> {
   ///初期化
   Future<void> initialize() async {
     final savedOption = await _readPreference();
-    state = ThemeState(themePath: defaultThemePaths);
+    state = ThemeState(themePath: defaultThemePaths,selectedOption: savedOption);
     await state.changeTheme(savedOption);
   }
 
@@ -32,7 +34,7 @@ class ThemeStateNotifier extends StateNotifier<ThemeState> {
   Future<void> applyTheme(CustomThemeOption option) async {
     await state.changeTheme(option);
     await _writePreference(option);
-    state = ThemeState(themePath: state.themePath);
+    state = ThemeState(themePath: state.themePath, selectedOption: option);
   }
 
   /// 設定の保存
