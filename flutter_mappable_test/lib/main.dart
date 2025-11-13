@@ -70,23 +70,18 @@ class MyHomePage extends ConsumerStatefulWidget {
 }
 
 class _MyHomePageState extends ConsumerState<MyHomePage> {
-  int _counter = 0;
-
+  String message='';
   void _incrementCounter() {
     setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
+      
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final themeoption=ref.watch(themeProvider).selectedOption;
-    final themeDataAsync=ref.watch(themeChangeProvider(themeoption));
+    final notifier=ref.watch(themeStateNotifierProvider.notifier);
+    final model=ref.watch(themeStateNotifierProvider);
+
     return Scaffold(
       appBar: AppBar(
         // TRY THIS: Try changing the color here to a specific color (to
@@ -97,17 +92,14 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
         // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
       ),
-      body:  themeDataAsync.maybeWhen(
-          loading: ()=> const Center(child: CircularProgressIndicator()),
-          orElse: () => const Center(child: Text('Error loading theme')),
-          data: (data) => Center(
+      body:  Center(
             child:  Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 const Text('You have pushed the button this many times:'),
                 RadioGroup(
-                  groupValue: ref.watch(themeProvider).selectedOption,
-                  onChanged: (v) => ref.read(themeProvider.notifier).state=CustomThemeModel().copyWith(selectedOption: v),
+                  groupValue: model.selectedOption,
+                  onChanged: (v) => notifier.applyTheme(v!),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -135,13 +127,12 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
                   )
                 ),
                 Text(
-                  '$_counter',
+                  '${model.selectedOption}',
                   style: Theme.of(context).textTheme.headlineMedium,
                 ),
               ],
             ),
-          )
-      ),
+          ),
       floatingActionButton: FloatingActionButton(
         onPressed: _incrementCounter,
         tooltip: 'Increment',

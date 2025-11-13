@@ -36,7 +36,7 @@ dependencies:
   cupertino_icons: ^1.0.8
   dart_mappable: 
   json_theme: 
-  flutter_riverpod: 
+  flutter_riverpod: ^2.6.1 
   shared_preferences:
   flutter_hooks: 
 
