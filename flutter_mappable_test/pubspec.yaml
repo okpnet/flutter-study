@@ -35,6 +35,7 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
   dart_mappable: 
+  # https://appainter.dev/
   json_theme: 
   flutter_riverpod: ^2.6.1 
   shared_preferences:

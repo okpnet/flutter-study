@@ -26,11 +26,6 @@ class ThemeStateNotifier extends StateNotifier<ThemeState> {
   Future<bool> initialize() async {
     try {
       final savedOption = await _readPreference();
-      if (savedOption == state.selectedOption) {
-        // 保存されているテーマと現在のテーマが同じ場合は何もしない
-        return true;
-      }
-
       state = state.copyWith(selectedOption: savedOption);
       await state.changeTheme(savedOption);
       await _writePreference(savedOption);
