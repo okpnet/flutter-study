@@ -3,6 +3,7 @@ import 'package:flutter_mappable_test/options/custom_theme_option.dart';
 import 'package:flutter_mappable_test/themes/states/theme_state.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../logs/logging.dart';
 
 final themeStateNotifierProvider =
     StateNotifierProvider<ThemeStateNotifier, ThemeState>(
@@ -33,9 +34,11 @@ class ThemeStateNotifier extends StateNotifier<ThemeState> {
       state = state.copyWith(selectedOption: savedOption);
       await state.changeTheme(savedOption);
       await _writePreference(savedOption);
+      log.i('テーマを初期化しました: $savedOption');
       return true;
     } catch (e) {
       // エラー処理（必要に応じて）
+      log.e('テーマの初期化に失敗しました: $e');
       return false;
     }
   }
