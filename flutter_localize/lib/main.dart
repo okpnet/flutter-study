@@ -120,7 +120,16 @@ class _MyHomePageState extends State<MyHomePage> {
               '$_counter',
               style: Theme.of(context).textTheme.headlineMedium,
             ),
-            TextButton(onPressed: () {}, child: Text(t.settings.language)),
+            TextButton(
+              onPressed: () {
+                LocaleSettings.setLocale(
+                  LocaleSettings.currentLocale == AppLocale.en
+                      ? AppLocale.jp
+                      : AppLocale.en,
+                );
+              },
+              child: Text(t.settings.language),
+            ),
           ],
         ),
       ),
