@@ -1,7 +1,14 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'i18n/strings.g.dart';
 
 void main() {
-  runApp(const MyApp());
+  WidgetsFlutterBinding.ensureInitialized();
+  // デバイスのロケールで初期化
+  LocaleSettings.useDeviceLocale();
+  // TranslationProviderでラップ
+  runApp(TranslationProvider(child: const MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -11,6 +18,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      locale: TranslationProvider.of(context).locale.flutterLocale,
+      supportedLocales: <Locale>[Locale('en'), Locale('ja')],
+      localizationsDelegates: GlobalMaterialLocalizations.delegates,
       title: 'Flutter Demo',
       theme: ThemeData(
         // This is the theme of your application.
@@ -69,6 +79,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final t = Translations.of(context);
     // This method is rerun every time setState is called, for instance as done
     // by the _incrementCounter method above.
     //
@@ -109,6 +120,7 @@ class _MyHomePageState extends State<MyHomePage> {
               '$_counter',
               style: Theme.of(context).textTheme.headlineMedium,
             ),
+            TextButton(onPressed: () {}, child: Text(t.settings.language)),
           ],
         ),
       ),
