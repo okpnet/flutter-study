@@ -1,0 +1,3 @@
+class BModel {
+  String name = '';
+}
