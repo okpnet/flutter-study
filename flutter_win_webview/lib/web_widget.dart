@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:webview_windows/webview_windows.dart';
+import 'package:webview_win_floating/webview_win_floating.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
 class WebWidget extends StatefulWidget {
   const WebWidget({super.key});
@@ -9,27 +10,20 @@ class WebWidget extends StatefulWidget {
 }
 
 class _WebWidgetState extends State<WebWidget> {
-  final WebviewController _controller = WebviewController();
+  final _controller = WebViewController();
 
   @override
   void initState() {
     super.initState();
-    _initializeWebView();
-  }
-
-  Future<void> _initializeWebView() async {
-    await _controller.initialize();
-    await _controller.loadUrl('https://www.google.com');
-    setState(() {});
+    _controller.setJavaScriptMode(JavaScriptMode.unrestricted);
+    _controller.loadRequest(Uri.parse('https://www.google.com'));
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Web Widget')),
-      body: _controller.value.isInitialized
-          ? Webview(_controller)
-          : const Center(child: CircularProgressIndicator()),
+      body: WebViewWidget(controller: _controller),
     );
   }
 }
