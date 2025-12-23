@@ -1,3 +1,9 @@
+import 'dart:convert';
+import 'dart:io';
+import 'dart:math';
+
+import '../models/pms_model.dart';
+
 class KeycloakService {
   // Keycloak service implementation
   final String baseUrl;
@@ -5,14 +11,13 @@ class KeycloakService {
   final String clientId;
   final Uri redirectUri;
 
-  String? _codeVerifier;
+  PKCEModel _pkceModel = PKCEModel.generate();
+
   String? _state;
 
   Uri buildAuthorizeUrl({
     List<String> scopes = const ['openid', 'profile', 'email'],
   }) {
-    _codeVerifier = generateCodeVerifier();
-    final challenge = codeChallengeS256(_codeVerifier!);
     _state = _randomState();
 
     return Uri.parse(
@@ -23,8 +28,8 @@ class KeycloakService {
         'client_id': clientId,
         'redirect_uri': redirectUri.toString(),
         'scope': scopes.join(' '),
-        'state': _state!,
-        'code_challenge': challenge,
+        'state': _state,
+        'code_challenge': _pkceModel.challenge,
         'code_challenge_method': 'S256',
       },
     );
@@ -39,7 +44,7 @@ class KeycloakService {
       'client_id': clientId,
       'code': code,
       'redirect_uri': redirectUri.toString(),
-      'code_verifier': _codeVerifier!,
+      'code_verifier': _pkceModel.verifier,
     };
 
     final res = await http.post(
