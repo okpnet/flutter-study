@@ -1,0 +1,12 @@
+{
+    "baseUrl": "",
+    "redirectPath": "",
+    "apiPath": "",
+    "certData": "",
+    "pkceConfig":
+    {
+        "clientId": "",
+        "challengeMethod": "",
+        "scopes": []
+    }
+}

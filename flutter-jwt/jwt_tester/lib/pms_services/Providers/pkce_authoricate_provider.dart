@@ -26,6 +26,10 @@ class PkceAuthenticatorProvider {
     String pkceUrljsonSource,
     AuthStateModel state,
   ) {
+    if(pkceUrljsonSource.isEmpty) {
+      
+      throw ArgumentError('pkceUrljsonSource must not be empty');
+    }
     var configMap = PkceUrlConfig.fromJsonString(pkceUrljsonSource);
     return PkceAuthenticatorProvider(
       urlConfig: configMap,

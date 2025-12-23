@@ -16,7 +16,7 @@ class _WebWidgetState extends State<WebWidget> {
   void initState() {
     super.initState();
     _controller.setJavaScriptMode(JavaScriptMode.unrestricted);
-    _controller.loadRequest(Uri.parse('https://www.google.com'));
+    _controller.loadRequest(Uri.parse('https://qmspi.local:8443'));
   }
 
   @override

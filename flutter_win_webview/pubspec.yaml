@@ -36,6 +36,7 @@ dependencies:
   cupertino_icons: ^1.0.8
   webview_win_floating: ^3.0.2
   webview_flutter: ^4.13.0
+  crypto: ^3.0.7
 
 dev_dependencies:
   flutter_test:
@@ -89,3 +90,6 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+  assets:
+    #- .env
+    - assets/pkce_url.json
