@@ -15,8 +15,29 @@ class _WebWidgetState extends State<WebWidget> {
   @override
   void initState() {
     super.initState();
-    _controller.setJavaScriptMode(JavaScriptMode.unrestricted);
-    _controller.loadRequest(Uri.parse('https://qmspi.local:8443'));
+    _controller
+      ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..setNavigationDelegate(
+        NavigationDelegate(
+          onNavigationRequest: (req) {
+            final uri = Uri.parse(req.url);
+            if (uri.scheme == 'myapp' && uri.host == 'callback') {
+              final code = uri.queryParameters['code'];
+              if (code != null) {
+                // Handle the authorization code
+                print('Authorization code: $code');
+                return NavigationDecision.prevent;
+              }
+            }
+            return NavigationDecision.navigate;
+          },
+        ),
+      );
+    _controller.loadRequest(
+      Uri.parse(
+        'https://qmspi.local:8443/realms/pms/protocol/openid-connect/auth',
+      ),
+    );
   }
 
   @override
