@@ -1,11 +1,7 @@
+import 'dart:convert';
+import 'dart:math';
+import 'package:crypto/crypto.dart';
 
-        'response_type': 'code',
-        'client_id': clientId,
-        'redirect_uri': redirectUri.toString(),
-        'scope': scopes.join(' '),
-        'state': _state!,
-        'code_challenge': challenge,
-        'code_challenge_method': 'S256',
 class KeycloakAccessModel {
   static const String _codeCharengeMethod = 'S256';
   final String authorizationEndpoint;
@@ -16,24 +12,24 @@ class KeycloakAccessModel {
   final String codeChallenge;
   final List<String> scopes;
 
-  KeycloakAccessModel({
+  KeycloakAccessModel._(
+    this.codeVerifier,
+    this.codeChallenge, {
     required this.authorizationEndpoint,
     required this.tokenEndpoint,
     required this.clientId,
     required this.redirectUri,
     required this.scopes,
-  }){
+  });
 
-  }
-
-  Map<String,dynamic> createUrlParameter(){
-    final result={
-      'response_type':'code',
-      'client_id':clientId,
-      'redirect_uri':redirectUri.toString(),
-      'scope':scopes.join(' '),
-      'code_challenge':codeChallenge,
-      'code_challenge_method':_codeCharengeMethod,
+  Map<String, dynamic> createUrlParameter() {
+    final result = {
+      'response_type': 'code',
+      'client_id': clientId,
+      'redirect_uri': redirectUri.toString(),
+      'scope': scopes.join(' '),
+      'code_challenge': codeChallenge,
+      'code_challenge_method': _codeCharengeMethod,
     };
     return result;
   }
@@ -44,10 +40,13 @@ class KeycloakAccessModel {
     return newUri;
   }
 
-  
-  KeycloakAccessModel._(this.codeVerifier, this.codeChallenge);
-
-  static KeycloakAccessModel generate() {
+  static KeycloakAccessModel generate({
+    required String authorizationEndpoint,
+    required String tokenEndpoint,
+    required String clientId,
+    required Uri redirectUri,
+    required List<String> scopes,
+  }) {
     String generateCodeVerifier() {
       final random = Random.secure();
       final values = List<int>.generate(32, (i) => random.nextInt(256));
@@ -62,6 +61,14 @@ class KeycloakAccessModel {
 
     final v = generateCodeVerifier();
     final c = generateCodeChallenge(v);
-    return PKCEModel._(v, c);
+    return KeycloakAccessModel._(
+      v,
+      c,
+      authorizationEndpoint: authorizationEndpoint,
+      tokenEndpoint: tokenEndpoint,
+      clientId: clientId,
+      redirectUri: redirectUri,
+      scopes: scopes,
+    );
   }
 }
