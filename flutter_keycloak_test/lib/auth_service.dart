@@ -254,5 +254,17 @@ class AuthService{
         ]);
     }
 
-    
+    Future<bool> needAuthentication() async {
+        return !(await isAuthenticated());
+    }
+
+    Future<Duration?> getTokenValidityDuration() async {
+        final expirationStr= await _secureStorage.read(key: _tokenExprirationKey);
+        if(expirationStr==null)return null;
+
+        final expiration=DateTime.fromMillisecondsSinceEpoch(int.parse(expirationStr));
+        final remaining=expiration.difference(DateTime.now());
+
+        return remaining.isNegative ? Duration.zero: remaining;
+    }
 }
