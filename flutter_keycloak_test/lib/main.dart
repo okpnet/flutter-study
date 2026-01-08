@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:teste/screens/auth_screen.dart';
+import 'package:flutter_keycloak_test/screems/auth_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -16,51 +16,42 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         useMaterial3: true,
         scaffoldBackgroundColor: Colors.black,
-        colorScheme:const ColorScheme.dark(
+        colorScheme: const ColorScheme.dark(
           primary: Colors.white,
           secondary: Colors.grey,
-          surface:Colors.black,
-          background:Colors.black,
+          surface: Colors.black,
+          background: Colors.black,
           onPrimary: Colors.white,
           onSecondary: Colors.white,
           onSurface: Colors.white,
           onBackground: Colors.white,
         ),
-        textTheme:const TextTheme(
+        textTheme: const TextTheme(
           displayLarge: TextStyle(
-            fontSize:48,
+            fontSize: 48,
             fontWeight: FontWeight.w300,
-            letterSpacing: -1.5
-            ),
-          titleLarge: TextStyle(
-            fontSize: 22,
-            fontWeight: FontWeight.w400
+            letterSpacing: -1.5,
           ),
-          bodyLarge: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w400
-          ),
-          bodyMedium: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w400
-          ),
+          titleLarge: TextStyle(fontSize: 22, fontWeight: FontWeight.w400),
+          bodyLarge: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
+          bodyMedium: TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
         ),
-        evatedButtonTheme: ElevatedButtonThemeData(
-          style:EvetedButton.styleForm(
-            backgroundColor:Colors.white,
-            foregroundColor:Colors.black,
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.white,
+            foregroundColor: Colors.black,
             elevation: 0,
-            shpe:RoundedRectangleBorder(
-              borderRadius:BorderRadius.circular(8),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
             ),
           ),
         ),
-        outlieButtonTheme:OutlineButtonThemeData(
-          style:OutlineButton.styleForm(
-            foregroundColor:Colors.white,
-            side:const BorderSide(color:Colors.grey),
-            shape:RoundRectangleBorder(
-              borderRadius:BorderRadius.circular(8),
+        outlinedButtonTheme: OutlinedButtonThemeData(
+          style: OutlinedButton.styleFrom(
+            foregroundColor: Colors.white,
+            side: const BorderSide(color: Colors.grey),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
             ),
           ),
         ),
