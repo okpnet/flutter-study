@@ -1,25 +1,36 @@
 import 'dart:convert';
 import 'dart:math';
 import 'package:crypto/crypto.dart';
+import 'package:flutter/material.dart';
 
 class KeycloakAccessModel {
-  static const String _codeCharengeMethod = 'S256';
-  final String authorizationEndpoint;
-  final String tokenEndpoint;
+  static const String ENDPOINT_AUTH = "auth";
+  static const String ENDPOINT_TOKEN = "token";
+  static const String CHARENGE_METHOD = 'S256';
+
+  // Configuration
+  final String keycloakUrl;
+  final String realms;
   final String clientId;
-  final Uri redirectUri;
+  final String redirectUri;
   final String codeVerifier;
   final String codeChallenge;
   final List<String> scopes;
 
+  // Token Storage Keys
+  static const String _accesTokenKey = 'access_token';
+  static const String _refreshTokenKey = 'refresh_token';
+  static const String _idTokenKey = 'id_token';
+  static const String _tokenExprirationKey = 'token_expiration';
+
   KeycloakAccessModel._(
     this.codeVerifier,
     this.codeChallenge, {
-    required this.authorizationEndpoint,
-    required this.tokenEndpoint,
+    required this.keycloakUrl,
+    required this.realms,
     required this.clientId,
     required this.redirectUri,
-    required this.scopes,
+    this.scopes = ['openid', 'profile', 'email'],
   });
 
   Map<String, dynamic> createUrlParameter() {
