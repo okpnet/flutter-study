@@ -16,12 +16,10 @@ class _WebWidgetState extends State<WebWidget> {
   @override
   void initState() {
     _keycloakModel = KeycloakAccessModel.generate(
-      authorizationEndpoint:
-          'https://qmspi.local:8443/realms/pms/protocol/openid-connect/auth',
-      tokenEndpoint:
-          'https://qmspi.local:8443/realms/pms/protocol/openid-connect/token',
-      clientId: 'pms-flutter-app',
-      redirectUri: Uri.parse('myapp://callback'),
+      keycloakUrl: 'https://qmspi.local:8443/',
+      realms: 'pms',
+      clientId: 'app',
+      redirectUri: 'myapp://callback',
       scopes: ['openid', 'profile', 'email'],
     );
     super.initState();

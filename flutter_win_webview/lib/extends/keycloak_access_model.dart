@@ -7,6 +7,7 @@ class KeycloakAccessModel {
   static const String ENDPOINT_AUTH = "auth";
   static const String ENDPOINT_TOKEN = "token";
   static const String CHARENGE_METHOD = 'S256';
+  static const List<String> DEFAULT_SCOPES = ['openid', 'profile', 'email'];
 
   // Configuration
   final String keycloakUrl;
@@ -30,7 +31,7 @@ class KeycloakAccessModel {
     required this.realms,
     required this.clientId,
     required this.redirectUri,
-    this.scopes = ['openid', 'profile', 'email'],
+    this.scopes = DEFAULT_SCOPES,
   });
 
   Map<String, dynamic> createUrlParameter() {
@@ -40,22 +41,22 @@ class KeycloakAccessModel {
       'redirect_uri': redirectUri.toString(),
       'scope': scopes.join(' '),
       'code_challenge': codeChallenge,
-      'code_challenge_method': _codeCharengeMethod,
+      'code_challenge_method': CHARENGE_METHOD,
     };
     return result;
   }
 
   Uri get authorizationUrl {
-    final uri = Uri.parse(authorizationEndpoint);
+    final uri = Uri.parse(keycloakUrl);
     final newUri = uri.replace(queryParameters: createUrlParameter());
     return newUri;
   }
 
   static KeycloakAccessModel generate({
-    required String authorizationEndpoint,
-    required String tokenEndpoint,
+    required String keycloakUrl,
+    required String realms,
     required String clientId,
-    required Uri redirectUri,
+    required String redirectUri,
     required List<String> scopes,
   }) {
     String generateCodeVerifier() {
@@ -75,8 +76,8 @@ class KeycloakAccessModel {
     return KeycloakAccessModel._(
       v,
       c,
-      authorizationEndpoint: authorizationEndpoint,
-      tokenEndpoint: tokenEndpoint,
+      keycloakUrl: keycloakUrl,
+      realms: realms,
       clientId: clientId,
       redirectUri: redirectUri,
       scopes: scopes,
