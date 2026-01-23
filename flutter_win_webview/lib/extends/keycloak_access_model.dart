@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 class KeycloakAccessModel {
   static const String ENDPOINT_AUTH = "auth";
   static const String ENDPOINT_TOKEN = "token";
+  static const String ENDPOINT_LOGOUT = "logout";
   static const String CHARENGE_METHOD = 'S256';
   static const List<String> DEFAULT_SCOPES = ['openid', 'profile', 'email'];
 
@@ -46,10 +47,29 @@ class KeycloakAccessModel {
     return result;
   }
 
+  // Authorization URL
   Uri get authorizationUrl {
-    final uri = Uri.parse(keycloakUrl);
+    final uri = Uri.parse(
+      '$keycloakUrl/realms/$realms/protocol/openid-connect/$ENDPOINT_AUTH',
+    );
     final newUri = uri.replace(queryParameters: createUrlParameter());
     return newUri;
+  }
+
+  // Token URL
+  Uri get tokenUrl {
+    final uri = Uri.parse(
+      '$keycloakUrl/realms/$realms/protocol/openid-connect/$ENDPOINT_TOKEN',
+    );
+    return uri;
+  }
+
+  // Logout URL
+  Uri get logoutUrl {
+    final uri = Uri.parse(
+      '$keycloakUrl/realms/$realms/protocol/openid-connect/$ENDPOINT_LOGOUT',
+    );
+    return uri;
   }
 
   static KeycloakAccessModel generate({

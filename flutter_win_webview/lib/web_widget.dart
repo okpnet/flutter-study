@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_win_webview/extends/keycloak_access_model.dart';
 import 'package:webview_win_floating/webview_win_floating.dart';
@@ -18,8 +20,8 @@ class _WebWidgetState extends State<WebWidget> {
     _keycloakModel = KeycloakAccessModel.generate(
       keycloakUrl: 'https://qmspi.local:8443/',
       realms: 'pms',
-      clientId: 'app',
-      redirectUri: 'myapp://callback',
+      clientId: 'qual-app',
+      redirectUri: 'jwt-tester://auth/callback',
       scopes: ['openid', 'profile', 'email'],
     );
     super.initState();
@@ -29,19 +31,20 @@ class _WebWidgetState extends State<WebWidget> {
         NavigationDelegate(
           onNavigationRequest: (req) {
             final uri = Uri.parse(req.url);
+            log('URL:${uri.toString()}');
             if (uri.scheme == 'myapp' && uri.host == 'callback') {
               final code = uri.queryParameters['code'];
               if (code != null) {
                 // Handle the authorization code
                 print('Authorization code: $code');
-                return NavigationDecision.prevent;
               }
+              return NavigationDecision.prevent;
             }
             return NavigationDecision.navigate;
           },
         ),
-      );
-    _controller.loadRequest(_keycloakModel!.authorizationUrl);
+      )
+      ..loadRequest(_keycloakModel!.authorizationUrl);
   }
 
   @override
