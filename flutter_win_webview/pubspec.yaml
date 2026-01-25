@@ -37,6 +37,7 @@ dependencies:
   webview_win_floating: ^3.0.2
   webview_flutter: ^4.13.0
   crypto: ^3.0.7
+  http: ^1.6.0
 
 dev_dependencies:
   flutter_test:

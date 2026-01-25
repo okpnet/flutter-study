@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 class ConvertHelper {
-  static ByteData? convertByteData(dynamic? arg) {
+  static ByteData? convertByteData(dynamic arg) {
     if (arg == null) return null;
     final bytes = base64Decode(arg as String);
     return ByteData.sublistView(bytes);
