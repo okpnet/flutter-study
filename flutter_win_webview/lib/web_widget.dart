@@ -66,6 +66,7 @@ class _WebWidgetState extends State<WebWidget> {
   Future<void> _startAuthFlow() async {
     // ★ 1) 先にローカルHTTPサーバを起動
     _server = await HttpServer.bind(InternetAddress.loopbackIPv4, 45035);
+
     unawaited(_waitForCallback()); // バックグラウンドで待ち受け
     _keycloakModel = KeycloakAccessModel.generate(
       //keycloakUrl: 'https://qmspi.local:8443/',

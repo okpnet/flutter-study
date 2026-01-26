@@ -38,6 +38,8 @@ dependencies:
   webview_flutter: ^4.13.0
   crypto: ^3.0.7
   http: ^1.6.0
+  dispose: ^0.1.0
+  get_it: ^9.2.0
 
 dev_dependencies:
   flutter_test:
