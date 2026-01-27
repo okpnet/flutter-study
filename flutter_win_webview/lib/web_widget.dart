@@ -69,8 +69,8 @@ class _WebWidgetState extends State<WebWidget> {
 
     unawaited(_waitForCallback()); // バックグラウンドで待ち受け
     _keycloakModel = KeycloakAccessModel.generate(
-      //keycloakUrl: 'https://qmspi.local:8443/',
-      keycloakUrl: 'https://okp-04.local:8443',
+      keycloakUrl: 'https://qmspi.local:8443/',
+      //keycloakUrl: 'https://okp-04.local:8443',
       realms: 'pms',
       clientId: 'qual-app',
       redirectUri: 'http://127.0.0.1:45035/callback',

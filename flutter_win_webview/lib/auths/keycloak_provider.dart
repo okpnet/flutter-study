@@ -14,13 +14,21 @@ final class KeycloakProvider {
 
   HttpServer? _server;
 
-  KeycloakProvider({required this.authUriModel}) {
-    unawaited(_startAuthFlow());
+  bool isLoading = false;
+
+  String? token;
+
+  KeycloakProvider._(HttpServer server, {required this.authUriModel}) {
+    _server = server;
   }
 
-  Future<void> _startAuthFlow() async {
-    _server = await HttpServer.bind(InternetAddress.loopbackIPv4, 45035);
-    unawaited(_waitForCallback()); // バックグラウンドで待ち受け
+  factory KeycloakProvider.create({
+    required HttpServer server,
+    required AuthUriModel authUriModel,
+  }) {
+    final provider = KeycloakProvider._(server, authUriModel: authUriModel);
+    unawaited(provider._waitForCallback()); // バックグラウンドで待ち受け
+    return provider;
   }
 
   // ★ 3) コールバックを受け取り、トークンへ交換
