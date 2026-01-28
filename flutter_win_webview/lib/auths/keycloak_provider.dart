@@ -3,38 +3,61 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
-import 'package:flutter/material.dart';
 import 'package:flutter_win_webview/auths/auth_uri_model.dart';
 import 'package:flutter_win_webview/auths/keycloak_uri_model.dart';
+import 'package:flutter_win_webview/libexts/defaultresult.dart';
+import 'package:flutter_win_webview/storeges/reader_writer.dart';
 import 'package:http/http.dart' as http; // ★ 追加：トークン交換用
-import 'package:get_it/get_it.dart';
 
 final class KeycloakProvider {
   final AuthUriModel authUriModel;
-
-  HttpServer? _server;
+  final ReaderWriter readerWriter;
+  final HttpServer? callbackServer;
 
   bool isLoading = false;
 
   String? token;
 
-  KeycloakProvider._(HttpServer server, {required this.authUriModel}) {
-    _server = server;
-  }
+  KeycloakProvider._({
+    required this.callbackServer,
+    required this.readerWriter,
+    required this.authUriModel,
+  });
 
   factory KeycloakProvider.create({
     required HttpServer server,
     required AuthUriModel authUriModel,
+    required ReaderWriter readWriter,
   }) {
-    final provider = KeycloakProvider._(server, authUriModel: authUriModel);
-    unawaited(provider._waitForCallback()); // バックグラウンドで待ち受け
+    final provider = KeycloakProvider._(
+      readerWriter: readWriter,
+      authUriModel: authUriModel,
+      callbackServer: server,
+    );
+    unawaited(provider.login()); // バックグラウンドで待ち受け
     return provider;
   }
 
+  //
+  Future<void> refreshToken() async {
+    final result = await readerWriter.read<String>("code");
+    final code = switch (result) {
+      Success<String>() => result.value,
+      Failure<String>() => "",
+      // TODO: Handle this case.
+      Warning<String>() => throw UnimplementedError(),
+    };
+    await _post(PostType.token, code);
+  }
+
+  Future<void> logout() async {}
+
   // ★ 3) コールバックを受け取り、トークンへ交換
-  Future<void> _waitForCallback() async {
+  Future<void> login() async {
     try {
-      final req = await _server!.firstWhere((r) => r.uri.path == '/callback');
+      final req = await callbackServer!.firstWhere(
+        (r) => r.uri.path == '/callback',
+      );
       final uri = req.uri;
 
       // ユーザー向けに軽いHTMLを返答（真っ白回避）
@@ -44,7 +67,7 @@ final class KeycloakProvider {
       );
 
       await req.response.close();
-      await _server?.close(force: true);
+      await callbackServer?.close(force: true);
 
       final code = uri.queryParameters['code'];
       final state = uri.queryParameters['state'];
@@ -53,27 +76,35 @@ final class KeycloakProvider {
         log('No authorization code in callback.');
         return;
       }
+
+      readerWriter.write("code", code);
       // ★ state の検証（KeycloakAccessModel が発行した値と一致するか）を必ず実装
       // if (state != expectedState) { ... return; }
-      await _exchangeToken(code);
+      await refreshToken();
     } catch (e, st) {
       log('Callback wait error: $e\n$st');
     }
   }
 
-  Future<void> _exchangeToken(String code) async {
+  Future<void> _post(PostType type, String code) async {
     try {
-      final _keycloakModel = authUriModel as KeycloakUriModel;
+      final keycloakModel = authUriModel as KeycloakUriModel;
       final body = <String, String>{
         'grant_type': 'authorization_code',
-        'client_id': _keycloakModel!.clientId,
+        'client_id': keycloakModel!.clientId,
         'code': code,
-        'redirect_uri': _keycloakModel!.redirectUri,
-        'code_verifier': _keycloakModel!.codeVerifier, // ★ PKCE
+        'redirect_uri': keycloakModel!.redirectUri,
+        'code_verifier': keycloakModel!.codeVerifier, // ★ PKCE
+      };
+
+      final postUri = switch (type) {
+        PostType.token => keycloakModel.tokenUrl,
+        PostType.login => keycloakModel.authorizationUrl,
+        PostType.logout => keycloakModel.logoutUrl,
       };
 
       final res = await http.post(
-        _keycloakModel!.tokenUrl,
+        postUri,
         headers: {'Content-Type': 'application/x-www-form-urlencoded'},
         body: body,
       );
@@ -99,6 +130,8 @@ final class KeycloakProvider {
   }
 
   void dispose() {
-    _server?.close(force: true);
+    callbackServer?.close(force: true);
   }
 }
+
+enum PostType { token, login, logout }

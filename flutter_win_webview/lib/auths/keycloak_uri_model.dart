@@ -7,6 +7,7 @@ import 'package:flutter_win_webview/auths/auth_uri_model.dart';
 const String CHARENGE_METHOD = 'S256';
 const List<String> DEFAULT_SCOPES = ['openid', 'profile', 'email'];
 
+//Keycloak向けエントリーモデル
 final class KeycloakUriModel implements AuthUriModel {
   // Configuration
   final String keycloakUrl;
@@ -16,7 +17,7 @@ final class KeycloakUriModel implements AuthUriModel {
   final String codeVerifier;
   final String codeChallenge;
   final List<String> scopes;
-
+  //コンストラクタ
   KeycloakUriModel._(
     this.codeVerifier,
     this.codeChallenge, {
@@ -26,7 +27,7 @@ final class KeycloakUriModel implements AuthUriModel {
     required this.redirectUri,
     this.scopes = DEFAULT_SCOPES,
   });
-
+  //URLパラメーター生成
   Map<String, dynamic> createUrlParameter() {
     final result = {
       'response_type': 'code',
@@ -67,6 +68,7 @@ final class KeycloakUriModel implements AuthUriModel {
     return uri;
   }
 
+  //モデル生成
   factory KeycloakUriModel.generate({
     required String keycloakUrl,
     required String realms,

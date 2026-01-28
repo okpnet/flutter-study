@@ -1,3 +1,4 @@
+//OAuth2.0 PKCE　エントリーインターフェイス
 abstract interface class AuthUriModel {
   static const String ENDPOINT_AUTH = "auth";
   static const String ENDPOINT_TOKEN = "token";
