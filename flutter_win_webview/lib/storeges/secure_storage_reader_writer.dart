@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter_win_webview/libexts/defaultresult.dart';
 import 'package:flutter_win_webview/storeges/reader_writer.dart';
+import 'package:flutter_win_webview/storeges/storage_change_event.dart';
 import 'package:flutter_win_webview/storeges/storage_item_converter.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
@@ -13,6 +14,11 @@ class SecureStorageReaderWriter implements ReaderWriter {
   };
   //ストレージライブラリインスタンス
   final FlutterSecureStorage _storage = FlutterSecureStorage();
+  // ★ 追加：変更通知用の StreamController
+  final _changeController = StreamController<StorageChangeEvent>.broadcast();
+  // ★ 外部が listen できるストリーム
+  @override
+  Stream<StorageChangeEvent> get onChange => _changeController.stream;
   //コンバーター群ゲットアクセサ
   @override
   Map<String, StorageItemConverter> get converters => _converters;
@@ -50,6 +56,8 @@ class SecureStorageReaderWriter implements ReaderWriter {
     }
     final data = (converter as StorageTypeConverter<T>).convertToString(value);
     await _storage.write(key: key, value: data);
+    // ★ 変更通知を発火
+    _changeController.add(StorageChangeEvent(key: key, sender: value));
   }
 
   //読み込み:T型用のコンバーターが存在しないときは例外をスロー
@@ -78,6 +86,8 @@ class SecureStorageReaderWriter implements ReaderWriter {
   Future<void> delete(String key) async {
     // Implementation for deleting from secure storage
     await _storage.delete(key: key);
+    // ★ 変更通知を発火
+    _changeController.add(StorageChangeEvent(key: key, sender: null));
   }
 
   //ストレージを空にする
@@ -85,5 +95,10 @@ class SecureStorageReaderWriter implements ReaderWriter {
   Future<void> clear() async {
     // Implementation for clearing all data in secure storage
     await _storage.deleteAll();
+  }
+
+  //破棄
+  void dispose() {
+    _changeController.close();
   }
 }

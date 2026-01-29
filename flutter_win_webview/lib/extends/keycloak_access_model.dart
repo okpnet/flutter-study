@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:math';
 import 'package:crypto/crypto.dart';
-import 'package:flutter/material.dart';
 
 class KeycloakAccessModel {
   static const String ENDPOINT_AUTH = "auth";
@@ -18,12 +17,6 @@ class KeycloakAccessModel {
   final String codeVerifier;
   final String codeChallenge;
   final List<String> scopes;
-
-  // Token Storage Keys
-  static const String _accesTokenKey = 'access_token';
-  static const String _refreshTokenKey = 'refresh_token';
-  static const String _idTokenKey = 'id_token';
-  static const String _tokenExprirationKey = 'token_expiration';
 
   KeycloakAccessModel._(
     this.codeVerifier,

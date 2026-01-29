@@ -112,10 +112,10 @@ final class KeycloakProvider {
       final keycloakModel = authUriModel as KeycloakUriModel;
       final body = <String, String>{
         'grant_type': 'authorization_code',
-        'client_id': keycloakModel!.clientId,
+        'client_id': keycloakModel.clientId,
         'code': code,
-        'redirect_uri': keycloakModel!.redirectUri,
-        'code_verifier': keycloakModel!.codeVerifier, // ★ PKCE
+        'redirect_uri': keycloakModel.redirectUri,
+        'code_verifier': keycloakModel.codeVerifier, // ★ PKCE
       };
 
       final postUri = switch (type) {
