@@ -2,13 +2,13 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:crypto/crypto.dart';
-import 'package:flutter_win_webview/auths/auth_uri_model.dart';
+import 'package:flutter_win_webview/auths/models/iauth_uri_model.dart';
 
 const String CHARENGE_METHOD = 'S256';
 const List<String> DEFAULT_SCOPES = ['openid', 'profile', 'email'];
 
 //Keycloak向けエントリーモデル
-final class KeycloakUriModel implements AuthUriModel {
+final class KeycloakUriModel implements IAuthUriModel {
   // Configuration
   final String keycloakUrl;
   final String realms;
@@ -44,7 +44,7 @@ final class KeycloakUriModel implements AuthUriModel {
   @override
   Uri get authorizationUrl {
     final uri = Uri.parse(
-      '$keycloakUrl/realms/$realms/protocol/openid-connect/${AuthUriModel.ENDPOINT_AUTH}',
+      '$keycloakUrl/realms/$realms/protocol/openid-connect/${IAuthUriModel.ENDPOINT_AUTH}',
     );
     final newUri = uri.replace(queryParameters: createUrlParameter());
     return newUri;
@@ -54,7 +54,7 @@ final class KeycloakUriModel implements AuthUriModel {
   @override
   Uri get tokenUrl {
     final uri = Uri.parse(
-      '$keycloakUrl/realms/$realms/protocol/openid-connect/${AuthUriModel.ENDPOINT_TOKEN}',
+      '$keycloakUrl/realms/$realms/protocol/openid-connect/${IAuthUriModel.ENDPOINT_TOKEN}',
     );
     return uri;
   }
@@ -63,7 +63,7 @@ final class KeycloakUriModel implements AuthUriModel {
   @override
   Uri get logoutUrl {
     final uri = Uri.parse(
-      '$keycloakUrl/realms/$realms/protocol/openid-connect/${AuthUriModel.ENDPOINT_LOGOUT}',
+      '$keycloakUrl/realms/$realms/protocol/openid-connect/${IAuthUriModel.ENDPOINT_LOGOUT}',
     );
     return uri;
   }

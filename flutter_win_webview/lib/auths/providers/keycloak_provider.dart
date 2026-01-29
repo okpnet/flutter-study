@@ -2,15 +2,15 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
-
-import 'package:flutter_win_webview/auths/auth_uri_model.dart';
-import 'package:flutter_win_webview/auths/keycloak_uri_model.dart';
+import 'package:flutter_win_webview/auths/models/auth_models.dart';
+import 'package:flutter_win_webview/auths/storage_converters/auth_stae_keycloak_model_converter.dart';
+import 'package:flutter_win_webview/auths/storage_converters/auth_state_model_converter.dart';
 import 'package:flutter_win_webview/libexts/defaultresult.dart';
 import 'package:flutter_win_webview/storeges/reader_writer.dart';
 import 'package:http/http.dart' as http; // ★ 追加：トークン交換用
 
 final class KeycloakProvider {
-  final AuthUriModel authUriModel;
+  final IAuthUriModel authUriModel;
   final ReaderWriter readerWriter;
   final HttpServer? callbackServer;
 
@@ -22,11 +22,17 @@ final class KeycloakProvider {
     required this.callbackServer,
     required this.readerWriter,
     required this.authUriModel,
-  });
+  }) {
+    readerWriter.converters.addAll({
+      (AuthStateModelConverter).toString(): AuthStateModelConverter(),
+      (AuthStaeKeycloakModelConverter).toString():
+          AuthStaeKeycloakModelConverter(),
+    });
+  }
 
   factory KeycloakProvider.create({
     required HttpServer server,
-    required AuthUriModel authUriModel,
+    required IAuthUriModel authUriModel,
     required ReaderWriter readWriter,
   }) {
     final provider = KeycloakProvider._(
@@ -40,17 +46,33 @@ final class KeycloakProvider {
 
   //
   Future<void> refreshToken() async {
-    final result = await readerWriter.read<String>("code");
-    final code = switch (result) {
-      Success<String>() => result.value,
-      Failure<String>() => "",
-      // TODO: Handle this case.
-      Warning<String>() => throw UnimplementedError(),
+    final result = await readerWriter.read<AuthStateModel>(AUTH_MODEL_KEY);
+    final model = switch (result) {
+      Success<AuthStateModel>() => result.value,
+      Failure<AuthStateModel>() => null,
+      Warning<AuthStateModel>() => throw UnimplementedError(),
     };
-    await _post(PostType.token, code);
+
+    if (model != null &&
+        model.isAccessTokenExpired == ExpiredStateType.enabled) {
+      await _post(PostType.token, model.code!);
+    }
   }
 
-  Future<void> logout() async {}
+  Future<void> logout() async {
+    final result = await readerWriter.read<AuthStateModel>(AUTH_MODEL_KEY);
+    final model = switch (result) {
+      Success<AuthStateModel>() => result.value,
+      _ => null,
+    };
+
+    if (model != null &&
+        model.isAccessTokenExpired == ExpiredStateType.enabled) {
+      await _post(PostType.logout, model.code!);
+    }
+
+    await readerWriter.delete(AUTH_MODEL_KEY);
+  }
 
   // ★ 3) コールバックを受け取り、トークンへ交換
   Future<void> login() async {
@@ -70,17 +92,16 @@ final class KeycloakProvider {
       await callbackServer?.close(force: true);
 
       final code = uri.queryParameters['code'];
-      final state = uri.queryParameters['state'];
+      //final state = uri.queryParameters['state'];
 
       if (code == null || code.isEmpty) {
         log('No authorization code in callback.');
         return;
       }
 
-      readerWriter.write("code", code);
       // ★ state の検証（KeycloakAccessModel が発行した値と一致するか）を必ず実装
       // if (state != expectedState) { ... return; }
-      await refreshToken();
+      await _post(PostType.token, code);
     } catch (e, st) {
       log('Callback wait error: $e\n$st');
     }
@@ -98,9 +119,8 @@ final class KeycloakProvider {
       };
 
       final postUri = switch (type) {
-        PostType.token => keycloakModel.tokenUrl,
-        PostType.login => keycloakModel.authorizationUrl,
         PostType.logout => keycloakModel.logoutUrl,
+        _ => keycloakModel.tokenUrl,
       };
 
       final res = await http.post(
@@ -108,6 +128,24 @@ final class KeycloakProvider {
         headers: {'Content-Type': 'application/x-www-form-urlencoded'},
         body: body,
       );
+
+      final result = switch (type) {
+        PostType.token =>
+          res.statusCode == 200
+              ? AuthStateKyclaokModel.fromResponse(code, res.body)
+              : null,
+        PostType.logout =>
+          res.statusCode == 204
+              ? AuthStateModel(accessToken: '', code: '')
+              : null,
+        _ => null,
+      };
+
+      if (result == null) {
+        readerWriter.delete('auth');
+      } else {
+        readerWriter.write('auth', result);
+      }
 
       if (res.statusCode == 200) {
         final map = json.decode(res.body) as Map<String, dynamic>;
