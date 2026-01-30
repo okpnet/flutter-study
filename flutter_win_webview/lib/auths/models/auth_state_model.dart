@@ -4,8 +4,8 @@ const String AUTH_MODEL_KEY = "authstate";
 
 class AuthStateModel with AuthTokenMixin {
   final String? code;
-  AuthStateModel({this.code, String? token}) {
-    accessToken = token;
+  AuthStateModel({this.code, String? accessToken}) {
+    super.accessToken = accessToken;
   }
 
   Map<String, dynamic> toJson() {
@@ -13,6 +13,6 @@ class AuthStateModel with AuthTokenMixin {
   }
 
   factory AuthStateModel.fromJson(Map<String, dynamic> json) {
-    return AuthStateModel(token: json['accessToken'], code: json['code']);
+    return AuthStateModel(accessToken: json['accessToken'], code: json['code']);
   }
 }

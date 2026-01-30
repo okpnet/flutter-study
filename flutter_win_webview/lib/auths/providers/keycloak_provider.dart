@@ -150,7 +150,9 @@ final class KeycloakProvider with WebAuthMixin implements IAuthProvider {
               ? AuthStateKyclaokModel.fromResponse(code, res.body)
               : null,
         PostType.logout =>
-          res.statusCode == 204 ? AuthStateModel(token: '', code: '') : null,
+          res.statusCode == 204
+              ? AuthStateModel(accessToken: '', code: '')
+              : null,
         _ => null,
       };
 

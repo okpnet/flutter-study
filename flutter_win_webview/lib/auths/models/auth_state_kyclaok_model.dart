@@ -8,7 +8,7 @@ class AuthStateKyclaokModel extends AuthStateModel with AuthTokenMixin {
   final String? refreshToken;
 
   AuthStateKyclaokModel({
-    required super.token,
+    required super.accessToken,
     required this.refreshToken,
     required this.tokenId,
     required super.code,
@@ -25,7 +25,7 @@ class AuthStateKyclaokModel extends AuthStateModel with AuthTokenMixin {
 
   factory AuthStateKyclaokModel.fromJson(Map<String, dynamic> json) {
     return AuthStateKyclaokModel(
-      token: json['accessToken'],
+      accessToken: json['accessToken'],
       refreshToken: json['refreshToken'],
       tokenId: json['tokenId'],
       code: json['code'],
@@ -35,7 +35,7 @@ class AuthStateKyclaokModel extends AuthStateModel with AuthTokenMixin {
   factory AuthStateKyclaokModel.fromResponse(String code, String body) {
     final map = json.decode(body) as Map<String, dynamic>;
     return AuthStateKyclaokModel(
-      token: map['access_token'] as String?,
+      accessToken: map['access_token'] as String?,
       refreshToken: map['refresh_token'] as String?,
       tokenId: map['id_token'] as String?,
       code: code,
