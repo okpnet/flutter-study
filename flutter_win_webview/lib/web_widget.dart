@@ -77,7 +77,7 @@ class _WebWidgetState extends ConsumerState<WebWidget> {
                 log('post failed.');
               }
             });
-            final uriModel = (value as WebAuthMixin).authUriModel;
+            final uriModel = (value as WebAuthMixin).uriModel;
             _controller.loadRequest(uriModel.authorizationUrl);
             return Scaffold(
               appBar: AppBar(title: const Text('Web Widget')),

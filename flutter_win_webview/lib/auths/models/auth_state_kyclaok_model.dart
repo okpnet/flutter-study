@@ -1,9 +1,10 @@
 import 'dart:convert';
 
 import 'package:flutter_win_webview/auths/models/auth_state_model.dart';
-import 'package:flutter_win_webview/auths/models/auth_token_mixin.dart';
+import 'package:flutter_win_webview/auths/models/iauth_token_expored.dart';
 
-class AuthStateKyclaokModel extends AuthStateModel with AuthTokenMixin {
+class AuthStateKyclaokModel extends AuthStateModel
+    implements IAuthTokenExpored {
   final String? tokenId;
   final String? refreshToken;
 

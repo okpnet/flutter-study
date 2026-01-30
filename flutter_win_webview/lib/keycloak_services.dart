@@ -35,5 +35,19 @@ final keycloakProvider = FutureProvider<IAuthProvider>((ref) async {
     server: server,
     authUriModel: authUri,
     readWriter: rw,
+    delegate: (server) async {
+      final req = await server.firstWhere((r) => r.uri.path == '/callback');
+      final uri = req.uri;
+
+      // ユーザー向けに軽いHTMLを返答（真っ白回避）
+      req.response.headers.contentType = ContentType.html;
+      req.response.write(
+        '<html><body>サインイン処理に戻っています。ウィンドウを閉じても構いません。</body></html>',
+      );
+
+      await req.response.close();
+      final code = uri.queryParameters['code'];
+      return code;
+    },
   );
 });

@@ -1,12 +1,22 @@
-import 'package:flutter_win_webview/auths/models/auth_token_mixin.dart';
+import 'package:flutter_win_webview/auths/models/auth_models.dart';
+import 'package:jwt_decode/jwt_decode.dart';
 
 const String AUTH_MODEL_KEY = "authstate";
 
-class AuthStateModel with AuthTokenMixin {
+class AuthStateModel implements IAuthTokenExpored {
   final String? code;
-  AuthStateModel({this.code, String? accessToken}) {
-    super.accessToken = accessToken;
+  final String? accessToken;
+
+  @override
+  ExpiredStateType get isAccessTokenExpired {
+    return accessToken == null
+        ? ExpiredStateType.signedOut
+        : Jwt.isExpired(accessToken!)
+        ? ExpiredStateType.disabled
+        : ExpiredStateType.enabled;
   }
+
+  AuthStateModel({this.code, this.accessToken});
 
   Map<String, dynamic> toJson() {
     return {"accessToken": accessToken, "code": code};

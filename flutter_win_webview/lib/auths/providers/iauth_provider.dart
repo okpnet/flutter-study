@@ -6,3 +6,5 @@ abstract interface class IAuthProvider {
   Future<void> login();
   Future<void> logout();
 }
+
+abstract interface class IAuthUriProvider {}

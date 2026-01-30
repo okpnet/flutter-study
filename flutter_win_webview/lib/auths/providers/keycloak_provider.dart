@@ -11,9 +11,14 @@ import 'package:flutter_win_webview/libexts/defaultresult.dart';
 import 'package:flutter_win_webview/storeges/istorage_reader_writer.dart';
 import 'package:http/http.dart' as http; // ★ 追加：トークン交換用
 
+typedef GetCodeFromServer = Future<String?> Function(HttpServer);
+
+//ローカルサーバーがコールバックを受け取るOAuth
 final class KeycloakProvider with WebAuthMixin implements IAuthProvider {
   final IStorageReaderWriter readerWriter;
   final HttpServer? callbackServer;
+  final IAuthUriModel authUriModel;
+  final GetCodeFromServer takeCodeDelegate;
   // ★ 追加：変更通知用の StreamController
   final _changeController = StreamController<ExpiredStateEvent>.broadcast();
 
@@ -24,34 +29,38 @@ final class KeycloakProvider with WebAuthMixin implements IAuthProvider {
   // ★ 外部が listen できるストリーム
   @override
   Stream<ExpiredStateEvent> get onChange => _changeController.stream;
+  @override
+  IAuthUriModel get uriModel => authUriModel;
 
+  //コンストラクタ
   KeycloakProvider._({
     required this.callbackServer,
     required this.readerWriter,
-    required uriModel,
+    required this.authUriModel,
+    required this.takeCodeDelegate,
   }) {
     readerWriter.converters.addAll({
-      (AuthStateModelConverter).toString(): AuthStateModelConverter(),
-      (AuthStaeKeycloakModelConverter).toString():
-          AuthStaeKeycloakModelConverter(),
+      (AuthStateModel).toString(): AuthStateModelConverter(),
+      (AuthStateKyclaokModel).toString(): AuthStaeKeycloakModelConverter(),
     });
-    authUriModel = uriModel;
   }
-
+  //インスタンス生成
   factory KeycloakProvider.create({
     required HttpServer server,
     required IAuthUriModel authUriModel,
     required IStorageReaderWriter readWriter,
+    required GetCodeFromServer delegate,
   }) {
     final provider = KeycloakProvider._(
       readerWriter: readWriter,
-      uriModel: authUriModel,
+      authUriModel: authUriModel,
       callbackServer: server,
+      takeCodeDelegate: delegate,
     );
     unawaited(provider.login()); // バックグラウンドで待ち受け
     return provider;
   }
-  //
+  //トークンの更新
   @override
   Future<void> refreshToken() async {
     final result = await readerWriter.read<AuthStateModel>(AUTH_MODEL_KEY);
@@ -88,30 +97,14 @@ final class KeycloakProvider with WebAuthMixin implements IAuthProvider {
   @override
   Future<void> login() async {
     try {
-      final req = await callbackServer!.firstWhere(
-        (r) => r.uri.path == '/callback',
-      );
-      final uri = req.uri;
-
-      // ユーザー向けに軽いHTMLを返答（真っ白回避）
-      req.response.headers.contentType = ContentType.html;
-      req.response.write(
-        '<html><body>サインイン処理に戻っています。ウィンドウを閉じても構いません。</body></html>',
-      );
-
-      await req.response.close();
+      final code = await takeCodeDelegate(callbackServer!);
       await callbackServer?.close(force: true);
-
-      final code = uri.queryParameters['code'];
-      //final state = uri.queryParameters['state'];
 
       if (code == null || code.isEmpty) {
         log('No authorization code in callback.');
         return;
       }
 
-      // ★ state の検証（KeycloakAccessModel が発行した値と一致するか）を必ず実装
-      // if (state != expectedState) { ... return; }
       await _post(PostType.token, code);
     } catch (e, st) {
       log('Callback wait error: $e\n$st');
