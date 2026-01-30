@@ -1,12 +1,12 @@
 import 'dart:async';
 import 'package:flutter_win_webview/libexts/defaultresult.dart';
-import 'package:flutter_win_webview/storeges/reader_writer.dart';
+import 'package:flutter_win_webview/storeges/istorage_reader_writer.dart';
 import 'package:flutter_win_webview/storeges/storage_change_event.dart';
 import 'package:flutter_win_webview/storeges/storage_item_converter.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 //ストレージ読み書き
-class SecureStorageReaderWriter implements ReaderWriter {
+class SecureStorageReaderWriter implements IStorageReaderWriter {
   //コンバーター群
   //キーは型名
   final Map<String, StorageItemConverter> _converters = {

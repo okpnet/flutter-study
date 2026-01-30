@@ -1,3 +1,4 @@
+import 'package:flutter_win_webview/auths/models/auth_models.dart';
 import 'package:jwt_decode/jwt_decode.dart';
 
 mixin AuthTokenMixin {
@@ -11,5 +12,3 @@ mixin AuthTokenMixin {
         : ExpiredStateType.enabled;
   }
 }
-
-enum ExpiredStateType { enabled, disabled, signedOut }
