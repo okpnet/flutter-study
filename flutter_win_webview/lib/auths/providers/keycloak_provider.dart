@@ -11,19 +11,12 @@ import 'package:flutter_win_webview/libexts/defaultresult.dart';
 import 'package:flutter_win_webview/storeges/istorage_reader_writer.dart';
 import 'package:http/http.dart' as http; // ★ 追加：トークン交換用
 
-typedef GetCodeFromServer = Future<String?> Function(HttpServer);
-
 //ローカルサーバーがコールバックを受け取るOAuth
 final class KeycloakProvider with WebAuthMixin implements IAuthProvider {
   final IStorageReaderWriter readerWriter;
-  final HttpServer? callbackServer;
   final IAuthUriModel authUriModel;
-  final GetCodeFromServer takeCodeDelegate;
   // ★ 追加：変更通知用の StreamController
   final _changeController = StreamController<ExpiredStateEvent>.broadcast();
-
-  bool isLoading = false;
-
   String? token;
 
   // ★ 外部が listen できるストリーム
@@ -33,12 +26,7 @@ final class KeycloakProvider with WebAuthMixin implements IAuthProvider {
   IAuthUriModel get uriModel => authUriModel;
 
   //コンストラクタ
-  KeycloakProvider._({
-    required this.callbackServer,
-    required this.readerWriter,
-    required this.authUriModel,
-    required this.takeCodeDelegate,
-  }) {
+  KeycloakProvider._({required this.readerWriter, required this.authUriModel}) {
     readerWriter.converters.addAll({
       (AuthStateModel).toString(): AuthStateModelConverter(),
       (AuthStateKyclaokModel).toString(): AuthStaeKeycloakModelConverter(),
@@ -46,18 +34,13 @@ final class KeycloakProvider with WebAuthMixin implements IAuthProvider {
   }
   //インスタンス生成
   factory KeycloakProvider.create({
-    required HttpServer server,
     required IAuthUriModel authUriModel,
     required IStorageReaderWriter readWriter,
-    required GetCodeFromServer delegate,
   }) {
     final provider = KeycloakProvider._(
       readerWriter: readWriter,
       authUriModel: authUriModel,
-      callbackServer: server,
-      takeCodeDelegate: delegate,
     );
-    unawaited(provider.login()); // バックグラウンドで待ち受け
     return provider;
   }
   //トークンの更新
@@ -95,11 +78,8 @@ final class KeycloakProvider with WebAuthMixin implements IAuthProvider {
 
   // ログイン:ローカルサーバのコールバック
   @override
-  Future<void> login() async {
+  Future<void> login(String? code) async {
     try {
-      final code = await takeCodeDelegate(callbackServer!);
-      await callbackServer?.close(force: true);
-
       if (code == null || code.isEmpty) {
         log('No authorization code in callback.');
         return;
@@ -150,10 +130,11 @@ final class KeycloakProvider with WebAuthMixin implements IAuthProvider {
       };
 
       if (result == null) {
-        readerWriter.delete(AUTH_MODEL_KEY);
+        readerWriter.write(AUTH_MODEL_KEY, null);
       } else {
         readerWriter.write(AUTH_MODEL_KEY, result);
       }
+      readerWriter.write(AUTH_MODEL_KEY, result);
       _changeController.add(
         ExpiredStateEvent(
           value: result == null
@@ -167,7 +148,7 @@ final class KeycloakProvider with WebAuthMixin implements IAuthProvider {
   }
 
   void dispose() {
-    callbackServer?.close(force: true);
+    //callbackServer?.close(force: true);
     _changeController.close();
   }
 }

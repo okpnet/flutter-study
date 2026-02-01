@@ -71,6 +71,9 @@ class SecureStorageReaderWriter implements IStorageReaderWriter {
         Exception("No converter found for type $converterKey"),
       );
     }
+    if (!await _storage.containsKey(key: key)) {
+      return Result.failure(Exception("No data found for key $key"));
+    }
     final data = await _storage.read(key: key);
     if (data == null) {
       return Result.failure(Exception("No data found for key $key"));
