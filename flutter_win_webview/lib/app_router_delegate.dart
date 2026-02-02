@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_win_webview/auths/models/auth_models.dart';
-import 'package:flutter_win_webview/keycloak_services.dart';
 import 'package:flutter_win_webview/logout_page.dart';
-import 'package:flutter_win_webview/router_state.dart';
+import 'package:flutter_win_webview/providers/router_providers/router_state.dart';
+import 'package:flutter_win_webview/start_app.dart';
 import 'package:flutter_win_webview/top_page.dart';
 import 'package:flutter_win_webview/web_widget.dart';
 
@@ -21,9 +20,13 @@ class AppRouterDelegate extends RouterDelegate<Object>
   @override
   Widget build(BuildContext context) {
     final routeState = ref.watch(routeStateProvider);
-    final authState = ref.watch(authStateProvider);
+    // final authState = ref.watch(authStateProvider);
     final pages = routeState.stack.map((page) {
       switch (page) {
+        case AppPage.signInWebView:
+          return MaterialPage(child: WebWidget());
+        case AppPage.boot:
+          return MaterialPage(child: const StartApp());
         case AppPage.top:
           return MaterialPage(child: TopPage());
         case AppPage.loggedOut:
@@ -31,21 +34,11 @@ class AppRouterDelegate extends RouterDelegate<Object>
       }
     }).toList();
 
-    if (authState.value == ExpiredStateType.signedOut) {
-      pages.add(MaterialPage(child: WebWidget()));
-    }
-
     return Navigator(
       key: navigatorKey,
       pages: pages,
       onPopPage: (route, result) {
         if (!route.didPop(result)) return false;
-
-        final stack = [...routeState.stack];
-        if (stack.length > 1) {
-          stack.removeLast();
-          ref.read(routeStateProvider.notifier).state = RouteState(stack);
-        }
         return true;
       },
     );
@@ -67,7 +60,7 @@ class AppNavigatorObserver extends NavigatorObserver {
     // スタックが1つ以上ある場合だけ pop 相当を行う
     if (state.stack.length > 1) {
       final newStack = [...state.stack]..removeLast();
-      ref.read(routeStateProvider.notifier).state = RouteState(newStack);
+      ref.read(routeStateProvider.notifier).update(RouteState.crate(newStack));
     }
   }
 }

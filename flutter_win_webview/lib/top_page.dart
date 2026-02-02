@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_win_webview/keycloak_services.dart';
-import 'package:flutter_win_webview/router_state.dart';
+import 'package:flutter_win_webview/providers/router_providers/router_state.dart';
 import 'package:flutter_win_webview/screenlibs/overlay_loading.dart';
 
 class TopPage extends ConsumerWidget {
@@ -19,10 +19,9 @@ class TopPage extends ConsumerWidget {
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                ref.read(routeStateProvider.notifier).state = RouteState([
-                  AppPage.top,
-                  AppPage.loggedOut,
-                ]);
+                ref
+                    .read(routeStateProvider.notifier)
+                    .update(RouteState.crate([AppPage.top, AppPage.loggedOut]));
               },
               child: const Text("ログアウト"),
             ),
