@@ -4,7 +4,7 @@ import 'package:flutter_win_webview/providers/inialize.dart';
 import 'package:flutter_win_webview/providers/router_providers/router_state.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
+import 'dart:developer';
 part 'callback_server.g.dart';
 
 @Riverpod(keepAlive: true)
@@ -28,6 +28,7 @@ Future<HttpServer> callBackServer(Ref ref, {required int port}) async {
     final code = uri.queryParameters['code'];
     unawaited(
       provider.login(code).whenComplete(() {
+        log('Callback server: login process completed.');
         ref
             .read(routeStateProvider.notifier)
             .update(RouteState.crate([AppPage.top]));

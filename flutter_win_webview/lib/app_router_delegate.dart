@@ -24,13 +24,13 @@ class AppRouterDelegate extends RouterDelegate<Object>
     final pages = routeState.stack.map((page) {
       switch (page) {
         case AppPage.signInWebView:
-          return MaterialPage(child: WebWidget());
+          return MaterialPage(key: ValueKey(page), child: WebWidget());
         case AppPage.boot:
           return MaterialPage(child: const StartApp());
         case AppPage.top:
-          return MaterialPage(child: TopPage());
+          return MaterialPage(key: ValueKey(page), child: TopPage());
         case AppPage.loggedOut:
-          return MaterialPage(child: LoggedOutPage());
+          return MaterialPage(key: ValueKey(page), child: LoggedOutPage());
       }
     }).toList();
 

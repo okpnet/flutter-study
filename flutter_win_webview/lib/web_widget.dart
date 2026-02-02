@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_win_webview/providers/inialize.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -34,7 +35,16 @@ class _WebWidgetState extends ConsumerState<WebWidget> {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Scaffold(
             appBar: AppBar(title: const Text('Web Widget')),
-            body: CircularProgressIndicator(),
+            body: Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  CupertinoActivityIndicator(),
+                  SizedBox(height: 20),
+                  Text("Connecting keycloak..."),
+                ],
+              ),
+            ),
           );
         }
 
