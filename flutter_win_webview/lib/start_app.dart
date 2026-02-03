@@ -30,7 +30,7 @@ final class StartApp extends ConsumerWidget {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             ref
                 .read(routeStateProvider.notifier)
-                .update(RouteState.crate([AppPage.signInWebView]));
+                .update(RouteState.crate([AppPage.top]));
           });
 
           return const Scaffold(

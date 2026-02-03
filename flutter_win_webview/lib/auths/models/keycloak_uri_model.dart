@@ -17,6 +17,12 @@ final class KeycloakUriModel implements IAuthUriModel {
   final String codeVerifier;
   final String codeChallenge;
   final List<String> scopes;
+
+  @override
+  String toString() {
+    return '{keycloakUrl: $keycloakUrl, realms: $realms, clientId: $clientId, redirectUri: $redirectUri, codeVerifier: $codeVerifier, codeChallenge: $codeChallenge, scopes: $scopes}';
+  }
+
   //コンストラクタ
   KeycloakUriModel._(
     this.codeVerifier,

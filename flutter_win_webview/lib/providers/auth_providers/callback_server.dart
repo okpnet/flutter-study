@@ -9,7 +9,7 @@ part 'callback_server.g.dart';
 
 @Riverpod(keepAlive: true)
 Future<HttpServer> callBackServer(Ref ref, {required int port}) async {
-  final provider = ref.read(keycloakProvider);
+  final provider = ref.watch(keycloakProvider);
   final server = await HttpServer.bind(InternetAddress.loopbackIPv4, port);
 
   ref.onDispose(() {

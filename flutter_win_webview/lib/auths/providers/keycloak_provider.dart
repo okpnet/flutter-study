@@ -5,11 +5,13 @@ import 'package:flutter_win_webview/auths/models/auth_models.dart';
 import 'package:flutter_win_webview/auths/providers/expired_state_event.dart';
 import 'package:flutter_win_webview/auths/providers/iauth_provider.dart';
 import 'package:flutter_win_webview/auths/providers/web_auth_mixin.dart';
+import 'package:flutter_win_webview/auths/results/connect_state_result.dart';
 import 'package:flutter_win_webview/auths/storage_converters/auth_stae_keycloak_model_converter.dart';
 import 'package:flutter_win_webview/auths/storage_converters/auth_state_model_converter.dart';
 import 'package:flutter_win_webview/libexts/defaultresult.dart';
 import 'package:flutter_win_webview/storeges/istorage_reader_writer.dart';
-import 'package:http/http.dart' as http; // ★ 追加：トークン交換用
+import 'package:http/http.dart' as http;
+import 'package:http/http.dart'; // ★ 追加：トークン交換用
 
 //ローカルサーバーがコールバックを受け取るOAuth
 final class KeycloakProvider with WebAuthMixin implements IAuthProvider {
@@ -118,34 +120,56 @@ final class KeycloakProvider with WebAuthMixin implements IAuthProvider {
       );
 
       final result = switch (type) {
-        PostType.token =>
-          res.statusCode == 200
-              ? AuthStateKyclaokModel.fromResponse(code, res.body)
-              : null,
-        PostType.logout =>
-          res.statusCode == 204
-              ? AuthStateModel(accessToken: '', code: '')
-              : null,
-        _ => null,
+        PostType.token => _getToken(code, res),
+        PostType.logout => _getLogout(code, res),
+        _ => ConnectStateResult.failure(Exception('Unknown post type')),
       };
 
-      if (result == null) {
-        readerWriter.write(AUTH_MODEL_KEY, null);
+      if (result is SuccessState<AuthStateModel>) {
+        final value = result.value;
+        readerWriter.write(AUTH_MODEL_KEY, value);
+        log(
+          'Token exchange successful: Access Token=${value.accessToken}',
+          level: 0,
+        );
+        _changeController.add(
+          ExpiredStateEvent(
+            value: value.accessToken == null || value.accessToken!.isEmpty
+                ? ExpiredStateType.signedOut
+                : value.isAccessTokenExpired,
+          ),
+        );
       } else {
-        readerWriter.write(AUTH_MODEL_KEY, result);
+        //ここにくる場合はエラーハンドリング
+        final error = result as FailureState<AuthStateModel>;
+        log('Error in _post: ${error.error}', level: 0, error: error.error);
       }
-      readerWriter.write(AUTH_MODEL_KEY, result);
-      _changeController.add(
-        ExpiredStateEvent(
-          value: result == null
-              ? ExpiredStateType.signedOut
-              : result.isAccessTokenExpired,
-        ),
-      );
     } catch (e, st) {
       log('Token exchange error: $e\n$st');
     }
   }
+
+  ConnectStateResult<AuthStateModel> _getToken(String code, Response res) =>
+      res.statusCode == 200
+      ? ConnectStateResult.success(
+          AuthStateKyclaokModel.fromResponse(code, res.body),
+          statusCode: res.statusCode,
+        )
+      : ConnectStateResult.failure(
+          Exception('Failed to get token: ${res.statusCode}'),
+          statusCode: res.statusCode,
+        );
+
+  ConnectStateResult<AuthStateModel> _getLogout(String code, Response res) =>
+      res.statusCode == 204
+      ? ConnectStateResult.success(
+          AuthStateModel(accessToken: null, code: null),
+          statusCode: res.statusCode,
+        )
+      : ConnectStateResult.failure(
+          Exception('Failed to get token: ${res.statusCode}'),
+          statusCode: res.statusCode,
+        );
 
   void dispose() {
     //callbackServer?.close(force: true);

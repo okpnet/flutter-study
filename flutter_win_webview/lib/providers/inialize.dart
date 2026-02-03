@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_win_webview/auths/models/iauth_uri_model.dart';
@@ -28,17 +29,24 @@ Future<void> initialize(Ref ref, int port) async {
       ..invalidate(authStateProvider)
       ..invalidate(routeStateProvider);
   });
+  //
+  //callBackServerProviderがkeycloakProviderを参照するので、そのときに作られてしまう。
+  //ここで先にkeycloakProviderを作成しておく。
+  ref.watch(authUriModelProvider);
+  ref.watch(readerWriterProvider);
+  ref.watch(expiredHandlerProvider);
+  ref.watch(keycloakProvider);
 
   await ref.watch(callBackServerProvider(port: port).future);
   await Future.delayed(const Duration(seconds: 3));
 }
 
 /// 接続モデル（Keycloak の URI 構成）
-@riverpod
+@Riverpod(keepAlive: true)
 IAuthUriModel authUriModel(Ref ref) {
   final uriModel = KeycloakUriModel.generate(
-    // keycloakUrl: 'https://qmspi.local:8443/',
-    keycloakUrl: 'https://okp-04.local:8443',
+    keycloakUrl: 'https://qmspi.local:8443/',
+    // keycloakUrl: 'https://okp-04.local:8443',
     clientId: 'qual-app',
     realms: 'pms',
     redirectUri: 'http://127.0.0.1:45035/callback',

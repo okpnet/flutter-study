@@ -49,6 +49,7 @@ class RouteState extends _$RouteState {
       log('RouteState update: isInit=$isInit, newState=${newState.stack}');
     }
     final newList = _creteNewStack(newState.stack);
+    log('RouteState update: newList=$newList');
     state = newState.clone()
       ..stack.clear()
       ..stack.addAll(newList);

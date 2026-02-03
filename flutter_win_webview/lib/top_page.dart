@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_win_webview/keycloak_services.dart';
@@ -19,6 +20,7 @@ class TopPage extends ConsumerWidget {
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
+                log("ログアウトボタンが押されました");
                 ref
                     .read(routeStateProvider.notifier)
                     .update(RouteState.crate([AppPage.top, AppPage.loggedOut]));

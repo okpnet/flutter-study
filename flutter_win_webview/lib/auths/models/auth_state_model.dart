@@ -9,7 +9,7 @@ class AuthStateModel implements IAuthTokenExpored {
 
   @override
   ExpiredStateType get isAccessTokenExpired {
-    return accessToken == null
+    return accessToken == null || accessToken!.isEmpty
         ? ExpiredStateType.signedOut
         : Jwt.isExpired(accessToken!)
         ? ExpiredStateType.disabled
