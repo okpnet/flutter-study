@@ -54,7 +54,7 @@ class _WebWidgetState extends ConsumerState<WebWidget> {
 
         return Scaffold(
           appBar: AppBar(title: const Text('Web Widget')),
-          body: WebViewWidget(controller: controller!),
+          body: WebViewWidget(controller: controller),
         );
       },
     );

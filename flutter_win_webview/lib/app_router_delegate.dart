@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_win_webview/logout_page.dart';
@@ -15,6 +17,8 @@ class AppRouterDelegate extends RouterDelegate<Object>
 
   AppRouterDelegate(this.ref) {
     ref.listen(routeStateProvider, (_, __) => notifyListeners());
+    //ref.watch(routeStateProvider);
+    log('AppRouterDelegate initialized');
   }
 
   @override
