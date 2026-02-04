@@ -20,6 +20,7 @@ const int DEFAULT_PORT = 45035;
 
 @Riverpod(keepAlive: true)
 Future<void> initialize(Ref ref, int port) async {
+  log('initialize: Starting initialization on port $port');
   ref.onDispose(() {
     ref
       ..invalidate(keycloakProvider)
@@ -40,14 +41,15 @@ Future<void> initialize(Ref ref, int port) async {
 
   await ref.watch(callBackServerProvider(port: port).future);
   await Future.delayed(const Duration(seconds: 3));
+  log('initialize: Initialization completed on port $port');
 }
 
 /// 接続モデル（Keycloak の URI 構成）
 @Riverpod(keepAlive: true)
 IAuthUriModel authUriModel(Ref ref) {
   final uriModel = KeycloakUriModel.generate(
-    // keycloakUrl: 'https://qmspi.local:8443/',
-    keycloakUrl: 'https://okp-04.local:8443',
+    keycloakUrl: 'https://qmspi.local:8443/',
+    // keycloakUrl: 'https://okp-04.local:8443',
     clientId: 'qual-app',
     realms: 'pms',
     redirectUri: 'http://127.0.0.1:45035/callback',

@@ -52,19 +52,19 @@ class AppRouterDelegate extends RouterDelegate<Object>
   Future<void> setNewRoutePath(Object configuration) async {}
 }
 
-class AppNavigatorObserver extends NavigatorObserver {
-  final WidgetRef ref;
+// class AppNavigatorObserver extends NavigatorObserver {
+//   final WidgetRef ref;
 
-  AppNavigatorObserver(this.ref);
+//   AppNavigatorObserver(this.ref);
 
-  @override
-  void didRemove(Route route, Route? previousRoute) {
-    final state = ref.read(routeStateProvider);
+//   @override
+//   void didRemove(Route route, Route? previousRoute) {
+//     final state = ref.read(routeStateProvider);
 
-    // スタックが1つ以上ある場合だけ pop 相当を行う
-    if (state.stack.length > 1) {
-      final newStack = [...state.stack]..removeLast();
-      ref.read(routeStateProvider.notifier).update(RouteState.crate(newStack));
-    }
-  }
-}
+//     // スタックが1つ以上ある場合だけ pop 相当を行う
+//     if (state.stack.length > 1) {
+//       final newStack = [...state.stack]..removeLast();
+//       ref.read(routeStateProvider.notifier).update(RouteState.crate(newStack));
+//     }
+//   }
+// }

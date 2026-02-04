@@ -128,10 +128,6 @@ final class KeycloakProvider with WebAuthMixin implements IAuthProvider {
       if (result is SuccessState<AuthStateModel>) {
         final value = result.value;
         readerWriter.write(AUTH_MODEL_KEY, value);
-        log(
-          'Token exchange successful: Access Token=${value.accessToken}',
-          level: 0,
-        );
         _changeController.add(
           ExpiredStateEvent(
             value: value.accessToken == null || value.accessToken!.isEmpty

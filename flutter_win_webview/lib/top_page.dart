@@ -23,7 +23,7 @@ class TopPage extends ConsumerWidget {
                 log("ログアウトボタンが押されました");
                 ref
                     .read(routeStateProvider.notifier)
-                    .update(RouteState.crate([AppPage.top, AppPage.loggedOut]));
+                    .update(RouteState.crate([]));
               },
               child: const Text("ログアウト"),
             ),
