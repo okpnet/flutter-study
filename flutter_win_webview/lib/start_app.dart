@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_win_webview/providers/auth_providers/auth_state.dart';
 import 'package:flutter_win_webview/providers/inialize.dart';
 import 'package:flutter_win_webview/providers/router_providers/router_state.dart';
 
@@ -28,9 +29,11 @@ final class StartApp extends ConsumerWidget {
           );
         } else {
           WidgetsBinding.instance.addPostFrameCallback((_) {
-            ref
-                .read(routeStateProvider.notifier)
-                .update(RouteState.crate([AppPage.top]));
+            final handler = ExpiredRouteHandler(
+              pages: [AppPage.top],
+              funcState: () => ref.read(authStateProvider),
+            );
+            ref.read(routeStateProvider.notifier).update(handler);
           });
 
           return const Scaffold(

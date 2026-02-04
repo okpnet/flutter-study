@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_win_webview/keycloak_services.dart';
+import 'package:flutter_win_webview/providers/auth_providers/auth_state.dart';
 import 'package:flutter_win_webview/providers/router_providers/router_state.dart';
 import 'package:flutter_win_webview/screenlibs/overlay_loading.dart';
 
@@ -21,9 +22,11 @@ class TopPage extends ConsumerWidget {
             ElevatedButton(
               onPressed: () {
                 log("ログアウトボタンが押されました");
-                ref
-                    .read(routeStateProvider.notifier)
-                    .update(RouteState.crate([]));
+                final handler = ExpiredRouteHandler(
+                  pages: [AppPage.loggedOut],
+                  funcState: () => ref.read(authStateProvider),
+                );
+                ref.read(routeStateProvider.notifier).update(handler);
               },
               child: const Text("ログアウト"),
             ),

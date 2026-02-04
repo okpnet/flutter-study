@@ -29,7 +29,9 @@ Future<HttpServer> callBackServer(Ref ref, {required int port}) async {
     unawaited(
       provider.login(code).whenComplete(() {
         log('Callback server: login process completed.');
-        ref.read(routeStateProvider.notifier).pop();
+        final handler = ExpiredRouteHandler(pages: []);
+        handler.pop();
+        ref.read(routeStateProvider.notifier).update(handler);
       }),
     );
   });
