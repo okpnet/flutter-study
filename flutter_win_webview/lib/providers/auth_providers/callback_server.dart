@@ -5,8 +5,10 @@ import 'package:flutter_win_webview/providers/router_providers/router_state.dart
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:developer';
+
 part 'callback_server.g.dart';
 
+// ローカルサーバーがコールバックを受け取るOAuth
 @Riverpod(keepAlive: true)
 Future<HttpServer> callBackServer(Ref ref, {required int port}) async {
   final provider = ref.watch(keycloakProvider);
@@ -14,6 +16,7 @@ Future<HttpServer> callBackServer(Ref ref, {required int port}) async {
 
   ref.onDispose(() {
     unawaited(server.close());
+    log('Callback server: Server closed on dispose.');
   });
 
   server.listen((HttpRequest request) {
@@ -29,8 +32,7 @@ Future<HttpServer> callBackServer(Ref ref, {required int port}) async {
     unawaited(
       provider.login(code).whenComplete(() {
         log('Callback server: login process completed.');
-        final handler = ExpiredRouteHandler(pages: []);
-        handler.pop();
+        final handler = ExpiredRouteHandler.popCreate(pages: []);
         ref.read(routeStateProvider.notifier).update(handler);
       }),
     );

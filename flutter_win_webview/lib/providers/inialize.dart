@@ -8,7 +8,6 @@ import 'package:flutter_win_webview/auths/providers/expired_state_event.dart';
 import 'package:flutter_win_webview/auths/providers/iauth_provider.dart';
 import 'package:flutter_win_webview/auths/providers/keycloak_provider.dart';
 import 'package:flutter_win_webview/providers/auth_providers/auth_state.dart';
-import 'package:flutter_win_webview/providers/auth_providers/callback_server.dart';
 import 'package:flutter_win_webview/providers/router_providers/router_state.dart';
 import 'package:flutter_win_webview/storeges/istorage_reader_writer.dart';
 import 'package:flutter_win_webview/storeges/secure_storage_reader_writer.dart';
@@ -39,7 +38,6 @@ Future<void> initialize(Ref ref, int port) async {
   ref.watch(expiredHandlerProvider);
   ref.watch(keycloakProvider);
 
-  await ref.watch(callBackServerProvider(port: port).future);
   await Future.delayed(const Duration(seconds: 3));
   log('initialize: Initialization completed on port $port');
 }
@@ -89,7 +87,7 @@ IAuthProvider keycloak(Ref ref) {
   ref.onDispose(() {
     sub.cancel();
     // 必要なら provider のクリーンアップもここで
-    provider.dispose();
+    unawaited(provider.dispose());
   });
 
   return provider;

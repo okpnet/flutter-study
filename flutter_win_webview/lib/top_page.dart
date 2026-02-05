@@ -22,9 +22,8 @@ class TopPage extends ConsumerWidget {
             ElevatedButton(
               onPressed: () {
                 log("ログアウトボタンが押されました");
-                final handler = ExpiredRouteHandler(
+                final handler = ExpiredRouteHandler.resetCreate(
                   pages: [AppPage.loggedOut],
-                  funcState: () => ref.read(authStateProvider),
                 );
                 ref.read(routeStateProvider.notifier).update(handler);
               },

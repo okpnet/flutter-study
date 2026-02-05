@@ -21,11 +21,14 @@ final class KeycloakProvider with WebAuthMixin implements IAuthProvider {
   final _changeController = StreamController<ExpiredStateEvent>.broadcast();
   String? token;
 
+  Future<void>? _inFlight;
   // ★ 外部が listen できるストリーム
   @override
   Stream<ExpiredStateEvent> get onChange => _changeController.stream;
   @override
   IAuthUriModel get uriModel => authUriModel;
+
+  bool _isPosting = false;
 
   //コンストラクタ
   KeycloakProvider._({required this.readerWriter, required this.authUriModel}) {
@@ -95,54 +98,63 @@ final class KeycloakProvider with WebAuthMixin implements IAuthProvider {
 
   //ログイン後のコードがある状態のポスト通信
   Future<void> _post(PostType type, String code) async {
-    try {
-      if (code.isEmpty) throw Exception('code is empty');
+    final postFuture = () async {
+      try {
+        if (code.isEmpty) throw Exception('code is empty');
 
-      final keycloakModel = authUriModel as KeycloakUriModel;
-      final body = <String, String>{
-        'grant_type': 'authorization_code',
-        'client_id': keycloakModel.clientId,
-        'code': code,
-        'redirect_uri': keycloakModel.redirectUri,
-        'code_verifier': keycloakModel.codeVerifier, // ★ PKCE
-      };
+        final keycloakModel = authUriModel as KeycloakUriModel;
+        final body = <String, String>{
+          'grant_type': 'authorization_code',
+          'client_id': keycloakModel.clientId,
+          'code': code,
+          'redirect_uri': keycloakModel.redirectUri,
+          'code_verifier': keycloakModel.codeVerifier, // ★ PKCE
+        };
 
-      final postUri = switch (type) {
-        PostType.logout => keycloakModel.logoutUrl,
-        _ => keycloakModel.tokenUrl,
-      };
-      //自己証明書エラー可否
-      HttpOverrides.global = PermitInvalidCertification();
-      final res = await http.post(
-        postUri,
-        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-        body: body,
-      );
-
-      final result = switch (type) {
-        PostType.token => _getToken(code, res),
-        PostType.logout => _getLogout(code, res),
-        _ => ConnectStateResult.failure(Exception('Unknown post type')),
-      };
-
-      if (result is SuccessState<AuthStateModel>) {
-        final value = result.value;
-        readerWriter.write(AUTH_MODEL_KEY, value);
-        _changeController.add(
-          ExpiredStateEvent(
-            value: value.accessToken == null || value.accessToken!.isEmpty
-                ? ExpiredStateType.signedOut
-                : value.isAccessTokenExpired,
-          ),
+        final postUri = switch (type) {
+          PostType.logout => keycloakModel.logoutUrl,
+          _ => keycloakModel.tokenUrl,
+        };
+        //自己証明書エラー可否
+        HttpOverrides.global = PermitInvalidCertification();
+        final res = await http.post(
+          postUri,
+          headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+          body: body,
         );
-      } else {
-        //ここにくる場合はエラーハンドリング
-        final error = result as FailureState<AuthStateModel>;
-        log('Error in _post: ${error.error}', level: 0, error: error.error);
+
+        final result = switch (type) {
+          PostType.token => _getToken(code, res),
+          PostType.logout => _getLogout(code, res),
+          _ => ConnectStateResult.failure(Exception('Unknown post type')),
+        };
+
+        if (result is SuccessState<AuthStateModel> &&
+            _changeController.isClosed == false) {
+          final value = result.value;
+          readerWriter.write(AUTH_MODEL_KEY, value);
+          _changeController.add(
+            ExpiredStateEvent(
+              value: value.accessToken == null || value.accessToken!.isEmpty
+                  ? ExpiredStateType.signedOut
+                  : value.isAccessTokenExpired,
+            ),
+          );
+        } else {
+          //ここにくる場合はエラーハンドリング
+          if (result is FailureState<AuthStateModel>) {
+            final error = result;
+            log('Error in _post: ${error.error}', level: 0, error: error.error);
+          }
+        }
+      } catch (e, st) {
+        log('Token exchange error: $e\n$st');
+      } finally {
+        _inFlight = null;
       }
-    } catch (e, st) {
-      log('Token exchange error: $e\n$st');
-    }
+    }();
+    _inFlight = postFuture;
+    await postFuture;
   }
 
   ConnectStateResult<AuthStateModel> _getToken(String code, Response res) =>
@@ -157,7 +169,7 @@ final class KeycloakProvider with WebAuthMixin implements IAuthProvider {
         );
 
   ConnectStateResult<AuthStateModel> _getLogout(String code, Response res) =>
-      res.statusCode == 204
+      res.statusCode == 204 || res.statusCode == 200
       ? ConnectStateResult.success(
           AuthStateModel(accessToken: null, code: null),
           statusCode: res.statusCode,
@@ -167,9 +179,20 @@ final class KeycloakProvider with WebAuthMixin implements IAuthProvider {
           statusCode: res.statusCode,
         );
 
-  void dispose() {
+  Future<void> dispose() async {
     //callbackServer?.close(force: true);
-    _changeController.close();
+    try {
+      for (int counter = 0; counter < 1000; counter++) {
+        await Future.delayed(const Duration(milliseconds: 120));
+        if (_inFlight == null) break;
+      }
+      log('KeycloakProvider post completed or timed out.');
+    } catch (e) {
+      log('Error waiting for in-flight post to complete: $e');
+    } finally {
+      _changeController.close();
+      log('KeycloakProvider disposed');
+    }
   }
 }
 

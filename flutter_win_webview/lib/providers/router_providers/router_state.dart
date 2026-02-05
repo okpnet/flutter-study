@@ -7,6 +7,7 @@ part 'router_state.g.dart';
 
 enum AppPage { boot, top, loggedOut, signInWebView }
 
+/// ルーター状態を管理する StateNotifier
 @riverpod
 class RouteState extends _$RouteState {
   final List<AppPage> stack = [AppPage.boot];
@@ -49,26 +50,64 @@ enum PageState { pop, push, rest }
 
 /// ---- 付帯クラス ----
 class ExpiredRouteHandler {
-  ExpiredRouteHandler({required this.pages, this.funcState});
-
+  // 追加するページ群
   final List<AppPage> pages;
+  // 認証状態を取得する関数
+  // nullの場合は認証状態を考慮しない
   final AuthState Function()? funcState;
+  // 移動状態
+  final PageState pageState;
+  // コンストラクタ
+  ExpiredRouteHandler._({
+    required this.pages,
+    required this.pageState,
+    required this.funcState,
+  });
 
-  PageState _pageState = PageState.rest;
+  factory ExpiredRouteHandler.popCreate({
+    required List<AppPage> pages,
+    AuthState Function()? funcState,
+  }) {
+    return ExpiredRouteHandler._(
+      pages: pages,
+      pageState: PageState.pop,
+      funcState: funcState,
+    );
+  }
 
-  void reset() => _pageState = PageState.rest;
-  void pop() => _pageState = PageState.pop;
-  void push() => _pageState = PageState.push;
+  factory ExpiredRouteHandler.pushCreate({
+    required List<AppPage> pages,
+    AuthState Function()? funcState,
+  }) {
+    return ExpiredRouteHandler._(
+      pages: pages,
+      pageState: PageState.push,
+      funcState: funcState,
+    );
+  }
 
+  factory ExpiredRouteHandler.resetCreate({
+    required List<AppPage> pages,
+    AuthState Function()? funcState,
+  }) {
+    return ExpiredRouteHandler._(
+      pages: pages,
+      pageState: PageState.rest,
+      funcState: funcState,
+    );
+  }
+
+  // ハンドラ実行
   List<AppPage> handle(RouteState state) {
-    final list = switch (_pageState) {
+    final list = switch (pageState) {
       PageState.pop => _handlePop(),
       PageState.push => _handlePush(state),
-      PageState.rest => _handleRest(),
+      PageState.rest => _handleReset(),
     };
     return _handleAuthState(list);
   }
 
+  //戻るハンドラ
   List<AppPage> _handlePop() {
     if (pages.length > 1) {
       final newPages = [...pages]..removeLast();
@@ -80,15 +119,18 @@ class ExpiredRouteHandler {
     }
   }
 
+  //進むハンドラ
   List<AppPage> _handlePush(RouteState state) {
     return [...state.stack, ...pages];
   }
 
-  List<AppPage> _handleRest() {
+  //ページ再設定ハンドラ
+  List<AppPage> _handleReset() {
     log('ExpiredRouteHandler: rest, no changes to pages.');
     return pages;
   }
 
+  //認証状態ハンドラ
   List<AppPage> _handleAuthState(List<AppPage> list) {
     final authState = funcState?.call().expiredEvent.value;
     if (authState == null) {

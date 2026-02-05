@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_win_webview/providers/auth_providers/callback_server.dart';
 import 'package:flutter_win_webview/providers/inialize.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -23,6 +24,7 @@ class _WebWidgetState extends ConsumerState<WebWidget> {
     return FutureBuilder(
       future: (() async {
         try {
+          await ref.watch(callBackServerProvider(port: DEFAULT_PORT).future);
           await controller.clearCache();
           await controller.loadRequest(uriModel.authorizationUrl);
           return true;

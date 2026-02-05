@@ -29,7 +29,7 @@ final class StartApp extends ConsumerWidget {
           );
         } else {
           WidgetsBinding.instance.addPostFrameCallback((_) {
-            final handler = ExpiredRouteHandler(
+            final handler = ExpiredRouteHandler.resetCreate(
               pages: [AppPage.top],
               funcState: () => ref.read(authStateProvider),
             );

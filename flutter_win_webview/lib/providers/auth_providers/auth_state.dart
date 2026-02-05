@@ -5,6 +5,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'auth_state.g.dart';
 
+/// 認証状態を管理する StateNotifier
 @Riverpod(keepAlive: true)
 class AuthState extends _$AuthState {
   ExpiredStateEvent expiredEvent = ExpiredStateEvent(
