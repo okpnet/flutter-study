@@ -28,8 +28,6 @@ final class KeycloakProvider with WebAuthMixin implements IAuthProvider {
   @override
   IAuthUriModel get uriModel => authUriModel;
 
-  bool _isPosting = false;
-
   //コンストラクタ
   KeycloakProvider._({required this.readerWriter, required this.authUriModel}) {
     readerWriter.converters.addAll({
