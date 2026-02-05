@@ -6,7 +6,7 @@ part of 'callback_server.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$callBackServerHash() => r'd731487239f300df4cae457d6154d9550af6aaa1';
+String _$callBackServerHash() => r'880421ebeb82f6c6edd33350c82ee5eab4b8470d';
 
 /// Copied from Dart SDK
 class _SystemHash {

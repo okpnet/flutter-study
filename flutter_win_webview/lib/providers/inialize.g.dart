@@ -6,7 +6,7 @@ part of 'inialize.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$initializeHash() => r'ce303a05fa2c1cdecbf18b871aef5218d2171de0';
+String _$initializeHash() => r'2bb965db756ffc46120707f0612c11bfb785b3e7';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -66,7 +66,7 @@ class InitializeFamily extends Family<AsyncValue<void>> {
 }
 
 /// See also [initialize].
-class InitializeProvider extends AutoDisposeFutureProvider<void> {
+class InitializeProvider extends FutureProvider<void> {
   /// See also [initialize].
   InitializeProvider(int port)
     : this._internal(
@@ -112,7 +112,7 @@ class InitializeProvider extends AutoDisposeFutureProvider<void> {
   }
 
   @override
-  AutoDisposeFutureProviderElement<void> createElement() {
+  FutureProviderElement<void> createElement() {
     return _InitializeProviderElement(this);
   }
 
@@ -132,12 +132,12 @@ class InitializeProvider extends AutoDisposeFutureProvider<void> {
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-mixin InitializeRef on AutoDisposeFutureProviderRef<void> {
+mixin InitializeRef on FutureProviderRef<void> {
   /// The parameter `port` of this provider.
   int get port;
 }
 
-class _InitializeProviderElement extends AutoDisposeFutureProviderElement<void>
+class _InitializeProviderElement extends FutureProviderElement<void>
     with InitializeRef {
   _InitializeProviderElement(super.provider);
 
@@ -145,13 +145,13 @@ class _InitializeProviderElement extends AutoDisposeFutureProviderElement<void>
   int get port => (origin as InitializeProvider).port;
 }
 
-String _$authUriModelHash() => r'967101655e62d839ba8724ebcec2b2464dea3050';
+String _$authUriModelHash() => r'ae125f4c8b739b2c75da2b0de5ba7c2455cffe50';
 
 /// 接続モデル（Keycloak の URI 構成）
 ///
 /// Copied from [authUriModel].
 @ProviderFor(authUriModel)
-final authUriModelProvider = AutoDisposeProvider<IAuthUriModel>.internal(
+final authUriModelProvider = Provider<IAuthUriModel>.internal(
   authUriModel,
   name: r'authUriModelProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
@@ -163,7 +163,7 @@ final authUriModelProvider = AutoDisposeProvider<IAuthUriModel>.internal(
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-typedef AuthUriModelRef = AutoDisposeProviderRef<IAuthUriModel>;
+typedef AuthUriModelRef = ProviderRef<IAuthUriModel>;
 String _$readerWriterHash() => r'316f6a02a2157832c94fbaa3994c9f52e8f955a9';
 
 /// ストレージ（SecureStorage）
@@ -203,7 +203,7 @@ final expiredHandlerProvider =
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef ExpiredHandlerRef = AutoDisposeProviderRef<ExpiredEventHandler>;
-String _$keycloakHash() => r'e9de8d233320bf4d26c445433610e002ba804736';
+String _$keycloakHash() => r'7216343174d5eda2038ac5a11496ecdbf494dcdf';
 
 /// Keycloak を使った OAuth サービスプロバイダ
 ///

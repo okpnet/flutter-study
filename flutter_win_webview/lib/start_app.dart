@@ -1,15 +1,27 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_win_webview/overlays/loading_screen.dart';
 import 'package:flutter_win_webview/providers/auth_providers/auth_state.dart';
 import 'package:flutter_win_webview/providers/inialize.dart';
 import 'package:flutter_win_webview/providers/router_providers/router_state.dart';
 
-final class StartApp extends ConsumerWidget {
+final class StartApp extends ConsumerStatefulWidget {
   const StartApp({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<StartApp> createState() => _StartAppState();
+}
+
+class _StartAppState extends ConsumerState<StartApp> {
+  @override
+  void initState() {
+    super.initState();
+    // ref.read(loadingScreenStateProvider.notifier).update(true);
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return FutureBuilder(
       future: Future.wait([ref.watch(initializeProvider(DEFAULT_PORT).future)]),
       builder: (context, snapshot) {

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_win_webview/app_router_delegate.dart';
+import 'package:flutter_win_webview/overlays/global_loading_overlay.dart';
 
 void main() {
   runApp(const ProviderScope(child: MyApp()));
@@ -15,6 +16,9 @@ class MyApp extends ConsumerWidget {
       debugShowCheckedModeBanner: false,
       routerDelegate: AppRouterDelegate(ref),
       routeInformationParser: const _NoopParser(),
+      builder: (context, router) {
+        return GlobalLoadingOverlay(child: router!);
+      },
     );
   }
 }
