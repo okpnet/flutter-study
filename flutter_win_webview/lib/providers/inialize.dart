@@ -38,7 +38,7 @@ Future<void> initialize(Ref ref, int port) async {
   ref.watch(expiredHandlerProvider);
   ref.watch(keycloakProvider);
 
-  await Future.delayed(const Duration(seconds: 3));
+  await Future.delayed(const Duration(seconds: 5));
   log('initialize: Initialization completed on port $port');
 }
 

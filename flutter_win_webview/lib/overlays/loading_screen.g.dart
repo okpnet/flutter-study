@@ -1,28 +1,27 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'router_state.dart';
+part of 'loading_screen.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$routeStateHash() => r'f663fdbd005cbb592a92e10c2e61d5a76765d627';
+String _$loadingScreenStateHash() =>
+    r'74b6015f3c1c1bfc9ae5f516673c76c9d030d6e4';
 
-/// ルーター状態を管理する StateNotifier
-///
-/// Copied from [RouteState].
-@ProviderFor(RouteState)
-final routeStateProvider =
-    AutoDisposeNotifierProvider<RouteState, RouteState>.internal(
-      RouteState.new,
-      name: r'routeStateProvider',
+/// See also [LoadingScreenState].
+@ProviderFor(LoadingScreenState)
+final loadingScreenStateProvider =
+    NotifierProvider<LoadingScreenState, bool>.internal(
+      LoadingScreenState.new,
+      name: r'loadingScreenStateProvider',
       debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
           ? null
-          : _$routeStateHash,
+          : _$loadingScreenStateHash,
       dependencies: null,
       allTransitiveDependencies: null,
     );
 
-typedef _$RouteState = AutoDisposeNotifier<RouteState>;
+typedef _$LoadingScreenState = Notifier<bool>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
