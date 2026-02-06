@@ -17,7 +17,6 @@ class AppRouterDelegate extends RouterDelegate<Object>
 
   AppRouterDelegate(this.ref) {
     ref.listen(routeStateProvider, (_, __) => notifyListeners());
-    //ref.watch(routeStateProvider);
     log('AppRouterDelegate initialized');
   }
 

@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_win_webview/overlays/loading_screen.dart';
 import 'package:flutter_win_webview/providers/router_providers/router_state.dart';
 
 class TopPage extends ConsumerWidget {
@@ -22,6 +23,7 @@ class TopPage extends ConsumerWidget {
                 final handler = ExpiredRouteHandler.resetCreate(
                   pages: [AppPage.loggedOut],
                 );
+                ref.read(loadingScreenStateProvider.notifier).update(true);
                 ref.read(routeStateProvider.notifier).update(handler);
               },
               child: const Text("ログアウト"),

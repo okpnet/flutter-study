@@ -17,7 +17,7 @@ class _StartAppState extends ConsumerState<StartApp> {
   @override
   void initState() {
     super.initState();
-    // ref.read(loadingScreenStateProvider.notifier).update(true);
+    //ref.read(loadingScreenStateProvider.notifier).update(true);
   }
 
   @override
@@ -26,14 +26,17 @@ class _StartAppState extends ConsumerState<StartApp> {
       future: Future.wait([ref.watch(initializeProvider(DEFAULT_PORT).future)]),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Scaffold(
+          return Scaffold(
             body: Center(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  CupertinoActivityIndicator(),
-                  SizedBox(height: 20),
-                  Text("Loading..."),
+                  Transform.scale(
+                    scale: 2.0, // ← ここで2倍に拡大
+                    child: const CupertinoActivityIndicator(),
+                  ),
+                  const SizedBox(height: 10),
+                  const Text("Loading..."),
                 ],
               ),
             ),

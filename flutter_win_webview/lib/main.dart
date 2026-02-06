@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_win_webview/app_router_delegate.dart';
 import 'package:flutter_win_webview/overlays/global_loading_overlay.dart';
+import 'package:flutter_win_webview/overlays/loading_screen.dart';
+import 'package:flutter_win_webview/screenlibs/overlay_loading.dart';
 
 void main() {
   runApp(const ProviderScope(child: MyApp()));
@@ -17,7 +19,20 @@ class MyApp extends ConsumerWidget {
       routerDelegate: AppRouterDelegate(ref),
       routeInformationParser: const _NoopParser(),
       builder: (context, router) {
-        return GlobalLoadingOverlay(child: router!);
+        return Stack(
+          children: [
+            ?router,
+            Consumer(
+              builder: (context, ref, child) {
+                final isLoading = ref.watch(loadingScreenStateProvider);
+                if (isLoading) {
+                  return const OverlayLoading();
+                }
+                return const SizedBox.shrink();
+              },
+            ),
+          ],
+        );
       },
     );
   }
