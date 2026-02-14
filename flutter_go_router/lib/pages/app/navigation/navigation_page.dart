@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_go_router/pages/navigation/app_navigation_bar.dart';
+import 'package:flutter_go_router/pages/app/navigation/app_navigation_bar.dart';
 import 'package:go_router/go_router.dart';
 
 class NavigationPage extends StatelessWidget {
