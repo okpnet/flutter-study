@@ -12,14 +12,15 @@ part of 'auth_notifier.dart';
 @ProviderFor(AuthNotifier)
 final authProvider = AuthNotifierProvider._();
 
-final class AuthNotifierProvider extends $NotifierProvider<AuthNotifier, int> {
+final class AuthNotifierProvider
+    extends $AsyncNotifierProvider<AuthNotifier, ExpiredStateType> {
   AuthNotifierProvider._()
     : super(
         from: null,
         argument: null,
         retry: null,
         name: r'authProvider',
-        isAutoDispose: true,
+        isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
@@ -30,29 +31,22 @@ final class AuthNotifierProvider extends $NotifierProvider<AuthNotifier, int> {
   @$internal
   @override
   AuthNotifier create() => AuthNotifier();
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(int value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<int>(value),
-    );
-  }
 }
 
-String _$authNotifierHash() => r'f2392e620a7885d4016cfb90b92d9dea77972c88';
+String _$authNotifierHash() => r'f03c1082977c2ce0c34540e2c03161614eff8548';
 
-abstract class _$AuthNotifier extends $Notifier<int> {
-  int build();
+abstract class _$AuthNotifier extends $AsyncNotifier<ExpiredStateType> {
+  FutureOr<ExpiredStateType> build();
   @$mustCallSuper
   @override
   void runBuild() {
-    final ref = this.ref as $Ref<int, int>;
+    final ref =
+        this.ref as $Ref<AsyncValue<ExpiredStateType>, ExpiredStateType>;
     final element =
         ref.element
             as $ClassProviderElement<
-              AnyNotifier<int, int>,
-              int,
+              AnyNotifier<AsyncValue<ExpiredStateType>, ExpiredStateType>,
+              AsyncValue<ExpiredStateType>,
               Object?,
               Object?
             >;

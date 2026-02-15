@@ -5,15 +5,17 @@ import 'package:go_router/go_router.dart';
 
 part 'detail_router.g.dart';
 
-const String homeDetailpath = '/home/detail';
+const String homeDetailpath = 'detail/:id';
+const String homeDetailName = 'homeDetail';
 
-@TypedGoRoute<DetailRouter>(path: homeDetailpath)
+@TypedGoRoute<DetailRouter>(path: homeDetailpath, name: homeDetailName)
 class DetailRouter extends GoRouteData with $DetailRouter {
-  const DetailRouter();
+  final String id;
+  const DetailRouter({required this.id});
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
     // TODO: implement build
-    return home.DetailPage();
+    return home.DetailPage(id: id);
   }
 }

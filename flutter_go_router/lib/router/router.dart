@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_go_router/pages/app/navigation/homes/home_router.dart';
 import 'package:flutter_go_router/pages/error/error_page.dart';
-import 'package:flutter_go_router/pages/login/login_router.dart';
 import 'package:flutter_go_router/providers/redirect/redirect_controller.dart';
 import 'package:flutter_go_router/providers/refresh/refresh_listenable.dart';
 import 'package:go_router/go_router.dart';
@@ -12,11 +12,12 @@ part 'router.g.dart';
 GoRouter router(Ref ref) {
   return GoRouter(
     debugLogDiagnostics: true,
-    initialLocation: const LoginRouter().location,
+    initialLocation: const HomeRouter().location,
     routes: $appRoutes,
     refreshListenable: ref.read(refreshListenableProvider),
     redirect: (_, state) => ref.read(redirectControllerProvider).call(state),
-    errorPageBuilder: (context, state) =>
-        const MaterialPage(child: ErrorPage()),
+    errorPageBuilder: (context, state) {
+      return MaterialPage(child: ErrorPage());
+    },
   );
 }

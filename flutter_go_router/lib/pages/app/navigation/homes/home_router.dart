@@ -4,10 +4,10 @@ import 'package:go_router/go_router.dart';
 
 part 'home_router.g.dart';
 
-const String homeRouterPath = '/home';
+const String homeRouterPath = '/';
 const String homeRouterName = 'home';
 
-@TypedGoRoute<HomeRouter>(path: '/home', name: 'home')
+@TypedGoRoute<HomeRouter>(path: homeRouterPath, name: homeRouterName)
 class HomeRouter extends GoRouteData with $HomeRouter {
   const HomeRouter();
 

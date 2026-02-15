@@ -8,14 +8,21 @@ part of 'detail_router.dart';
 
 List<RouteBase> get $appRoutes => [$detailRouter];
 
-RouteBase get $detailRouter =>
-    GoRouteData.$route(path: '/home/detail', factory: $DetailRouter._fromState);
+RouteBase get $detailRouter => GoRouteData.$route(
+  path: 'detail/:id',
+  name: 'homeDetail',
+  factory: $DetailRouter._fromState,
+);
 
 mixin $DetailRouter on GoRouteData {
-  static DetailRouter _fromState(GoRouterState state) => const DetailRouter();
+  static DetailRouter _fromState(GoRouterState state) =>
+      DetailRouter(id: state.pathParameters['id']!);
+
+  DetailRouter get _self => this as DetailRouter;
 
   @override
-  String get location => GoRouteData.$location('/home/detail');
+  String get location =>
+      GoRouteData.$location('detail/${Uri.encodeComponent(_self.id)}');
 
   @override
   void go(BuildContext context) => context.go(location);

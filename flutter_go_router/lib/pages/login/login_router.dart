@@ -4,7 +4,10 @@ import 'package:go_router/go_router.dart';
 
 part 'login_router.g.dart';
 
-@TypedGoRoute<LoginRouter>(path: '/login', name: 'Login')
+const String loginPath = '/login';
+const String loginName = 'Login';
+
+@TypedGoRoute<LoginRouter>(path: loginPath, name: loginName)
 class LoginRouter extends GoRouteData with $LoginRouter {
   const LoginRouter();
 

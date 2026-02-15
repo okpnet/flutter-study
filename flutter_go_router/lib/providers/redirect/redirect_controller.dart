@@ -1,4 +1,5 @@
 import 'package:flutter_go_router/pages/login/login_router.dart';
+import 'package:flutter_go_router/providers/auth/auth_notifier.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -21,17 +22,21 @@ class RedirectController {
     // if (isMaintenanceMode) return _maintenanceGuard(fullPath);
 
     // ログイン状態を取得
-    // final isLoggedIn = await ref.read(isLoggedInProvider.future);
+    final authState = await ref.watch(authProvider.future);
 
     // ログインしているかどうかでリダイレクト先を決定
-    // if (isLoggedIn) return _authGuard(fullPath);
+    if (authState != ExpiredStateType.enabled) {
+      final location = _authGuard(fullPath);
+      return location;
+    }
 
-    // ログインしていない場合のリダイレクト処理
-    return _noAuthGuard(fullPath);
+    // ログインしている場合はリダイレクトしない
+    return null;
   }
 
-  String? _noAuthGuard(String? fullpath) {
+  String? _authGuard(String? fullPath) {
+    // ログイン状態がFailの場合はLoginRouterへリダイレクト
     final loginPath = const LoginRouter().location;
-    return loginPath != fullpath ? loginPath : null;
+    return loginPath != fullPath ? loginPath : null;
   }
 }

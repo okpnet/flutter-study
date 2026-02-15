@@ -18,13 +18,25 @@ RouteBase get $appRootRouter => ShellRouteData.$route(
         StatefulShellBranchData.$branch(
           routes: [
             GoRouteData.$route(
-              path: '/home',
+              path: '/',
               name: 'home',
               factory: $HomeRouter._fromState,
+              routes: [
+                GoRouteData.$route(
+                  path: 'detail/:id',
+                  name: 'homeDetail',
+                  factory: $DetailRouter._fromState,
+                ),
+              ],
             ),
           ],
         ),
       ],
+    ),
+    GoRouteData.$route(
+      path: '/login',
+      name: 'Login',
+      factory: $LoginRouter._fromState,
     ),
   ],
 );
@@ -42,7 +54,51 @@ mixin $HomeRouter on GoRouteData {
   static HomeRouter _fromState(GoRouterState state) => const HomeRouter();
 
   @override
-  String get location => GoRouteData.$location('/home');
+  String get location => GoRouteData.$location('/');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+mixin $DetailRouter on GoRouteData {
+  static DetailRouter _fromState(GoRouterState state) =>
+      DetailRouter(id: state.pathParameters['id']!);
+
+  DetailRouter get _self => this as DetailRouter;
+
+  @override
+  String get location =>
+      GoRouteData.$location('/detail/${Uri.encodeComponent(_self.id)}');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+mixin $LoginRouter on GoRouteData {
+  static LoginRouter _fromState(GoRouterState state) => const LoginRouter();
+
+  @override
+  String get location => GoRouteData.$location('/login');
 
   @override
   void go(BuildContext context) => context.go(location);
