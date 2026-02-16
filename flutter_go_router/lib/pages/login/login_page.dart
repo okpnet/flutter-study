@@ -15,7 +15,7 @@ class LoginPage extends ConsumerWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text("Hello World"),
+              const Text("ログインページ"),
               const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () {

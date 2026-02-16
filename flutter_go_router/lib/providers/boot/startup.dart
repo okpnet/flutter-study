@@ -7,5 +7,6 @@ part 'startup.g.dart';
 Future<void> startup(Ref ref) async {
   //ここでサービスの初期化する
   ref.read(authProvider);
-  await Future.delayed(Duration(seconds: 10));
+
+  await Future.delayed(Duration(seconds: 7));
 }

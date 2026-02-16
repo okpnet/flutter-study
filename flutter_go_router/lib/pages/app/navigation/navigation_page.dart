@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_go_router/pages/app/navigation/app_navigation_bar.dart';
+import 'package:flutter_go_router/pages/app/navigation/app_bttom_navbar.dart';
+import 'package:flutter_go_router/pages/app/navigation/app_top_navbar.dart';
 import 'package:go_router/go_router.dart';
 
 class NavigationPage extends StatelessWidget {
@@ -12,9 +13,14 @@ class NavigationPage extends StatelessWidget {
     return PopScope(
       canPop: false,
       child: Scaffold(
+        appBar: _createAppTopBar(),
         body: navigationShell,
-        bottomNavigationBar: AppNavigationBar(navigationShell: navigationShell),
+        bottomNavigationBar: AppBottomNavbar(navigationShell: navigationShell),
       ),
     );
+  }
+
+  AppBar _createAppTopBar() {
+    return AppBar(title: const Text('Test'));
   }
 }

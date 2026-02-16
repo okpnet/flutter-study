@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'startup.dart';
+part of 'app_state_routing.dart';
 
 // **************************************************************************
 // RiverpodGenerator
@@ -9,25 +9,25 @@ part of 'startup.dart';
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
 
-@ProviderFor(startup)
-final startupProvider = StartupProvider._();
+@ProviderFor(appStateRouting)
+final appStateRoutingProvider = AppStateRoutingProvider._();
 
-final class StartupProvider
+final class AppStateRoutingProvider
     extends $FunctionalProvider<AsyncValue<void>, void, FutureOr<void>>
     with $FutureModifier<void>, $FutureProvider<void> {
-  StartupProvider._()
+  AppStateRoutingProvider._()
     : super(
         from: null,
         argument: null,
         retry: null,
-        name: r'startupProvider',
+        name: r'appStateRoutingProvider',
         isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
 
   @override
-  String debugGetCreateSourceHash() => _$startupHash();
+  String debugGetCreateSourceHash() => _$appStateRoutingHash();
 
   @$internal
   @override
@@ -36,8 +36,8 @@ final class StartupProvider
 
   @override
   FutureOr<void> create(Ref ref) {
-    return startup(ref);
+    return appStateRouting(ref);
   }
 }
 
-String _$startupHash() => r'80530dc0ad37ad3232586c599568b9c672d5a2f8';
+String _$appStateRoutingHash() => r'81a98990b37fac0559b97b468ee526f1e4c2af80';

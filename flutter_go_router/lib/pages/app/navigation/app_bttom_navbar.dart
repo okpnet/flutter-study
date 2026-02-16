@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-class AppNavigationBar extends StatelessWidget {
+class AppBottomNavbar extends StatelessWidget {
   final StatefulNavigationShell navigationShell;
-  const AppNavigationBar({required this.navigationShell, super.key});
+  const AppBottomNavbar({required this.navigationShell, super.key});
 
   @override
   Widget build(BuildContext context) {
