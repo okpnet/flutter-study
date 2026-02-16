@@ -6,6 +6,7 @@ import 'package:flutter_go_router/pages/app/navigation/homes/home_router.dart';
 import 'package:flutter_go_router/pages/app/navigation/navigation_root_router.dart';
 import 'package:flutter_go_router/pages/login/login_page.dart';
 import 'package:flutter_go_router/pages/login/login_router.dart';
+import 'package:flutter_go_router/pages/logout/logout_router.dart';
 import 'package:go_router/go_router.dart';
 
 part 'app_root_router.g.dart';
@@ -33,6 +34,7 @@ final shellNavigatorKey = GlobalKey<NavigatorState>();
       ],
     ),
     TypedGoRoute<LoginRouter>(path: loginPath, name: loginName),
+    TypedGoRoute<LogoutRouter>(path: logoutPath, name: logoutName),
   ],
 )
 class AppRootRouter extends ShellRouteData {

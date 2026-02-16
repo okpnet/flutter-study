@@ -38,6 +38,11 @@ RouteBase get $appRootRouter => ShellRouteData.$route(
       name: 'Login',
       factory: $LoginRouter._fromState,
     ),
+    GoRouteData.$route(
+      path: '/logout',
+      name: 'Logout',
+      factory: $LogoutRouter._fromState,
+    ),
   ],
 );
 
@@ -99,6 +104,26 @@ mixin $LoginRouter on GoRouteData {
 
   @override
   String get location => GoRouteData.$location('/login');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+mixin $LogoutRouter on GoRouteData {
+  static LogoutRouter _fromState(GoRouterState state) => const LogoutRouter();
+
+  @override
+  String get location => GoRouteData.$location('/logout');
 
   @override
   void go(BuildContext context) => context.go(location);
