@@ -1,8 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_go_router/pages/login/login_router.dart';
 import 'package:flutter_go_router/providers/app_state_routing/app_state_routing.dart';
-import 'package:flutter_go_router/providers/auth/auth_notifier.dart';
 import 'package:flutter_go_router/providers/boot/startup.dart';
 import 'package:flutter_go_router/router/router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

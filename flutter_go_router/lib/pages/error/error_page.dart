@@ -3,7 +3,8 @@ import 'package:flutter_go_router/pages/app/navigation/homes/home_router.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 
 class ErrorPage extends HookWidget {
-  const ErrorPage({super.key});
+  final Exception? exception;
+  const ErrorPage({this.exception, super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -1,7 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_go_router/providers/auth/auth_notifier.dart';
+import 'package:flutter_go_router/pages/shared_controlls/shared_logout_button.dart';
 import 'package:flutter_go_router/router/router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -26,16 +26,7 @@ class DetailPage extends ConsumerWidget {
             label: const Text("戻る"),
           ),
           const SizedBox(height: 20),
-          ElevatedButton.icon(
-            icon: Icon(Icons.logout),
-            onPressed: () {
-              log("ログアウトが押されました");
-              ref
-                  .watch(authProvider.notifier)
-                  .changeState(ExpiredStateType.signedOut);
-            },
-            label: const Text("ログアウト"),
-          ),
+          SharedLogoutButton(),
         ],
       ),
     );

@@ -13,7 +13,7 @@ GoRouter router(Ref ref) {
   return GoRouter(
     debugLogDiagnostics: true,
     initialLocation: loginPath,
-    routes: app_root.$appRoutes,
+    routes: app_root.$appRoutes, //ルートの$appRoutesでなければ、全てのGoRouteDataが含まれていない。
     refreshListenable: ref.read(refreshListenableProvider),
     //redirect: (_, state) => ref.read(redirectControllerProvider).call(state),
     errorPageBuilder: (context, state) {

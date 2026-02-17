@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_go_router/pages/logout/logout_page.dart';
 import 'package:go_router/go_router.dart';
 
 part 'logout_router.g.dart';
@@ -11,7 +12,6 @@ class LogoutRouter extends GoRouteData with $LogoutRouter {
   const LogoutRouter();
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    // TODO: implement build
-    return super.build(context, state);
+    return LogoutPage();
   }
 }
