@@ -24,12 +24,12 @@ class LogoutPage extends HookConsumerWidget {
       Future<void> run() async {
         try {
           // 経過秒カウント
-          final tickTimer = ref.read(customTimerProvider(1));
+          final tickTimer = ref.watch(customTimerProvider(1));
           tickTimer.periodicStart((t) {
             // t.tick は 1,2,3,... と増加
             seconds.value = t.tick;
           });
-          final timeoutTimer = ref.read(customTimerProvider(30));
+          final timeoutTimer = ref.watch(customTimerProvider(30));
           timeoutTimer.timer(() {
             if (!isProcessing.value) return; // 既に完了しているなら何もしない
             isProcessing.value = false;
