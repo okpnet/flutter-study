@@ -1,7 +1,7 @@
 import 'dart:developer';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_go_router/pages/shared_controlls/overlay_indicator.dart';
 import 'package:flutter_go_router/providers/auth/auth_notifier.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -55,15 +55,7 @@ class LoginPage extends HookConsumerWidget {
             ),
 
             // ローディング時は全画面ブロック + CupertinoActivityIndicator を表示
-            if (isLoading.value) ...[
-              // 操作をブロック（タップ無効化）
-              const ModalBarrier(
-                dismissible: false,
-                color: Colors.black26, // 半透明で操作不能を示す
-              ),
-              // 中央にインジケータ表示
-              const Center(child: CupertinoActivityIndicator(radius: 16)),
-            ],
+            OverlayIndicator(show: isLoading.value),
           ],
         ),
       ),

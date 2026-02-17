@@ -47,7 +47,8 @@ class LogoutPage extends HookConsumerWidget {
               .read(authProvider.notifier)
               .changeState(ExpiredStateType.signedOut)
               .whenComplete(() {
-                dispose();
+                //ここでタイマーは停止する
+                //dispose();
                 log('logout timer dispose');
               });
 
@@ -63,7 +64,7 @@ class LogoutPage extends HookConsumerWidget {
             _goError(ex, ref);
           }
         } finally {
-          // タイマーは必ず止める
+          // ここでタイマーは停止する
           dispose();
           log('finally timer stoped');
         }
@@ -73,8 +74,8 @@ class LogoutPage extends HookConsumerWidget {
       run();
 
       return () {
-        // タイマーは必ず止める
-        dispose();
+        // ここでタイマーは止まらない
+        //dispose();
         log('return tyimer stoped');
       };
     }, []);
