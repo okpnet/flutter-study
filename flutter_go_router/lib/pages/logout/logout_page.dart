@@ -1,8 +1,8 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_go_router/pages/error/error_router.dart';
-import 'package:flutter_go_router/pages/logout/scope_provider/timers.dart';
 import 'package:flutter_go_router/providers/auth/auth_notifier.dart';
 import 'package:flutter_go_router/router/router.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -17,20 +17,24 @@ class LogoutPage extends HookConsumerWidget {
     final isProcessing = useState<bool>(true);
     final isMounted = context.mounted;
 
-    useEffect(() {
-      // Timer? tickTimer;
-      // Timer? timeoutTimer;
+    Timer? counterTimer;
+    Timer? timeoutTimer;
 
+    void dispose() {
+      counterTimer?.cancel();
+      timeoutTimer?.cancel();
+    }
+
+    useEffect(() {
       Future<void> run() async {
         try {
-          // 経過秒カウント
-          final tickTimer = ref.watch(customTimerProvider(1));
-          tickTimer.periodicStart((t) {
+          counterTimer = Timer.periodic(const Duration(seconds: 1), (t) {
             // t.tick は 1,2,3,... と増加
             seconds.value = t.tick;
+            log('カウント:${seconds.value}');
           });
-          final timeoutTimer = ref.watch(customTimerProvider(30));
-          timeoutTimer.timer(() {
+
+          timeoutTimer = Timer(const Duration(seconds: 30), () {
             if (!isProcessing.value) return; // 既に完了しているなら何もしない
             isProcessing.value = false;
 
@@ -38,26 +42,14 @@ class LogoutPage extends HookConsumerWidget {
             // ErrorRouter での遷移
             _goError(ex, ref);
           });
-          // tickTimer = Timer.periodic(const Duration(seconds: 1), (t) {
-          //   // t.tick は 1,2,3,... と増加
-          //   seconds.value = t.tick;
-          // });
-
-          // 30秒タイムアウト
-
-          // timeoutTimer = Timer(const Duration(seconds: 30), () {
-          //   if (!isProcessing.value) return; // 既に完了しているなら何もしない
-          //   isProcessing.value = false;
-
-          //   final ex = TimeoutException('ログアウトがタイムアウトしました（30秒）');
-          //   // ErrorRouter での遷移
-          //   _goError(ex, ref);
-          // });
-
-          // ログアウト実行（約6秒）
+          // await Future.delayed(const Duration(seconds: 60));
           await ref
               .read(authProvider.notifier)
-              .changeState(ExpiredStateType.signedOut);
+              .changeState(ExpiredStateType.signedOut)
+              .whenComplete(() {
+                dispose();
+                log('logout timer dispose');
+              });
 
           // 成功: Riverpod側で遷移する想定。ここでは状態更新のみ。
           if (isMounted) {
@@ -72,19 +64,19 @@ class LogoutPage extends HookConsumerWidget {
           }
         } finally {
           // タイマーは必ず止める
-          // if (timeoutTimer?.isActive ?? false) timeoutTimer!.cancel();
-          // if (tickTimer?.isActive ?? false) tickTimer!.cancel();
+          dispose();
+          log('finally timer stoped');
         }
       }
 
       // ページ表示直後に開始
       run();
 
-      // アンマウント時にタイマー停止
-      // return () {
-      //   if (timeoutTimer?.isActive ?? false) timeoutTimer!.cancel();
-      //   if (tickTimer?.isActive ?? false) tickTimer!.cancel();
-      // };
+      return () {
+        // タイマーは必ず止める
+        dispose();
+        log('return tyimer stoped');
+      };
     }, []);
 
     return Scaffold(

@@ -15,7 +15,7 @@ class ErrorPage extends HookWidget {
           builder: (context) {
             return AlertDialog(
               title: const Text('ERROR'),
-              content: const Text('PAGE NOT FOUND'),
+              content: Text(exception?.toString() ?? ''),
               actions: [
                 TextButton(
                   onPressed: () => Navigator.of(context).pop(true),
