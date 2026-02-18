@@ -46,7 +46,7 @@ Future<void> initialize(Ref ref, int port) async {
 @Riverpod(keepAlive: true)
 IAuthUriModel authUriModel(Ref ref) {
   final uriModel = KeycloakUriModel.generate(
-    keycloakUrl: 'https://qmspi.local:8443/',
+    keycloakUrl: 'https://qmspi.local:8443',
     // keycloakUrl: 'https://okp-04.local:8443',
     clientId: 'qual-app',
     realms: 'pms',

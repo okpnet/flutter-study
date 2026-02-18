@@ -145,7 +145,7 @@ class _InitializeProviderElement extends FutureProviderElement<void>
   int get port => (origin as InitializeProvider).port;
 }
 
-String _$authUriModelHash() => r'ae125f4c8b739b2c75da2b0de5ba7c2455cffe50';
+String _$authUriModelHash() => r'e44bd172bbab8467d000a9f55d754d178d1c3910';
 
 /// 接続モデル（Keycloak の URI 構成）
 ///
