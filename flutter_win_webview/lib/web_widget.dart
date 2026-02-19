@@ -19,27 +19,32 @@ class WebWidget extends HookConsumerWidget {
 
     final uriModel = ref.watch(authUriModelProvider);
     final pageState = useState<WebViewState>(WebViewState.none);
-
+    ref.watch(callBackServerProvider(port: DEFAULT_PORT).future);
     useEffect(() {
       Future<void> run() async {
         pageState.value = WebViewState.initiControler;
         try {
-          await ref.watch(callBackServerProvider(port: DEFAULT_PORT).future);
-          await controller!.clearCache();
-          await controller!.loadRequest(uriModel.authorizationUrl);
-          await controller!.setNavigationDelegate(
-            NavigationDelegate(
-              onPageStarted: (url) {
-                log('loading:$url');
-                pageState.value = WebViewState.pageLoading;
-              },
-              onPageFinished: (url) {
-                log('loading:$url');
-                pageState.value = WebViewState.pageLoaded;
-              },
-              onProgress: (progress) => log('progress:$progress'),
-            ),
-          );
+          //await controller!.clearCache();
+          await ref
+              .watch(callBackServerProvider(port: DEFAULT_PORT).future)
+              .whenComplete(() async {
+                await controller!.loadRequest(uriModel.authorizationUrl);
+                await controller!.setNavigationDelegate(
+                  NavigationDelegate(
+                    onPageStarted: (url) {
+                      log('loading:$url');
+                      pageState.value = WebViewState.pageLoading;
+                    },
+                    onPageFinished: (url) {
+                      log('loading:$url');
+                      pageState.value = WebViewState.pageLoaded;
+                    },
+                    onHttpError: (error) =>
+                        log('HTTP Errorerror:${error.toString()}'),
+                    //onProgress: (progress) => log('progress:$progress'),
+                  ),
+                );
+              });
         } catch (e) {
           log(e.toString());
         }
@@ -55,94 +60,32 @@ class WebWidget extends HookConsumerWidget {
       appBar: AppBar(title: const Text('Web Widget')),
       body: Center(
         child: Stack(
+          //ColumnにするとWebViewは機能しない。表示しない。
+          alignment: Alignment.center,
           children: [
-            Center(
-              child: switch (pageState.value) {
-                WebViewState.initiControler => Column(
+            WebViewWidget(controller: controller!),
+            if (pageState.value != WebViewState.pageLoaded)
+              Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize
+                      .min, //高さ方向（Columnなので当然）で最小にすると、親のCenterが効いて、上下中央に配置される。
                   children: [
                     Transform.scale(
                       scale: 2.0, // ← ここで2倍に拡大
                       child: const CupertinoActivityIndicator(),
                     ),
                     const SizedBox(height: 16),
-                    Text('初期化中...'),
+                    switch (pageState.value) {
+                      WebViewState.initiControler => const Text('初期化中...'),
+                      WebViewState.pageLoading => const Text('ページ読み込み中...'),
+                      _ => SizedBox.shrink(),
+                    },
                   ],
                 ),
-                WebViewState.pageLoading => Column(
-                  children: [
-                    Transform.scale(
-                      scale: 2.0, // ← ここで2倍に拡大
-                      child: const CupertinoActivityIndicator(),
-                    ),
-                    const SizedBox(height: 16),
-                    Text('ページロード中...'),
-                  ],
-                ),
-                WebViewState.none => Column(
-                  children: [
-                    Transform.scale(
-                      scale: 2.0, // ← ここで2倍に拡大
-                      child: const CupertinoActivityIndicator(),
-                    ),
-                    const SizedBox(height: 16),
-                    Text('処理中...'),
-                  ],
-                ),
-                _ => SizedBox.shrink(),
-              },
-            ),
+              ),
           ],
         ),
       ),
     );
   }
 }
-
-// class _WebWidgetState extends ConsumerState<WebWidget> {
-//   @override
-//   Widget build(BuildContext context) {
-//     WebViewController? controller = WebViewController();
-//     controller.setJavaScriptMode(JavaScriptMode.unrestricted);
-
-//     final uriModel = ref.watch(authUriModelProvider);
-//     return FutureBuilder(
-//       future: (() async {
-//         try {
-//           await ref.watch(callBackServerProvider(port: DEFAULT_PORT).future);
-//           await controller.clearCache();
-//           await controller.loadRequest(uriModel.authorizationUrl);
-//           return true;
-//         } catch (e) {
-//           log(e.toString());
-//           return false;
-//         }
-//       })(),
-//       builder: (context, snapshot) {
-//         if (snapshot.connectionState == ConnectionState.waiting) {
-//           return Scaffold(
-//             appBar: AppBar(title: const Text('Web Widget')),
-//             body: Center(
-//               child: Column(
-//                 mainAxisSize: MainAxisSize.min,
-//                 children: [
-//                   CupertinoActivityIndicator(),
-//                   SizedBox(height: 20),
-//                   Text("Connecting keycloak..."),
-//                 ],
-//               ),
-//             ),
-//           );
-//         }
-
-//         if (snapshot.hasError) {
-//           throw Exception('move errorpage');
-//         }
-
-//         return Scaffold(
-//           appBar: AppBar(title: const Text('Web Widget')),
-//           body: WebViewWidget(controller: controller),
-//         );
-//       },
-//     );
-//   }
-// }

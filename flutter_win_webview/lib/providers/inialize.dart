@@ -47,7 +47,7 @@ Future<void> initialize(Ref ref, int port) async {
 IAuthUriModel authUriModel(Ref ref) {
   final uriModel = KeycloakUriModel.generate(
     keycloakUrl: 'https://qmspi.local:8443',
-    // keycloakUrl: 'https://okp-04.local:8443',
+    //keycloakUrl: 'https://okp-04.local:8443',
     clientId: 'qual-app',
     realms: 'pms',
     redirectUri: 'http://127.0.0.1:45035/callback',
