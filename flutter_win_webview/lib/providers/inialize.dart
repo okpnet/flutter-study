@@ -32,11 +32,11 @@ Future<void> initialize(Ref ref, int port) async {
   //
   //callBackServerProviderがkeycloakProviderを参照するので、そのときに作られてしまう。
   //ここで先にkeycloakProviderを作成しておく。
-  ref.watch(authStateProvider);
-  ref.watch(authUriModelProvider);
-  ref.watch(readerWriterProvider);
-  ref.watch(expiredHandlerProvider);
-  ref.watch(keycloakProvider);
+  ref.read(authStateProvider);
+  ref.read(authUriModelProvider);
+  ref.read(readerWriterProvider);
+  ref.read(expiredHandlerProvider);
+  ref.read(keycloakProvider);
 
   await Future.delayed(const Duration(seconds: 5));
   log('initialize: Initialization completed on port $port');
