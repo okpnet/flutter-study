@@ -45,7 +45,9 @@ dependencies:
   http: #^1.6.0
   flutter_secure_storage: #^10.0.0
   jwt_decode: #^0.3.1
-
+  dart_mappable: #^4.6.1
+  dart_mappable_builder: #^4.6.4
+  talker:
 dev_dependencies:
   flutter_test:
     sdk: flutter
