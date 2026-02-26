@@ -1,4 +1,4 @@
-import 'package:flutter_win_webview_go_router/services/logger/ilogger.dart';
+import 'package:auther_controller/logger/ilogger.dart';
 import 'package:talker/talker.dart';
 
 class Logger implements ILogger {

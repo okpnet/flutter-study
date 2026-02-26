@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'initialize.dart';
+part of 'statup.dart';
 
 // **************************************************************************
 // RiverpodGenerator
@@ -9,25 +9,25 @@ part of 'initialize.dart';
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
 
-@ProviderFor(initilalize)
-final initilalizeProvider = InitilalizeProvider._();
+@ProviderFor(startup)
+final startupProvider = StartupProvider._();
 
-final class InitilalizeProvider
+final class StartupProvider
     extends $FunctionalProvider<AsyncValue<void>, void, FutureOr<void>>
     with $FutureModifier<void>, $FutureProvider<void> {
-  InitilalizeProvider._()
+  StartupProvider._()
     : super(
         from: null,
         argument: null,
         retry: null,
-        name: r'initilalizeProvider',
+        name: r'startupProvider',
         isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
 
   @override
-  String debugGetCreateSourceHash() => _$initilalizeHash();
+  String debugGetCreateSourceHash() => _$startupHash();
 
   @$internal
   @override
@@ -36,8 +36,8 @@ final class InitilalizeProvider
 
   @override
   FutureOr<void> create(Ref ref) {
-    return initilalize(ref);
+    return startup(ref);
   }
 }
 
-String _$initilalizeHash() => r'd65466abdccbccd20ae23d241c26c31a4e7f4abd';
+String _$startupHash() => r'754cf35e4e216c3bf2f1e5f82e987b3aeb17e672';
