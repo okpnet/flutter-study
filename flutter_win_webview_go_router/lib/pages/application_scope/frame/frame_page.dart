@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_win_webview_go_router/pages/application_scope/frame/navigationbars/bottom_bar_content.dart';
+import 'package:flutter_win_webview_go_router/pages/_shared/navigationbars/bottom_bar_content.dart';
 import 'package:go_router/go_router.dart';
 
 class FramePage extends StatelessWidget {

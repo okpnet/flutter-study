@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_go_router/pages/error/error_page.dart';
 import 'package:flutter_go_router/pages/login/login_router.dart';
 import 'package:flutter_go_router/providers/refresh/refresh_listenable.dart';
-import 'package:flutter_win_webview_go_router/pages/error/error_page.dart';
+import 'package:flutter_win_webview_go_router/pages/generarl_scope/error/error_page.dart';
 import 'package:flutter_win_webview_go_router/provider/refresh_listener/refresh_listenable.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';

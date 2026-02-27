@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_win_webview_go_router/pages/application_scope/frame/frame_router.dart';
-import 'package:flutter_win_webview_go_router/pages/error/error_router.dart';
-import 'package:flutter_win_webview_go_router/pages/page_controller/page_controller_page.dart';
+import 'package:flutter_win_webview_go_router/pages/generarl_scope/error/error_router.dart';
+import 'package:flutter_win_webview_go_router/pages/_controller/page_controller_page.dart';
 import 'package:go_router/go_router.dart';
 
-part 'app_root_router.g.dart';
+part '../page_controller/app_root_router.g.dart';
 
 final shellNavigatorKey = GlobalKey<NavigatorState>();
 

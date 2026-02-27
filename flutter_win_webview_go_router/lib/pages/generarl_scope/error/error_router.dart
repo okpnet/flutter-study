@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_win_webview_go_router/pages/error/error_page.dart';
+import 'package:flutter_win_webview_go_router/pages/generarl_scope/error/error_page.dart';
 import 'package:go_router/go_router.dart';
 
 part 'error_router.g.dart';

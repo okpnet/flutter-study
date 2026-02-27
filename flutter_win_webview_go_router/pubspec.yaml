@@ -48,11 +48,11 @@ dependencies:
   dart_mappable: #^4.6.1
   dart_mappable_builder: #^4.6.4
   talker:
-  auther_controller:
+  pms_authenticator:
     git:
       url: https://github.com/okpnet/flutter-pms.git
-      path: auther
-      ref: 1152fcab927735a9e8a85415a968b96833325c24
+      path: pms_authenticator
+      ref: 4e69845cbf71ed969a436b4fd96378aaed105b73
 dev_dependencies:
   flutter_test:
     sdk: flutter
