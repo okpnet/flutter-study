@@ -52,7 +52,7 @@ dependencies:
     git:
       url: https://github.com/okpnet/flutter-pms.git
       path: pms_authenticator
-      ref: 4e69845cbf71ed969a436b4fd96378aaed105b73
+      ref: d174f2cd32eedbf56123a9bd4fb4726bf6b240d7
 dev_dependencies:
   flutter_test:
     sdk: flutter

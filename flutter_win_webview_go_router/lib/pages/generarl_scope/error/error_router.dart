@@ -4,10 +4,12 @@ import 'package:go_router/go_router.dart';
 
 part 'error_router.g.dart';
 
-const String errorPath = '/error';
-const String errorName = 'Error';
+class ErrorConstant {
+  static const String path = '/error';
+  static const String name = 'Error';
+}
 
-@TypedGoRoute<ErrorRouter>(path: errorPath, name: errorName)
+@TypedGoRoute<ErrorRouter>(path: ErrorConstant.path, name: ErrorConstant.name)
 class ErrorRouter extends GoRouteData with $ErrorRouter {
   const ErrorRouter();
 

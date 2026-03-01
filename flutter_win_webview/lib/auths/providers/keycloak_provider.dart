@@ -113,6 +113,9 @@ final class KeycloakProvider with WebAuthMixin implements IAuthProvider {
           PostType.logout => keycloakModel.logoutUrl,
           _ => keycloakModel.tokenUrl,
         };
+        log('uri:$postUri');
+        log('body:${body.toString()}');
+
         //自己証明書エラー可否
         HttpOverrides.global = PermitInvalidCertification();
         final res = await http.post(
