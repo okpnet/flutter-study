@@ -5,8 +5,8 @@ import 'package:go_router/go_router.dart';
 part 'dashboard_router.g.dart';
 
 class DashboradConstant {
-  static const String path = '/';
-  static const String name = 'dashboard';
+  static const String path = '/dashboard';
+  static const String name = 'Dashboard';
 }
 
 @TypedGoRoute<DashboardRouter>(

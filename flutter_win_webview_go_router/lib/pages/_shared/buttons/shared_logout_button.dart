@@ -14,14 +14,16 @@ class SharedLogoutButton extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isLogout = useState<bool>(false);
+    final authprovider = ref.read(authControllerProvider.notifier);
     return Stack(
       children: [
         ElevatedButton.icon(
           icon: Icon(Icons.logout),
           onPressed: () {
             log("ログアウトが押されました");
-            ref.read(authControllerProvider.notifier).logout();
-            ref.read(rootRouterProvider).go(LogoutConstant.path, extra: ref);
+
+            authprovider.logout();
+            // ref.read(rootRouterProvider).go(LogoutConstant.path, extra: ref);
             // ref.watch(authProvider.notifier).changeState(ExpiredStateType.signedOut);
           },
           label: const Text("ログアウト"),

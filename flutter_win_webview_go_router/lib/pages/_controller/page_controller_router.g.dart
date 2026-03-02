@@ -18,8 +18,8 @@ RouteBase get $pageControllerRouter => ShellRouteData.$route(
         StatefulShellBranchData.$branch(
           routes: [
             GoRouteData.$route(
-              path: '/',
-              name: 'dashboard',
+              path: '/dashboard',
+              name: 'Dashboard',
               factory: $DashboardRouter._fromState,
               routes: [
                 GoRouteData.$route(
@@ -65,7 +65,7 @@ mixin $DashboardRouter on GoRouteData {
       const DashboardRouter();
 
   @override
-  String get location => GoRouteData.$location('/');
+  String get location => GoRouteData.$location('/dashboard');
 
   @override
   void go(BuildContext context) => context.go(location);
@@ -88,8 +88,9 @@ mixin $DashboardDetailRouter on GoRouteData {
   DashboardDetailRouter get _self => this as DashboardDetailRouter;
 
   @override
-  String get location =>
-      GoRouteData.$location('/detail/${Uri.encodeComponent(_self.id)}');
+  String get location => GoRouteData.$location(
+    '/dashboard/detail/${Uri.encodeComponent(_self.id)}',
+  );
 
   @override
   void go(BuildContext context) => context.go(location);

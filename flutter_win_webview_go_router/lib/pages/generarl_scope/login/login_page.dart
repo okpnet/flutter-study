@@ -1,8 +1,8 @@
 import 'dart:developer';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:flutter_win_webview_go_router/pages/_shared/indicator/overlay_indicator.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:pms_authenticator/auth_controller.dart';
@@ -14,36 +14,42 @@ class LoginPage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final pageState = useState<bool>(true);
-
+    final pageState = useState<WebViewState>(WebViewState.none);
     WebViewController? controller = useMemoized(() => WebViewController());
     controller!.setJavaScriptMode(JavaScriptMode.unrestricted);
     final authController = ref.watch(authControllerProvider.notifier);
 
     useEffect(() {
+      controller!.setNavigationDelegate(
+        NavigationDelegate(
+          onPageStarted: (url) {
+            log('onPageStarted: $url');
+            pageState.value = WebViewState.pageLoading;
+          },
+          onPageFinished: (url) {
+            log('onPageFinished: $url');
+            pageState.value = WebViewState.pageLoaded;
+          },
+          onWebResourceError: (error) {
+            log('onWebResourceError: ${error.description}');
+            pageState.value = WebViewState.none;
+          },
+        ),
+      );
       Future<void> run() async {
+        pageState.value = WebViewState.initiControler;
         await controller!.loadRequest(authController.loginUri!);
-        pageState.value = false;
       }
 
       run();
-      return () {
-        //dispose
-        controller = null;
-      };
-    });
+      return null;
+      // return () {
+      //   //dispose
+      //   controller = null;
+      // };
+    }, []);
 
-    return Material(
-      child: Scaffold(
-        body: Stack(
-          children: [
-            WebViewWidget(controller: controller!),
-            // ローディング時は全画面ブロック + CupertinoActivityIndicator を表示
-            OverlayIndicator(show: pageState.value),
-          ],
-        ),
-      ),
-    );
+    return _buildWebView(pageState.value, controller!);
   }
 
   Widget _buildWebView(WebViewState state, WebViewController controller) {
@@ -56,15 +62,16 @@ class LoginPage extends HookConsumerWidget {
     }
     return Material(
       child: Center(
-        child: Stack(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            CircularProgressIndicator(),
+            // 処理中インジケータ
+            CupertinoActivityIndicator(),
+            SizedBox(height: 20),
             switch (state) {
-              WebViewState.initiControler => const Text(
-                'WebViewControllerの初期化中...',
-              ),
-              WebViewState.pageLoading => const Text('ページを読み込み中...'),
-              _ => const SizedBox.shrink(),
+              WebViewState.initiControler => const Text('WEB initialize...'),
+              WebViewState.pageLoading => const Text('loading...'),
+              _ => const Text('initialize...'),
             },
           ],
         ),

@@ -1,6 +1,5 @@
 import 'package:flutter_win_webview_go_router/constants/constant_configure.dart';
 import 'package:flutter_win_webview_go_router/logging/my_logger.dart';
-import 'package:flutter_win_webview_go_router/pages/application_scope/dashboard/details/dashboard_detail_router.dart';
 import 'package:flutter_win_webview_go_router/pages/application_scope/dashboard/root/dashboard_router.dart';
 import 'package:flutter_win_webview_go_router/pages/generarl_scope/error/error_router.dart';
 import 'package:flutter_win_webview_go_router/pages/generarl_scope/logout/logout_router.dart';

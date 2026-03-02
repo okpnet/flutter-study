@@ -9,8 +9,8 @@ part of 'dashboard_router.dart';
 List<RouteBase> get $appRoutes => [$dashboardRouter];
 
 RouteBase get $dashboardRouter => GoRouteData.$route(
-  path: '/',
-  name: 'dashboard',
+  path: '/dashboard',
+  name: 'Dashboard',
   factory: $DashboardRouter._fromState,
 );
 
@@ -19,7 +19,7 @@ mixin $DashboardRouter on GoRouteData {
       const DashboardRouter();
 
   @override
-  String get location => GoRouteData.$location('/');
+  String get location => GoRouteData.$location('/dashboard');
 
   @override
   void go(BuildContext context) => context.go(location);
