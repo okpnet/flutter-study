@@ -40,4 +40,4 @@ final class StartupProvider
   }
 }
 
-String _$startupHash() => r'754cf35e4e216c3bf2f1e5f82e987b3aeb17e672';
+String _$startupHash() => r'507ff3e331d90c32f8669f91f429cfcfc268bdd6';

@@ -1,7 +1,9 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter_win_webview_go_router/constants/constant_configure.dart';
+import 'package:flutter_win_webview_go_router/logging/my_logger.dart';
 import 'package:flutter_win_webview_go_router/pages/application_scope/dashboard/details/dashboard_detail_router.dart';
+import 'package:flutter_win_webview_go_router/pages/application_scope/dashboard/root/dashboard_router.dart';
 import 'package:flutter_win_webview_go_router/pages/generarl_scope/error/error_router.dart';
+import 'package:flutter_win_webview_go_router/pages/generarl_scope/logout/logout_router.dart';
 import 'package:flutter_win_webview_go_router/provider/router/root_router.dart';
 import 'package:pms_authenticator/auth_controller.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -19,7 +21,7 @@ Future<void> startup(Ref ref) async {
         realms: ConstantConfigure.KEYCLOAK_RELMS,
         clientId: ConstantConfigure.KEYCLOAK_CLIENT_ID,
         redirectUrl: ConstantConfigure.KEYCLOAK_REDIRECT_URL,
-        logger: Logger(),
+        logger: MyLogger(),
       );
   ref.listen(authControllerProvider, (prev, next) {
     final router = ref.read(rootRouterProvider);
@@ -27,12 +29,18 @@ Future<void> startup(Ref ref) async {
       case AuthStateType.fail:
         router.go(ErrorConstant.path);
         break;
-      case AuthStateType.expired:
+      case AuthStateType.authenticated:
+        if (prev != AuthStateType.signedOut) {
+          return;
+        }
         if (router.canPop()) {
           router.pop();
         } else {
-          router.go(DashboardDetailConstant.path);
+          router.go(DashboradConstant.path);
         }
+        break;
+      case AuthStateType.signedOut:
+        router.go(LogoutConstant.path);
         break;
       default:
         return;
