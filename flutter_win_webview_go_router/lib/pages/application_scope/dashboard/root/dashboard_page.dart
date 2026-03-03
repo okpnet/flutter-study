@@ -25,7 +25,7 @@ class DashboardPage extends ConsumerWidget {
                   .read(rootRouterProvider)
                   .pushNamed(
                     DashboardDetailConstant.name,
-                    extra: {'id': '123'},
+                    pathParameters: {'id': '123'}, // ここでは例として '123' を渡す
                   );
             },
             label: const Text("詳細"),

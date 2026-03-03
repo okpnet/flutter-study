@@ -6,7 +6,6 @@ import 'package:flutter_win_webview_go_router/pages/_shared/indicator/overlay_in
 import 'package:flutter_win_webview_go_router/pages/generarl_scope/logout/logout_router.dart';
 import 'package:flutter_win_webview_go_router/provider/router/root_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:pms_authenticator/provider/auth_controller.dart';
 
 class SharedLogoutButton extends HookConsumerWidget {
   const SharedLogoutButton({super.key});
@@ -14,17 +13,16 @@ class SharedLogoutButton extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isLogout = useState<bool>(false);
-    final authprovider = ref.read(authControllerProvider.notifier);
+
     return Stack(
       children: [
         ElevatedButton.icon(
           icon: Icon(Icons.logout),
           onPressed: () {
             log("ログアウトが押されました");
-
-            authprovider.logout();
-            // ref.read(rootRouterProvider).go(LogoutConstant.path, extra: ref);
-            // ref.watch(authProvider.notifier).changeState(ExpiredStateType.signedOut);
+            ref
+                .read(rootRouterProvider)
+                .goNamed(LogoutConstant.name, extra: ref);
           },
           label: const Text("ログアウト"),
         ),

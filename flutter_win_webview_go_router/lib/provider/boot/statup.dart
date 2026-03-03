@@ -2,7 +2,7 @@ import 'package:flutter_win_webview_go_router/constants/constant_configure.dart'
 import 'package:flutter_win_webview_go_router/logging/my_logger.dart';
 import 'package:flutter_win_webview_go_router/pages/application_scope/dashboard/root/dashboard_router.dart';
 import 'package:flutter_win_webview_go_router/pages/generarl_scope/error/error_router.dart';
-import 'package:flutter_win_webview_go_router/pages/generarl_scope/logout/logout_router.dart';
+import 'package:flutter_win_webview_go_router/pages/generarl_scope/login/login_router.dart';
 import 'package:flutter_win_webview_go_router/provider/router/root_router.dart';
 import 'package:pms_authenticator/auth_controller.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -25,13 +25,13 @@ Future<void> startup(Ref ref) async {
   ref.listen(authControllerProvider, (prev, next) {
     final router = ref.read(rootRouterProvider);
     switch (next) {
+      case AuthStateType.expired:
+        router.push(LoginConstant.path);
+        break;
       case AuthStateType.fail:
         router.go(ErrorConstant.path);
         break;
       case AuthStateType.authenticated:
-        if (prev != AuthStateType.signedOut) {
-          return;
-        }
         if (router.canPop()) {
           router.pop();
         } else {
@@ -39,10 +39,8 @@ Future<void> startup(Ref ref) async {
         }
         break;
       case AuthStateType.signedOut:
-        router.go(LogoutConstant.path);
+        router.go(LoginConstant.path);
         break;
-      default:
-        return;
     }
   });
   ref.onDispose(() {

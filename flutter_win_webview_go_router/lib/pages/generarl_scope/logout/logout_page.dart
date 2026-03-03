@@ -42,7 +42,8 @@ class LogoutPage extends HookConsumerWidget {
             // ErrorRouter での遷移
             _goError(ex, ref);
           });
-          // await Future.delayed(const Duration(seconds: 60));
+          // ログアウト処理（例として3秒待機）
+          await Future.delayed(const Duration(seconds: 3));
           await ref.read(authControllerProvider.notifier).logout().whenComplete(
             () {
               //ここでタイマーは停止する
