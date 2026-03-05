@@ -1,0 +1,21 @@
+# ./lib/graphql/schema.graphql
+
+query staff {
+  tests_info_staff(distinct_on: code, limit: 1000, where: {remove: {_eq: false, _is_null: true}}) {
+    code
+    info_company_id
+    info_office_id
+    kana
+    phone
+    private_phone
+    remarks
+    remove
+    revision
+    sex
+    update_at
+    update_user_history_id
+    update_user_id
+  }
+  tests_history_info_address_by_pk
+  tests_info_assign
+}
