@@ -1,0 +1,7 @@
+targets:
+  $default:
+    builders:
+      graphql_codegen:
+        options:
+          assetsPath: "lib/graphql/schema.graphql"
+          outputDirectory: "lib/graphql/generated"
