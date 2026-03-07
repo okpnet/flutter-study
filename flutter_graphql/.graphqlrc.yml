@@ -1,0 +1,2 @@
+schema: "lib/graphql/schema.graphql" # 手元のスキーマファイルを指定
+documents: "lib/**/*.graphql"       # クエリを書く場所を指定
