@@ -3,5 +3,6 @@ targets:
     builders:
       graphql_codegen:
         options:
-          assetsPath: "lib/graphql/schema.graphql"
-          outputDirectory: "lib/graphql/generated"
+          assetsPath: "lib/graphql/**.graphql"
+          outputDirectory: "generated"
+          schemaPath: "lib/graphql/schema.graphql"

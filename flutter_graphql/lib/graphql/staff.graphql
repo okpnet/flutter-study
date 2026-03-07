@@ -19,3 +19,23 @@ query staff {
   tests_history_info_address_by_pk
   tests_info_assign
 }
+
+mutation MyMutation {
+  delete_tests_info_staff(where: {_and: {info_staff_id: {_eq: ""}}}) {
+    affected_rows
+    returning {
+      code
+      info_company_id
+      info_office_id
+      info_staff_id
+      kana
+      name
+      phone
+      private_phone
+      remarks
+      remove
+      revision
+      sex
+    }
+  }
+}
