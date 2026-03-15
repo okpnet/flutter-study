@@ -1,40 +1,49 @@
-# ./lib/graphql/schema.graphql
-
-query staff {
-  tests_info_staff(distinct_on: code, limit: 1000, where: {remove: {_eq: false, _is_null: true}}) {
+query StaffQuery {
+  tests_info_staff(where: {remove: {_eq: false, _is_null: true}}) {
     code
-    info_company_id
-    info_office_id
     kana
+    name
     phone
     private_phone
-    remarks
     remove
     revision
     sex
     update_at
     update_user_history_id
     update_user_id
+    remarks
   }
-  tests_history_info_address_by_pk
-  tests_info_assign
+  tests_info_staff_aggregate(where: {remove: {_eq: false, _is_null: true}}) {
+    aggregate {
+      count
+    }
+  }
 }
 
-mutation MyMutation {
-  delete_tests_info_staff(where: {_and: {info_staff_id: {_eq: ""}}}) {
-    affected_rows
+mutation StaffEdit {
+  insert_tests_info_staff(objects: {code: "", kana: "", name: "", phone: "", private_phone: "", remarks: "", remove: false, sex: "", update_user_history_id: "", update_user_id: ""}) {
     returning {
       code
-      info_company_id
-      info_office_id
-      info_staff_id
       kana
       name
       phone
       private_phone
       remarks
       remove
-      revision
+      sex
+      update_at
+      update_user_history_id
+    }
+  }
+  update_tests_info_staff(_set: {kana: "", name: "", phone: "", private_phone: "", remarks: "", remove: false, sex: "", update_user_history_id: "", update_user_id: ""}) {
+    returning {
+      code
+      kana
+      name
+      phone
+      private_phone
+      remarks
+      remove
       sex
     }
   }

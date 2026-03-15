@@ -26,3 +26,8 @@ linter:
 
 # Additional information about this file can be found at
 # https://dart.dev/guides/language/analysis-options
+
+#GraphQL code is generated and should not be analyzed by the linter
+analyzer:
+  exclude:
+    - "**/*.graphql.dart"
