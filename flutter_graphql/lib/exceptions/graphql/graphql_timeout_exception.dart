@@ -1,3 +1,4 @@
+part of 'graphql_exception.dart';
 
 final class GraphqlTimeoutException implements Exception {
   final String? message;
