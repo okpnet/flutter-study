@@ -45,12 +45,28 @@ final class GraphQLClientProvider {
         );
   }
 
-  Future<List<QueryResult>> _execute(List<(MutationType, MutationOptions)> values) async {
+  Future<List<QueryResult>> _execute(List<IEditModel> values) async {
     if(isHasura){
-      final insertOptions =Merge values.where((value) => value.$1 == MutationType.insert).map((e) => e.$2.variables.toString());
-      final updateOptions =values.where((value) => value.$1 == MutationType.update).map((e) => e.$2.variables.toString()).toList();
+      final insertOptions = values.where((value) => value.isNew).map((value)=>value.createInsertOptions()).map((values)=>values.document);
+      final updateOptions =values.where((value) => !value.isNew).map((value)=>value.createUpdateOptions()).toList();
 
-      
+      return await Future.wait([insertOptions,updateOptions].map((value) async {
+        try{
+          final documents=value.map((option) => option.document)..toList();
+          final result = await _mutation(
+              MutationOptions(
+                document: gql(value.),
+                variables: {'objects':valiable}
+                )
+            );
+          if (result.hasException) {
+            throw GraphqlException(message: result.exception.toString());
+          }
+          return result;
+        } on GraphqlTimeoutException{
+          rethrow;
+        }
+      }));
     }
 
     //not hasura
