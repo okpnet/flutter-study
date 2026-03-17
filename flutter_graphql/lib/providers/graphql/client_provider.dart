@@ -20,6 +20,8 @@ final class GraphQLClientProvider {
   late final Duration timeLimit;
   late final GraphQLClient client;
 
+  Map<string
+
   GraphQLClientProvider(this._url, {int? timeLimit,isHasura = false}) {
     this.timeLimit = timeLimit != null
         ? Duration(seconds: timeLimit)
