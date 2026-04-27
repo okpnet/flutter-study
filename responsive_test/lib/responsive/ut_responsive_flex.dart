@@ -23,7 +23,11 @@ class UtResponsiveFlex extends StatelessWidget implements IUtResponsiveFlex {
     if (child == null) {
       return SizedBox.shrink();
     }
-    return Align(alignment: Alignment.centerLeft, child: child);
+    return Align(
+      alignment: Alignment.centerLeft,
+      widthFactor: 1.0,
+      child: ColoredBox(color: Colors.redAccent, child: child),
+    );
   }
 
   factory UtResponsiveFlex.empty({Key? key, required UtGridFlexStyle flex}) {

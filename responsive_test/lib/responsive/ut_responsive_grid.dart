@@ -9,11 +9,13 @@ class UtResponsiveGrid extends StatelessWidget {
   final double? flexMinWidth;
   final List<UtResponsiveFlex> children;
   final int maxFlex;
+  final CrossAxisAlignment verticalAlignment;
   const UtResponsiveGrid({
     super.key,
     this.flexMinWidth,
     required this.children,
     this.maxFlex = 12,
+    this.verticalAlignment = .start,
   });
 
   @override
@@ -30,6 +32,7 @@ class UtResponsiveGrid extends StatelessWidget {
             .where((t) => t.hidePoint == null || type.isVisibleAt(t.hidePoint!))
             .splitWhere((t) => t.cr);
         return Column(
+          crossAxisAlignment: .stretch,
           children: [
             for (var rows in activeChildren)
               for (var row in _row(rows, rowFlex)) _buildRow(row),
@@ -40,7 +43,12 @@ class UtResponsiveGrid extends StatelessWidget {
   }
 
   Widget _buildRow(List<UtResponsiveFlex> list) {
-    return Row(children: [for (var value in list) Expanded(child: value)]);
+    return Row(
+      crossAxisAlignment: verticalAlignment,
+      children: [
+        for (var value in list) Expanded(flex: value.flex.flex, child: value),
+      ],
+    );
   }
 
   List<List<UtResponsiveFlex>> _row(
