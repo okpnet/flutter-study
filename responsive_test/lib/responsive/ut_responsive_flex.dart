@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:responsive_test/responsive/ut_grid_flex_style.dart';
 
 import 'ut_media_breakpoint.dart';
 
@@ -7,7 +8,7 @@ interface class IUtResponsiveFlex {}
 class UtResponsiveFlex extends StatelessWidget implements IUtResponsiveFlex {
   final UtMediaBreakpoint? hidePoint;
   final Widget? child;
-  final int flex;
+  final UtGridFlexStyle flex;
   final bool cr;
   const UtResponsiveFlex._({
     super.key,
@@ -25,19 +26,24 @@ class UtResponsiveFlex extends StatelessWidget implements IUtResponsiveFlex {
     return Align(alignment: Alignment.centerLeft, child: child);
   }
 
-  factory UtResponsiveFlex.empty({Key? key, required int flex}) {
+  factory UtResponsiveFlex.empty({Key? key, required UtGridFlexStyle flex}) {
     return UtResponsiveFlex._(key: key, flex: flex, cr: false, hidePoint: null);
   }
 
-  factory UtResponsiveFlex.cr({Key? key}) {
-    return UtResponsiveFlex._(key: key, flex: 0, cr: true, hidePoint: null);
+  factory UtResponsiveFlex.cr({Key? key, UtMediaBreakpoint? hidePoint}) {
+    return UtResponsiveFlex._(
+      key: key,
+      flex: .flex_1,
+      cr: true,
+      hidePoint: hidePoint,
+    );
   }
 
   factory UtResponsiveFlex.of({
     Key? key,
     UtMediaBreakpoint? hidePoint,
     required Widget child,
-    required int flex,
+    required UtGridFlexStyle flex,
   }) {
     return UtResponsiveFlex._(
       key: key,

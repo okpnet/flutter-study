@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:responsive_test/responsive/ut_grid_flex_style.dart';
 import 'package:responsive_test/responsive/ut_list_extension.dart';
 import 'package:responsive_test/responsive/ut_media_breakpoint.dart';
 import 'package:responsive_test/responsive/ut_responsive_flex.dart';
@@ -20,9 +21,10 @@ class UtResponsiveGrid extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         final widgetWidth = constraints.widthConstraints().maxWidth;
-        final width = flexMinWidth ?? minWidth;
 
         final type = UtMediaBreakpoint.of(widgetWidth);
+
+        final rowFlex = type.flexMaxCount;
         //ブレークポイント付の有効な子の
         final activeChildren = children
             .where((t) => t.hidePoint == null || type.isVisibleAt(t.hidePoint!))
@@ -30,7 +32,7 @@ class UtResponsiveGrid extends StatelessWidget {
         return Column(
           children: [
             for (var rows in activeChildren)
-              for (var row in _row(rows)) _buildRow(row),
+              for (var row in _row(rows, rowFlex)) _buildRow(row),
           ],
         );
       },
@@ -43,29 +45,32 @@ class UtResponsiveGrid extends StatelessWidget {
 
   List<List<UtResponsiveFlex>> _row(
     List<UtResponsiveFlex> values,
-    int rowFlexCount,
+    int rowFlex,
   ) {
     final rows = <List<UtResponsiveFlex>>[];
     var current = <UtResponsiveFlex>[];
     var sum = 0;
 
     void flush() {
-      final used = current.fold(0, (a, b) => a + b.flex);
-      final shortage = rowFlexCount - used;
+      final used = current.fold(0, (a, b) => a + b.flex.flex);
+      final shortage = rowFlex - used;
       if (shortage > 0) {
-        current.add(UtResponsiveFlex.empty(flex: shortage));
+        current.add(UtResponsiveFlex.empty(flex: UtGridFlexStyle.of(shortage)));
       }
       rows.add(current);
     }
 
-    for (var value in values) {
-      if (value.flex + sum > rowFlexCount) {
+    for (var item in values) {
+      final itemFlex = item.flex.flex > rowFlex
+          ? rowFlex
+          : item.flex.flex; //アイテムのFlex単体がrowFlexを超えるとき調整する
+      if (itemFlex + sum > rowFlex) {
         flush();
         current = <UtResponsiveFlex>[];
         sum = 0;
       }
-      current.add(value);
-      sum += value.flex;
+      current.add(item);
+      sum += itemFlex;
     }
     if (current.isNotEmpty) {
       flush();

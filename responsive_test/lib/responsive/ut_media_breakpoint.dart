@@ -1,17 +1,11 @@
 enum UtMediaBreakpoint {
-  br(_br),
-  mobile(_mobile),
-  smallTablet(_smallTablet),
-  tablet(_tablet),
-  smallPc(_smallPc),
-  pc(_pc);
+  br(double.nan, 0), //幅無視,0列
+  mobile(599, 4), //幅599,4列
+  smallTablet(767, 6), //幅767,6列
+  tablet(959, 8), //幅959,8列
+  smallPc(1199, 12), //幅1199,12列
+  pc(double.infinity, 12); //幅最大,12列
 
-  static const double _mobile = 599; //4
-  static const double _smallTablet = 767; //8
-  static const double _tablet = 959; //9
-  static const double _smallPc = 1199; //12
-  static const double _pc = double.infinity;
-  static const double _br = double.nan;
   final double width;
   final int flexMaxCount;
 

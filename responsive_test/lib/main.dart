@@ -48,15 +48,15 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Container(
         child: UtResponsiveGrid(
           children: [
-            UtResponsiveFlex.of(flex: 1, child: Text('1')),
+            UtResponsiveFlex.of(flex: .flex_1, child: Text('1')),
             //UtResponsiveFlex(flex: 3, cr: true, child: Text('2')),
-            UtResponsiveFlex.of(flex: 2, child: Text('2')),
-            UtResponsiveFlex.of(flex: 3, child: Text('3')),
-            UtResponsiveFlex.of(flex: 4, child: Text('4')),
+            UtResponsiveFlex.of(flex: .flex_2, child: Text('2')),
+            UtResponsiveFlex.of(flex: .flex_3, child: Text('3')),
+            UtResponsiveFlex.of(flex: .flex_4, child: Text('4')),
             UtResponsiveFlex.cr(),
-            UtResponsiveFlex.of(flex: 5, child: Text('5')),
-            UtResponsiveFlex.of(flex: 6, child: Text('6')),
-            UtResponsiveFlex.of(flex: 7, child: Text('7')),
+            UtResponsiveFlex.of(flex: .flex_5, child: Text('5')),
+            UtResponsiveFlex.of(flex: .flex_6, child: Text('6')),
+            UtResponsiveFlex.of(flex: .flex_7, child: Text('7')),
           ],
         ),
       ),
