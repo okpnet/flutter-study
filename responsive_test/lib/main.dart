@@ -47,20 +47,81 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: Container(
         child: UtResponsiveGrid(
+          spacing: 5,
           children: [
-            UtResponsiveFlex.of(flex: .flex_1, child: Text('1')),
+            UtResponsiveFlex.of(
+              flex: .flex_1,
+              child: Container(
+                decoration: BoxDecoration(color: Colors.brown),
+                child: Text('1'),
+              ),
+            ),
             //UtResponsiveFlex(flex: 3, cr: true, child: Text('2')),
-            UtResponsiveFlex.of(flex: .flex_2, child: Text('2')),
-            UtResponsiveFlex.of(flex: .flex_3, child: Text('3')),
-            UtResponsiveFlex.of(flex: .flex_4, child: Text('4')),
+            UtResponsiveFlex.of(
+              flex: .flex_2,
+              child: Container(
+                decoration: BoxDecoration(color: Colors.redAccent),
+                child: Text('2'),
+              ),
+            ),
+            UtResponsiveFlex.of(
+              flex: .flex_3,
+              child: Container(
+                decoration: BoxDecoration(color: Colors.purple),
+                child: Text('3'),
+              ),
+            ),
+            UtResponsiveFlex.of(
+              flex: .flex_4,
+              child: Container(
+                decoration: BoxDecoration(color: Colors.blue),
+                child: Text('4'),
+              ),
+            ),
             UtResponsiveFlex.cr(),
-            UtResponsiveFlex.of(flex: .flex_5, child: Text('5')),
-            UtResponsiveFlex.of(flex: .flex_6, child: Text('6')),
-            UtResponsiveFlex.of(flex: .flex_7, child: Text('7')),
+            UtResponsiveFlex.of(
+              flex: .flex_5,
+              child: Container(
+                decoration: BoxDecoration(color: Colors.blueGrey),
+                child: Text('5'),
+              ),
+            ),
+            UtResponsiveFlex.of(
+              flex: .flex_6,
+              child: Container(
+                decoration: BoxDecoration(color: Colors.green),
+                child: Text('6'),
+              ),
+            ),
+            UtResponsiveFlex.of(
+              flex: .flex_7,
+              child: Container(
+                decoration: BoxDecoration(color: Colors.lightGreen),
+                child: Text('7'),
+              ),
+            ),
             UtResponsiveFlex.cr(hidePoint: .smallPc),
-            UtResponsiveFlex.of(flex: .flex_4, child: Text('4')),
-            UtResponsiveFlex.of(flex: .flex_4, child: Text('4')),
-            UtResponsiveFlex.of(flex: .flex_3, child: Text('3')),
+            UtResponsiveFlex.of(
+              flex: .flex_4,
+              child: Container(
+                decoration: BoxDecoration(color: Colors.yellow),
+                child: Text('4'),
+              ),
+            ),
+            UtResponsiveFlex.of(
+              flex: .flex_4,
+              child: Container(
+                decoration: BoxDecoration(color: Colors.orange),
+                child: Text('4'),
+              ),
+            ),
+            UtResponsiveFlex.of(
+              flex: .flex_3,
+              child: Container(
+                decoration: BoxDecoration(color: Colors.red),
+                child: Text('3'),
+              ),
+            ),
           ],
         ),
       ),
