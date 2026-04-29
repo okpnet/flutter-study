@@ -65,6 +65,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: Text('2'),
               ),
             ),
+            UtResponsiveFlex.cr(hidePoint: .tablet),
             UtResponsiveFlex.of(
               flex: 2,
               child: Container(

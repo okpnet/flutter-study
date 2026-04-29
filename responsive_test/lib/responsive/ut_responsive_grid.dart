@@ -6,7 +6,6 @@ import 'package:responsive_test/responsive/ut_media_breakpoint.dart';
 import 'package:responsive_test/responsive/ut_responsive_flex.dart';
 
 class UtResponsiveGrid extends StatelessWidget {
-  final double? flexMinWidth;
   final List<UtResponsiveFlex> children;
   final double spacing;
   final UtBreakpointFlex? breakpointFlex;
@@ -14,7 +13,6 @@ class UtResponsiveGrid extends StatelessWidget {
 
   const UtResponsiveGrid({
     super.key,
-    this.flexMinWidth,
     required this.children,
     this.verticalAlignment = .start,
     this.spacing = 0.0,
@@ -37,14 +35,17 @@ class UtResponsiveGrid extends StatelessWidget {
         //ブレークポイント付の有効な子の
         final activeChildren = children
             .where((t) => t.hidePoint == null || bp.isVisibleAt(t.hidePoint!))
-            .where((t) => t.flexs.getFlex(bp) > 0)
             .splitWhere((t) => t.cr);
 
         return Column(
           crossAxisAlignment: .stretch,
           children: [
             for (var rows in activeChildren)
-              for (var row in buildRows(bp, rows, rowFlex))
+              for (var row in buildRows(
+                bp,
+                rows.where((t) => t.flexs.getFlex(bp) > 0).toList(),
+                rowFlex,
+              ))
                 isBuildWidgetContainer(bp, activeChildren.last == row, row),
           ],
         );

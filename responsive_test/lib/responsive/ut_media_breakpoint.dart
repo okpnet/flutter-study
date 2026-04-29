@@ -1,5 +1,4 @@
 enum UtMediaBreakpoint {
-  br(double.nan), //幅無視,0列
   mobile(599), //幅599,4列
   smallTablet(767), //幅767,6列
   tablet(959), //幅959,8列
@@ -12,12 +11,7 @@ enum UtMediaBreakpoint {
 
   bool matches(double width) => width <= this.width;
 
-  bool isVisibleAt(UtMediaBreakpoint hidePoint) {
-    if (hidePoint == .br) {
-      return true;
-    }
-    return width >= hidePoint.width;
-  }
+  bool isVisibleAt(UtMediaBreakpoint hidePoint) => width >= hidePoint.width;
 
   factory UtMediaBreakpoint.of(double width) {
     return UtMediaBreakpoint.values.firstWhere(
