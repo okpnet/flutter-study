@@ -50,7 +50,8 @@ class _MyHomePageState extends State<MyHomePage> {
           spacing: 5,
           children: [
             UtResponsiveFlex.of(
-              flex: .flex_1,
+              flex: 1,
+              mobile: 2,
               child: Container(
                 decoration: BoxDecoration(color: Colors.brown),
                 child: Text('1'),
@@ -58,21 +59,21 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             //UtResponsiveFlex(flex: 3, cr: true, child: Text('2')),
             UtResponsiveFlex.of(
-              flex: .flex_2,
+              flex: 2,
               child: Container(
                 decoration: BoxDecoration(color: Colors.redAccent),
                 child: Text('2'),
               ),
             ),
             UtResponsiveFlex.of(
-              flex: .flex_3,
+              flex: 2,
               child: Container(
                 decoration: BoxDecoration(color: Colors.purple),
                 child: Text('3'),
               ),
             ),
             UtResponsiveFlex.of(
-              flex: .flex_4,
+              flex: 4,
               child: Container(
                 decoration: BoxDecoration(color: Colors.blue),
                 child: Text('4'),
@@ -80,21 +81,24 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             UtResponsiveFlex.cr(),
             UtResponsiveFlex.of(
-              flex: .flex_5,
+              flex: 5,
               child: Container(
                 decoration: BoxDecoration(color: Colors.blueGrey),
                 child: Text('5'),
               ),
             ),
             UtResponsiveFlex.of(
-              flex: .flex_6,
+              flex: 6,
               child: Container(
                 decoration: BoxDecoration(color: Colors.green),
                 child: Text('6'),
               ),
             ),
             UtResponsiveFlex.of(
-              flex: .flex_7,
+              flex: 7,
+              mobile: 3,
+              smallPc: 12,
+              smallTablet: 4,
               child: Container(
                 decoration: BoxDecoration(color: Colors.lightGreen),
                 child: Text('7'),
@@ -102,21 +106,21 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             UtResponsiveFlex.cr(hidePoint: .smallPc),
             UtResponsiveFlex.of(
-              flex: .flex_4,
+              flex: 4,
               child: Container(
                 decoration: BoxDecoration(color: Colors.yellow),
                 child: Text('4'),
               ),
             ),
             UtResponsiveFlex.of(
-              flex: .flex_4,
+              flex: 4,
               child: Container(
                 decoration: BoxDecoration(color: Colors.orange),
                 child: Text('4'),
               ),
             ),
             UtResponsiveFlex.of(
-              flex: .flex_3,
+              flex: 3,
               child: Container(
                 decoration: BoxDecoration(color: Colors.red),
                 child: Text('3'),
