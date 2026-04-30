@@ -22,10 +22,24 @@ class UtResponsiveFlex implements IUtResponsiveFlex {
   }
 
   factory UtResponsiveFlex.offset({
-    required Map<UtMediaBreakpoint, int> flexs,
+    required int flex,
+    int? smallPc,
+    int? tablet,
+    int? smallTablet,
+    int? mobile,
     UtMediaBreakpoint? hidepoint,
   }) {
-    return UtResponsiveFlex._(flexs: flexs, cr: false, hidePoint: hidepoint);
+    return UtResponsiveFlex._(
+      flexs: {
+        .pc: flex,
+        .smallPc: smallPc ?? flex,
+        .tablet: smallTablet ?? flex,
+        .smallTablet: smallTablet ?? flex,
+        .mobile: mobile ?? flex,
+      },
+      cr: false,
+      hidePoint: hidepoint,
+    );
   }
 
   factory UtResponsiveFlex.cr({UtMediaBreakpoint? hidePoint}) {

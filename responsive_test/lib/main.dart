@@ -49,6 +49,7 @@ class _MyHomePageState extends State<MyHomePage> {
         child: UtResponsiveGrid(
           spacing: 5,
           children: [
+            UtResponsiveFlex.offset(flex: 2, mobile: 0),
             UtResponsiveFlex.of(
               flex: 1,
               mobile: 2,
@@ -67,7 +68,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             UtResponsiveFlex.cr(hidePoint: .tablet),
             UtResponsiveFlex.of(
-              flex: 2,
+              flex: 3,
               child: Container(
                 decoration: BoxDecoration(color: Colors.purple),
                 child: Text('3'),
