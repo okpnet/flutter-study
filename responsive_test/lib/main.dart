@@ -61,6 +61,8 @@ class _MyHomePageState extends State<MyHomePage> {
             UtResponsiveFlex.of(
               flex: 2,
               child: Container(
+                margin: EdgeInsets.all(30),
+                alignment: Alignment.bottomRight,
                 decoration: BoxDecoration(color: Colors.redAccent),
                 child: Text('2'),
               ),

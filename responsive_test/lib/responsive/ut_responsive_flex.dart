@@ -45,7 +45,7 @@ class UtResponsiveFlex implements IUtResponsiveFlex {
       flexs: {
         .pc: flex,
         .smallPc: smallPc ?? flex,
-        .tablet: smallTablet ?? flex,
+        .tablet: tablet ?? flex,
         .smallTablet: smallTablet ?? flex,
         .mobile: mobile ?? flex,
       },
