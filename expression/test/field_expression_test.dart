@@ -23,7 +23,7 @@ void main() {
   group('FieldExpression & ValueExpression', () {
     test('FieldExpression returns field function', () {
       final expr = FieldExpression<int, int>(field: (x) => x * 2);
-      final func = expr.accept<int, int>(visitor);
+      final func = expr.accept(visitor);
       expect(func(3), equals(6));
     });
 

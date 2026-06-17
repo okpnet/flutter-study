@@ -3,18 +3,18 @@ import '../../expression.dart';
 class SqlVisitor extends FieldVisitor {
   // AND
   @override
-  R Function(T) visitAnd<T, R>(AndExpression ex) {
-    final l = ex.left.accept<T, String>(this);
-    final r = ex.right.accept<T, String>(this);
+  R Function(T) visitAnd<T, R>(AndExpression<R> ex) {
+    final l = ex.left.accept(this);
+    final r = ex.right.accept(this);
     return (dynamic t) => "(${l(t)} AND ${r(t)})" as R;
   }
 
   // OR
   @override
-  R Function(T) visitOr<T, R>(OrExpression ex) {
-    final l = ex.left.accept<T, String>(this);
-    final r = ex.right.accept<T, String>(this);
-    return (dynamic t) => "(${l(t)} OR ${r(t)})" as R;
+  R Function(T) visitOr<T, R>(OrExpression<R> ex) {
+    final l = ex.left.accept(this);
+    final r = ex.right.accept(this);
+    return (T? _) => "(${l(null)} OR ${r(null)})" as R;
   }
 
   // Field
@@ -36,9 +36,9 @@ class SqlVisitor extends FieldVisitor {
 
   // Operator (=, <, >, <=, >=, LIKE, STARTS_WITH)
   @override
-  R Function(T) visitOperator<T, R>(OperatorExpression ex) {
-    final l = ex.left.accept<T, String>(this);
-    final r = ex.right.accept<T, String>(this);
+  R Function(T) visitOperator<T, R>(OperatorExpression<R> ex) {
+    final l = ex.left.accept(this);
+    final r = ex.right.accept(this);
 
     return (dynamic t) {
       final lv = l(t);
@@ -58,20 +58,20 @@ class SqlVisitor extends FieldVisitor {
 
   // IN
   @override
-  R Function(T) visitIn<T, R>(InExpression ex) {
-    final v = ex.value.accept<T, String>(this);
-    final lst = ex.list.accept<T, String>(this);
+  R Function(T) visitIn<T, R>(InExpression<R> ex) {
+    final v = ex.value.accept(this);
+    final lst = ex.list.accept(this);
 
     return (t) => "${v(t)} IN (${lst(t)})" as R;
   }
 
   // BETWEEN
   @override
-  R Function(T) visitBetween<T, R>(BetweenExpression ex) {
-    final v = ex.value.accept<T, String>(this);
-    final min = ex.min.accept<T, String>(this);
-    final max = ex.max.accept<T, String>(this);
+  R Function(T) visitBetween<T, R>(BetweenExpression<R> ex) {
+    final v = ex.value.accept(this);
+    final min = ex.min.accept(this);
+    final max = ex.max.accept(this);
 
-    return (dynamic t) => "${v(t)} BETWEEN ${min(t)} AND ${max(t)}" as R;
+    return (T? _) => "${v(null)} BETWEEN ${min(null)} AND ${max(null)}" as R;
   }
 }

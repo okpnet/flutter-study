@@ -19,25 +19,25 @@ abstract class FieldVisitor {
   /// 値ノードを処理します。
   ///
   /// [ex]: `ValueExpression<R>` ノード。
-  R Function(T) visitValue<T, R>(ValueExpression ex) {
+  R Function(T) visitValue<T, R>(ValueExpression<R> ex) {
     return (_) => ex.value;
   }
 
   /// 二項演算子ノードを処理します。
   ///
   /// [ex]: 演算子ノード（`OperatorExpression`）。
-  R Function(T) visitOperator<T, R>(OperatorExpression ex) {
-    final l = ex.left.accept<T, dynamic>(this);
-    final r = ex.right.accept<T, dynamic>(this);
+  R Function(T) visitOperator<T, R>(OperatorExpression<R> ex) {
+    final l = ex.left.accept(this);
+    final r = ex.right.accept(this);
     return (T item) => ex.delegate(l(item), r(item)) as R;
   }
 
   /// 論理 AND ノードを処理します。
   ///
   /// [ex]: `AndExpression` ノード。
-  R Function(T) visitAnd<T, R>(AndExpression ex) {
-    final l = ex.left.accept<T, R>(this);
-    final r = ex.right.accept<T, R>(this);
+  R Function(T) visitAnd<T, R>(AndExpression<R> ex) {
+    final l = ex.left.accept(this);
+    final r = ex.right.accept(this);
 
     return (T item) {
           final lb = l(item);
@@ -50,9 +50,9 @@ abstract class FieldVisitor {
   /// 論理 OR ノードを処理します。
   ///
   /// [ex]: `OrExpression` ノード。
-  R Function(T) visitOr<T, R>(OrExpression ex) {
-    final l = ex.left.accept<T, bool>(this);
-    final r = ex.right.accept<T, bool>(this);
+  R Function(T) visitOr<T, R>(OrExpression<R> ex) {
+    final l = ex.left.accept(this);
+    final r = ex.right.accept(this);
 
     return (T item) {
           final lb = l(item);
@@ -65,10 +65,10 @@ abstract class FieldVisitor {
   /// 範囲チェックノードを処理します。
   ///
   /// [ex]: `BetweenExpression` ノード。
-  R Function(T) visitBetween<T, R>(BetweenExpression ex) {
-    final v = ex.value.accept<T, dynamic>(this);
-    final min = ex.min.accept<T, dynamic>(this);
-    final max = ex.max.accept<T, dynamic>(this);
+  R Function(T) visitBetween<T, R>(BetweenExpression<R> ex) {
+    final v = ex.value.accept(this);
+    final min = ex.min.accept(this);
+    final max = ex.max.accept(this);
 
     return (T item) {
       final value = v(item);
@@ -82,9 +82,9 @@ abstract class FieldVisitor {
   /// 包含チェックノードを処理します。
   ///
   /// [ex]: `InExpression` ノード。右辺は `Iterable` である必要があります。
-  R Function(T) visitIn<T, R>(InExpression ex) {
-    final v = ex.value.accept<T, dynamic>(this);
-    final lst = ex.list.accept<T, dynamic>(this);
+  R Function(T) visitIn<T, R>(InExpression<R> ex) {
+    final v = ex.value.accept(this);
+    final lst = ex.list.accept(this);
 
     return (T item) {
       final value = v(item);

@@ -4,7 +4,7 @@ import 'field.dart';
 /// 範囲チェックを表す式ノード。
 ///
 /// [value] が [min] 以上 [max] 以下かを評価します。
-class BetweenExpression extends Expression {
+class BetweenExpression<R> extends Expression<dynamic, R> {
   /// 比較対象の値を表す式。
   final Expression value;
 
@@ -25,7 +25,7 @@ class BetweenExpression extends Expression {
   /// [visitor]: このノードを変換する [FieldVisitor]。
   /// 戻り値は `R Function(T)` 型の評価関数です。
   @override
-  R Function(T) accept<T, R>(FieldVisitor visitor) {
+  R Function(dynamic) accept(FieldVisitor visitor) {
     return visitor.visitBetween(this);
   }
 }
@@ -33,7 +33,7 @@ class BetweenExpression extends Expression {
 /// 値がリストに含まれるかを表す式ノード。
 ///
 /// 右辺の [list] は `Iterable` である必要があります。
-class InExpression extends Expression {
+class InExpression<R> extends Expression<dynamic, R> {
   /// チェック対象の式。
   final Expression value;
 
@@ -47,7 +47,7 @@ class InExpression extends Expression {
   /// [visitor]: このノードを変換する [FieldVisitor]。
   /// 戻り値は `R Function(T)` 型の評価関数です。
   @override
-  R Function(T) accept<T, R>(FieldVisitor visitor) {
+  R Function(dynamic) accept(FieldVisitor visitor) {
     return visitor.visitIn(this);
   }
 }

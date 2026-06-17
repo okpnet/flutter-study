@@ -4,7 +4,7 @@ import 'field.dart';
 /// 二項演算子を表す式ノード。
 ///
 /// 左辺 [left] と右辺 [right] を評価して、 [delegate] により比較や判定を行います。
-class OperatorExpression extends Expression {
+class OperatorExpression<R> extends Expression<dynamic, R> {
   /// 表示用ラベル（例: '=', '<', 'LIKE' など）。
   final String _label;
 
@@ -32,7 +32,7 @@ class OperatorExpression extends Expression {
   /// [visitor]: ノードを評価・変換する [FieldVisitor]。
   /// 戻り値は `R Function(T)` 型の評価関数です。
   @override
-  R Function(T) accept<T, R>(FieldVisitor visitor) {
+  R Function(dynamic) accept(FieldVisitor visitor) {
     return visitor.visitOperator(this);
   }
 

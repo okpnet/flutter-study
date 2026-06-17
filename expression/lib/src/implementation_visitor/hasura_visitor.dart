@@ -4,8 +4,8 @@ class HasuraGraphqlVisitor extends FieldVisitor {
   // AND
   @override
   R Function(T) visitAnd<T, R>(AndExpression ex) {
-    final l = ex.left.accept<T, Map<String, dynamic>>(this);
-    final r = ex.right.accept<T, Map<String, dynamic>>(this);
+    final l = ex.left.accept(this);
+    final r = ex.right.accept(this);
 
     return (dynamic t) =>
         <String, dynamic>{
@@ -17,8 +17,8 @@ class HasuraGraphqlVisitor extends FieldVisitor {
   // OR
   @override
   R Function(T) visitOr<T, R>(OrExpression ex) {
-    final l = ex.left.accept<T, Map<String, dynamic>>(this);
-    final r = ex.right.accept<T, Map<String, dynamic>>(this);
+    final l = ex.left.accept(this);
+    final r = ex.right.accept(this);
 
     return (dynamic t) =>
         <String, dynamic>{
@@ -42,8 +42,8 @@ class HasuraGraphqlVisitor extends FieldVisitor {
   // Operator (=, <>, <, >, <=, >=, LIKE, STARTS_WITH)
   @override
   R Function(T) visitOperator<T, R>(OperatorExpression ex) {
-    final l = ex.left.accept<T, dynamic>(this); // フィールド名 or 値
-    final r = ex.right.accept<T, dynamic>(this); // 値
+    final l = ex.left.accept(this); // フィールド名 or 値
+    final r = ex.right.accept(this); // 値
 
     return (dynamic t) {
       final field = l(t); // 例: "age"
@@ -78,8 +78,8 @@ class HasuraGraphqlVisitor extends FieldVisitor {
   // IN
   @override
   R Function(T) visitIn<T, R>(InExpression ex) {
-    final v = ex.value.accept<T, dynamic>(this); // フィールド名
-    final lst = ex.list.accept<T, dynamic>(this); // List 値
+    final v = ex.value.accept(this); // フィールド名
+    final lst = ex.list.accept(this); // List 値
 
     return (dynamic t) {
       final field = v(t);
@@ -94,9 +94,9 @@ class HasuraGraphqlVisitor extends FieldVisitor {
   // BETWEEN
   @override
   R Function(T) visitBetween<T, R>(BetweenExpression ex) {
-    final v = ex.value.accept<T, dynamic>(this); // フィールド名
-    final min = ex.min.accept<T, dynamic>(this);
-    final max = ex.max.accept<T, dynamic>(this);
+    final v = ex.value.accept(this); // フィールド名
+    final min = ex.min.accept(this);
+    final max = ex.max.accept(this);
 
     return (dynamic t) {
       final field = v(t);

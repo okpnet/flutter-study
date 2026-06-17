@@ -2,7 +2,7 @@ import 'package:expression/src/fields/field.dart';
 import '../visitor/visitor.dart';
 
 /// 論理 AND を表す式ノード。
-class AndExpression extends Expression {
+class AndExpression<R> extends Expression<dynamic, R> {
   /// 左辺の式。
   final Expression left;
 
@@ -16,11 +16,11 @@ class AndExpression extends Expression {
   /// [visitor]: 変換処理を行う [FieldVisitor]。
   @override
   // ignore: avoid_types_as_parameter_names
-  R Function(T) accept<T, R>(FieldVisitor visitor) => visitor.visitAnd(this);
+  R Function(dynamic) accept(FieldVisitor visitor) => visitor.visitAnd(this);
 }
 
 /// 論理 OR を表す式ノード。
-class OrExpression extends Expression {
+class OrExpression<R> extends Expression<dynamic, R> {
   /// 左辺の式。
   final Expression left;
 
@@ -34,5 +34,5 @@ class OrExpression extends Expression {
   /// [visitor]: 変換処理を行う [FieldVisitor]。
   @override
   // ignore: avoid_types_as_parameter_names
-  R Function(T) accept<T, R>(FieldVisitor visitor) => visitor.visitOr(this);
+  R Function(dynamic) accept(FieldVisitor visitor) => visitor.visitOr(this);
 }
