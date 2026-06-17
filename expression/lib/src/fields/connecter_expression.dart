@@ -1,32 +1,38 @@
 import 'package:expression/src/fields/field.dart';
 import '../visitor/visitor.dart';
 
-class AndExpressison extends Expression {
+/// 論理 AND を表す式ノード。
+class AndExpression extends Expression {
+  /// 左辺の式。
   final Expression left;
+
+  /// 右辺の式。
   final Expression right;
-  AndExpressison({required this.left, required this.right, super.name});
+
+  AndExpression({required this.left, required this.right, super.name});
+
+  /// ビジターでこの AND ノードを処理します。
+  ///
+  /// [visitor]: 変換処理を行う [FieldVisitor]。
   @override
-  accept(IFieldVisitor visitor, left) {
-    if (visitor case FieldVisitor instance) {
-      return instance.andEvalute(this.left, right);
-    }
-    throw ArgumentError(
-      'visitor shall FieldVisitor<T, R> but,that ${visitor.runtimeType} type.',
-    );
-  }
+  // ignore: avoid_types_as_parameter_names
+  R Function(T) accept<T, R>(FieldVisitor visitor) => visitor.visitAnd(this);
 }
 
-class OrExpressison extends Expression {
+/// 論理 OR を表す式ノード。
+class OrExpression extends Expression {
+  /// 左辺の式。
   final Expression left;
+
+  /// 右辺の式。
   final Expression right;
-  OrExpressison({required this.left, required this.right, super.name});
+
+  OrExpression({required this.left, required this.right, super.name});
+
+  /// ビジターでこの OR ノードを処理します。
+  ///
+  /// [visitor]: 変換処理を行う [FieldVisitor]。
   @override
-  accept(IFieldVisitor visitor, left) {
-    if (visitor case FieldVisitor instance) {
-      return instance.orEvalute(this.left, right);
-    }
-    throw ArgumentError(
-      'visitor shall FieldVisitor<T, R> but,that ${visitor.runtimeType} type.',
-    );
-  }
+  // ignore: avoid_types_as_parameter_names
+  R Function(T) accept<T, R>(FieldVisitor visitor) => visitor.visitOr(this);
 }

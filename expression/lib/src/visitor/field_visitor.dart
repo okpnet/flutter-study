@@ -1,53 +1,99 @@
 import 'package:expression/src/fields/field.dart';
 
+/// マーカーインターフェース。パッケージ外部での識別用。
+///
+/// 実装は `FieldVisitor` を使って表現木を走査します。
 abstract interface class IFieldVisitor {}
 
-///Expressionツリーを循環して[T]を受け取りExpressionの[accept]を実行して[R]に変換します。
-abstract class FieldVisitor implements IFieldVisitor {
-  //&Expressionを
-  R Function(T) andExpression<T,R>(R Function(T) left, R Function(T) right);
-  R Function(T) orExpression<T,R>(R Function(T) left, R Function(T) right);
-  bool Function(T) onStartWith<T,R>(String left, String right);
+/// 条件式ツリーを関数に変換するビジター基底クラス。
+///
+/// ジェネリクスは [T] が入力アイテム型、[R] が戻り値型を表します。
+abstract class FieldVisitor {
+  /// フィールド参照ノードを処理します。
+  ///
+  /// [ex]: `FieldExpression<T, R>` ノード。
+  R Function(T) visitField<T, R>(FieldExpression<T, R> ex) {
+    return ex.field;
+  }
 
-  R Function(T) eval<T,R>(Expression ex) {
-    return switch (ex) {
-      FieldExpression<T, R> arg => fieldeEvalute(arg.field),
-      ValueExpression<R> arg => valueEvalute(arg.value),
-      AndExpressison arg => andEvalute(arg.left, arg.right),
-      OrExpressison arg => andEvalute(arg.left, arg.right),
-      StartWithExpression arg=>onStartWith(left, right)
-      _ => throw UnimplementedError('Expression not implement type '),
+  /// 値ノードを処理します。
+  ///
+  /// [ex]: `ValueExpression<R>` ノード。
+  R Function(T) visitValue<T, R>(ValueExpression ex) {
+    return (_) => ex.value;
+  }
+
+  /// 二項演算子ノードを処理します。
+  ///
+  /// [ex]: 演算子ノード（`OperatorExpression`）。
+  R Function(T) visitOperator<T, R>(OperatorExpression ex) {
+    final l = ex.left.accept<T, dynamic>(this);
+    final r = ex.right.accept<T, dynamic>(this);
+    return (T item) => ex.delegate(l(item), r(item)) as R;
+  }
+
+  /// 論理 AND ノードを処理します。
+  ///
+  /// [ex]: `AndExpression` ノード。
+  R Function(T) visitAnd<T, R>(AndExpression ex) {
+    final l = ex.left.accept<T, R>(this);
+    final r = ex.right.accept<T, R>(this);
+
+    return (T item) {
+          final lb = l(item);
+          final rb = r(item);
+          return lb as bool && rb as bool;
+        }
+        as R Function(T);
+  }
+
+  /// 論理 OR ノードを処理します。
+  ///
+  /// [ex]: `OrExpression` ノード。
+  R Function(T) visitOr<T, R>(OrExpression ex) {
+    final l = ex.left.accept<T, bool>(this);
+    final r = ex.right.accept<T, bool>(this);
+
+    return (T item) {
+          final lb = l(item);
+          final rb = r(item);
+          return lb || rb;
+        }
+        as R Function(T);
+  }
+
+  /// 範囲チェックノードを処理します。
+  ///
+  /// [ex]: `BetweenExpression` ノード。
+  R Function(T) visitBetween<T, R>(BetweenExpression ex) {
+    final v = ex.value.accept<T, dynamic>(this);
+    final min = ex.min.accept<T, dynamic>(this);
+    final max = ex.max.accept<T, dynamic>(this);
+
+    return (T item) {
+      final value = v(item);
+      final lo = min(item);
+      final hi = max(item);
+
+      return (lo <= value && value <= hi) as R;
     };
   }
 
-  R Function(T) fieldeEvalute<T,R>(R Function(T) func) => func;
-  R Function(T) valueEvalute<T,R>(R value) =>
-      (T val) => value;
-  R Function(T) andEvalute<T,R>(Expression left, Expression right) {
-    final l = eval(left);
-    final r = eval(right);
-    return andExpression(l, r);
-  }
+  /// 包含チェックノードを処理します。
+  ///
+  /// [ex]: `InExpression` ノード。右辺は `Iterable` である必要があります。
+  R Function(T) visitIn<T, R>(InExpression ex) {
+    final v = ex.value.accept<T, dynamic>(this);
+    final lst = ex.list.accept<T, dynamic>(this);
 
-  R Function(T) orEvalute<T,R>(Expression left, Expression right) {
-    final l = eval(left);
-    final r = eval(right);
-    return orExpression(l, r);
-  }
+    return (T item) {
+      final value = v(item);
+      final list = lst(item);
 
-  bool Function(T) orStartWith<T>(Expression left, Expression right) {
-    final l = eval(left);
-    final r = eval(right);
-    return onStartWith(l(val).toString(), r(val).toString());
-  }
-
-  bool Function(dynamic) operator(
-    bool Function(dynamic, dynamic) delegate,
-    Expression left,
-    Expression right,
-  ) {
-    final l = eval(left);
-    final r = eval(right);
-    return (dynamic val) => delegate(l(val), r(val));
+      if (list is Iterable) {
+        return list.contains(value) as R;
+      }
+      throw ArgumentError("Right side of IN must be Iterable");
+    };
   }
 }
