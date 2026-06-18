@@ -1,4 +1,4 @@
-import '../../expression.dart';
+import '../../../expression.dart';
 
 class SqlVisitor extends FieldVisitor {
   // AND

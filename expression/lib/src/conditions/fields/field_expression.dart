@@ -1,4 +1,4 @@
-import 'package:expression/src/fields/field.dart';
+import 'package:expression/src/conditions/fields/field.dart';
 import '../visitor/visitor.dart';
 
 /// フィールド参照を表す式ノード。

@@ -1,4 +1,4 @@
-import '../expression.dart';
+import '../../expression.dart';
 
 /// 条件式ツリーを評価して関数に変換するビルダー。
 ///

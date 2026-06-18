@@ -1,4 +1,4 @@
-import 'package:expression/src/fields/field.dart';
+import 'package:expression/src/conditions/fields/field.dart';
 import '../visitor/visitor.dart';
 
 /// 論理 AND を表す式ノード。

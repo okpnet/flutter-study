@@ -17,6 +17,13 @@ class NumericFieldVisitor extends FieldVisitor {
   }
 }
 
+final map = <Map<String, dynamic>>[
+  {'name': 'Ansony', 'age': 50},
+  {'name': 'Berry', 'age': 40},
+  {'name': 'Chery', 'age': 30},
+  {'name': 'Denny', 'age': 20},
+  {'name': 'Epon', 'age': 10},
+];
 void main() {
   group('OperatorExpression arithmetic', () {
     final visitor = NumericFieldVisitor();
@@ -97,13 +104,6 @@ void main() {
     });
   });
   group('DSL', () {
-    final map = <Map<String, dynamic>>[
-      {'name': 'Ansony', 'age': 50},
-      {'name': 'Bill', 'age': 40},
-      {'name': 'Chery', 'age': 30},
-      {'name': 'Denny', 'age': 20},
-      {'name': 'Epon', 'age': 10},
-    ];
     test('List visitor DSL', () {
       final builder =
           ExpressionBuilder<
@@ -115,6 +115,8 @@ void main() {
             t.field((map) => map!['name']).like('e') &
             t.field((map) => map!['age']).gt(25),
       );
+      final result = map.where(expr);
+      print(result.join(','));
     });
     test('', () {});
   });

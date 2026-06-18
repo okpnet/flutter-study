@@ -1,4 +1,4 @@
-import '../../expression.dart';
+import '../../../expression.dart';
 
 /// 式同士を `&` や `|` で連結するための DSL 拡張。
 extension ExpressionConnecterDsl on Expression {

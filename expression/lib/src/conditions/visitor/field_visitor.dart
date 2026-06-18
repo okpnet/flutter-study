@@ -1,4 +1,4 @@
-import 'package:expression/src/fields/field.dart';
+import 'package:expression/src/conditions/fields/field.dart';
 
 /// マーカーインターフェース。パッケージ外部での識別用。
 ///

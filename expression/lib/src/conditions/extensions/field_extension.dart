@@ -1,4 +1,4 @@
-import '../../expression.dart';
+import '../../../expression.dart';
 
 /// フィールド選択や比較を簡潔に書くための DSL 拡張。
 ///
