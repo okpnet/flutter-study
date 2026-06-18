@@ -12,8 +12,8 @@ class ExpressionBuilder<T, R extends Function> {
   /// 与えられた [expression] を評価して `T -> R` の関数を返します。
   ///
   /// [expression]: 評価対象の条件式ツリー。
-  R build(Expression expression) {
-    final result = converter.evalute(expression);
-    return result;
+  R build({T? value, required Expression Function(T? t) builder}) {
+    final expr = builder(value);
+    return converter.evalute(expr);
   }
 }

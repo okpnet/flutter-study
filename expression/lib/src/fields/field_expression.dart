@@ -26,7 +26,7 @@ class FieldExpression<T, R> extends Expression<T, R> {
 /// ジェネリクスの [R] は格納される値の型を表します。
 class ValueExpression<R> extends Expression<dynamic, R> {
   /// 格納される値。
-  final dynamic value;
+  final R value;
 
   ValueExpression({required this.value, super.name});
 

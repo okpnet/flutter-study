@@ -3,9 +3,9 @@ import '../../expression.dart';
 /// フィールド選択や比較を簡潔に書くための DSL 拡張。
 ///
 /// `R Function(T)` 型に対して `expr` を取り、さまざまな比較式を生成します。
-extension FieldExpressionDsl<T, R> on R Function(T) {
+extension FieldExpressionDsl<T, R> on FieldExpression<T, R> {
   /// この関数を `FieldExpression` に変換します。
-  FieldExpression<T, R> get expr => FieldExpression(field: this);
+  FieldExpression<T, R> get expr => this;
 
   /// 等価比較: 左辺が [value] と等しいか。
   Expression eq(R value) => OperatorExpression.equal(
@@ -27,6 +27,18 @@ extension FieldExpressionDsl<T, R> on R Function(T) {
 
   /// 大なり比較: 左辺 > [value]
   Expression gt(R value) => OperatorExpression.greaterThan(
+    left: expr,
+    right: ValueExpression(value: value),
+  );
+
+  /// 小なり比較: 左辺 < [value]
+  Expression le(R value) => OperatorExpression.lessThanEqual(
+    left: expr,
+    right: ValueExpression(value: value),
+  );
+
+  /// 大なり比較: 左辺 > [value]
+  Expression ge(R value) => OperatorExpression.greaterThanEqual(
     left: expr,
     right: ValueExpression(value: value),
   );

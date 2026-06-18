@@ -4,7 +4,7 @@ import 'field.dart';
 /// 二項演算子を表す式ノード。
 ///
 /// 左辺 [left] と右辺 [right] を評価して、 [delegate] により比較や判定を行います。
-class OperatorExpression<R> extends Expression<dynamic, R> {
+class OperatorExpression<T, R> extends Expression<T, R> {
   /// 表示用ラベル（例: '=', '<', 'LIKE' など）。
   final String _label;
 
@@ -17,7 +17,7 @@ class OperatorExpression<R> extends Expression<dynamic, R> {
   String get lable => _label;
 
   /// 左右の評価結果を比較するデリゲート関数。
-  bool Function(dynamic, dynamic) delegate;
+  late bool Function(T, T) delegate;
 
   OperatorExpression({
     required this.delegate,
@@ -32,7 +32,7 @@ class OperatorExpression<R> extends Expression<dynamic, R> {
   /// [visitor]: ノードを評価・変換する [FieldVisitor]。
   /// 戻り値は `R Function(T)` 型の評価関数です。
   @override
-  R Function(dynamic) accept(FieldVisitor visitor) {
+  R Function(T) accept(FieldVisitor visitor) {
     return visitor.visitOperator(this);
   }
 
@@ -47,7 +47,7 @@ class OperatorExpression<R> extends Expression<dynamic, R> {
     required Expression right,
     String? name,
     String label = '=',
-  }) => OperatorExpression(
+  }) => OperatorExpression<T, R>(
     delegate: (l, r) => l == r,
     label: label,
     left: left,
@@ -60,7 +60,7 @@ class OperatorExpression<R> extends Expression<dynamic, R> {
     required Expression right,
     String? name,
     String label = '<>',
-  }) => OperatorExpression(
+  }) => OperatorExpression<T, R>(
     delegate: (l, r) => l != r,
     label: label,
     left: left,
@@ -73,8 +73,8 @@ class OperatorExpression<R> extends Expression<dynamic, R> {
     required Expression right,
     String? name,
     String label = '<',
-  }) => OperatorExpression(
-    delegate: (l, r) => l < r,
+  }) => OperatorExpression<T, R>(
+    delegate: (l, r) => changeValu(l, label) < changeValu(r, label),
     label: label,
     left: left,
     right: right,
@@ -86,8 +86,8 @@ class OperatorExpression<R> extends Expression<dynamic, R> {
     required Expression right,
     String? name,
     String label = '<=',
-  }) => OperatorExpression(
-    delegate: (l, r) => l <= r,
+  }) => OperatorExpression<T, R>(
+    delegate: (l, r) => changeValu(l, label) <= changeValu(r, label),
     label: label,
     left: left,
     right: right,
@@ -99,8 +99,8 @@ class OperatorExpression<R> extends Expression<dynamic, R> {
     required Expression right,
     String? name,
     String label = '>',
-  }) => OperatorExpression(
-    delegate: (l, r) => l > r,
+  }) => OperatorExpression<T, R>(
+    delegate: (l, r) => changeValu(l, label) > changeValu(r, label),
     label: label,
     left: left,
     right: right,
@@ -112,8 +112,8 @@ class OperatorExpression<R> extends Expression<dynamic, R> {
     required Expression right,
     String? name,
     String label = '>=',
-  }) => OperatorExpression(
-    delegate: (l, r) => l >= r,
+  }) => OperatorExpression<T, R>(
+    delegate: (l, r) => changeValu(l, label) >= changeValu(r, label),
     label: label,
     left: left,
     right: right,
@@ -125,7 +125,7 @@ class OperatorExpression<R> extends Expression<dynamic, R> {
     required Expression right,
     String? name,
     String label = 'START_WITH',
-  }) => OperatorExpression(
+  }) => OperatorExpression<T, R>(
     delegate: (l, r) => l.toString().startsWith(r.toString()),
     label: label,
     left: left,
@@ -138,7 +138,7 @@ class OperatorExpression<R> extends Expression<dynamic, R> {
     required Expression right,
     String? name,
     String label = 'END_WITH',
-  }) => OperatorExpression(
+  }) => OperatorExpression<T, R>(
     delegate: (l, r) => l.toString().endsWith(r.toString()),
     label: label,
     left: left,
@@ -159,5 +159,14 @@ class OperatorExpression<R> extends Expression<dynamic, R> {
       right: right,
       name: name,
     );
+  }
+  static dynamic changeValu<T>(T value, String operator) {
+    return switch (value) {
+      num val => val,
+      DateTime val => val,
+      _ => UnimplementedError(
+        'the operater value type may be numb or datetime.',
+      ),
+    };
   }
 }

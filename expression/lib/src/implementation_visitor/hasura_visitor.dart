@@ -30,7 +30,7 @@ class HasuraGraphqlVisitor extends FieldVisitor {
   // Field: ここでは単体では何も返さず「カラム名」として使う
   @override
   R Function(T) visitField<T, R>(FieldExpression<T, R> ex) {
-    return (dynamic _) => (ex.name ?? "<field>") as R;
+    return (dynamic t) => (ex.field(t) ?? "<field>") as R;
   }
 
   // Value: Hasura ではそのまま値として使う

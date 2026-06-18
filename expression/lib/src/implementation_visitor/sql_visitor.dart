@@ -25,18 +25,18 @@ class SqlVisitor extends FieldVisitor {
 
   // Value
   @override
-  R Function(T) visitValue<T, R>(ValueExpression ex) {
+  R Function(T) visitValue<T, R>(ValueExpression<R> ex) {
     return (_) {
       final v = ex.value;
       if (v is String) return "'$v'" as R;
       if (v is Iterable) return v.join(",") as R;
-      return v.toString() as R;
+      return v;
     };
   }
 
   // Operator (=, <, >, <=, >=, LIKE, STARTS_WITH)
   @override
-  R Function(T) visitOperator<T, R>(OperatorExpression<R> ex) {
+  R Function(dynamic) visitOperator<T, R>(OperatorExpression<T, R> ex) {
     final l = ex.left.accept(this);
     final r = ex.right.accept(this);
 

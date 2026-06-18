@@ -13,7 +13,9 @@ abstract class FieldVisitor {
   ///
   /// [ex]: `FieldExpression<T, R>` ノード。
   R Function(T) visitField<T, R>(FieldExpression<T, R> ex) {
-    return ex.field;
+    // ignore: prefer_function_declarations_over_variables
+    final result = (t) => ex.field(t);
+    return result;
   }
 
   /// 値ノードを処理します。
@@ -26,10 +28,10 @@ abstract class FieldVisitor {
   /// 二項演算子ノードを処理します。
   ///
   /// [ex]: 演算子ノード（`OperatorExpression`）。
-  R Function(T) visitOperator<T, R>(OperatorExpression<R> ex) {
+  R Function(T) visitOperator<T, R>(OperatorExpression<T, R> ex) {
     final l = ex.left.accept(this);
     final r = ex.right.accept(this);
-    return (T item) => ex.delegate(l(item), r(item)) as R;
+    return (dynamic item) => ex.delegate(l(item) as T, r(item) as T) as R;
   }
 
   /// 論理 AND ノードを処理します。

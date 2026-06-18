@@ -14,7 +14,7 @@ class FieldConvertter {
   ///
   /// ジェネリクスの [T] は入力型、[R] は返却される関数の型です。
   R evalute<T, R>(Expression expression) {
-    dynamic result = expression.accept(fieldVisitor);
+    final result = expression.accept(fieldVisitor) as dynamic;
     return result;
   }
 }

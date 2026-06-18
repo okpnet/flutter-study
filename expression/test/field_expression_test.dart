@@ -4,15 +4,15 @@ import 'package:test/test.dart';
 class SumFieldVisitor extends FieldVisitor {
   @override
   R Function(T) visitAnd<T, R>(AndExpression ex) {
-    final l = ex.left.accept<T, R>(this);
-    final r = ex.right.accept<T, R>(this);
+    final l = ex.left.accept(this);
+    final r = ex.right.accept(this);
     return (T v) => ((l(v) as int) + (r(v) as int)) as R;
   }
 
   @override
   R Function(T) visitOr<T, R>(OrExpression ex) {
-    final l = ex.left.accept<T, R>(this);
-    final r = ex.right.accept<T, R>(this);
+    final l = ex.left.accept(this);
+    final r = ex.right.accept(this);
     return (T v) => ((l(v) as int) - (r(v) as int)) as R;
   }
 }
@@ -29,7 +29,7 @@ void main() {
 
     test('ValueExpression returns constant function', () {
       final expr = ValueExpression(value: 5);
-      final func = expr.accept<int, int>(visitor);
+      final func = expr.accept(visitor);
       expect(func(999), equals(5));
     });
 
