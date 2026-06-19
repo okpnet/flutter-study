@@ -12,7 +12,7 @@ abstract class FieldVisitor {
   /// フィールド参照ノードを処理します。
   ///
   /// [ex]: `FieldExpression<T, R>` ノード。
-  R Function(T) visitField<T, R>(FieldExpression<T, R> ex) {
+  V Function(T) visitField<T, V>(FieldExpression<T, V> ex) {
     // ignore: prefer_function_declarations_over_variables
     final result = (t) => ex.field(t);
     return result;
@@ -37,7 +37,7 @@ abstract class FieldVisitor {
   /// 論理 AND ノードを処理します。
   ///
   /// [ex]: `AndExpression` ノード。
-  R Function(T) visitAnd<T, R>(AndExpression<R> ex) {
+  R Function(T) visitAnd<T, R>(AndExpression<T, R> ex) {
     final l = ex.left.accept(this);
     final r = ex.right.accept(this);
 
@@ -52,7 +52,7 @@ abstract class FieldVisitor {
   /// 論理 OR ノードを処理します。
   ///
   /// [ex]: `OrExpression` ノード。
-  R Function(T) visitOr<T, R>(OrExpression<R> ex) {
+  R Function(T) visitOr<T, R>(OrExpression<T, R> ex) {
     final l = ex.left.accept(this);
     final r = ex.right.accept(this);
 
@@ -67,18 +67,30 @@ abstract class FieldVisitor {
   /// 範囲チェックノードを処理します。
   ///
   /// [ex]: `BetweenExpression` ノード。
-  R Function(T) visitBetween<T, R>(BetweenExpression<R> ex) {
+  R Function(T) visitBetween<T, V, R>(BetweenExpression<T, V, R> ex) {
+    // if (V is! Comparable) {
+    //   throw UnsupportedError(
+    //     'The general-purpose V-type  must implement Comparable.',
+    //   );
+    // }
+
+    final r = R.toString();
+    final t = T.toString();
+
     final v = ex.value.accept(this);
     final min = ex.min.accept(this);
     final max = ex.max.accept(this);
 
-    return (T item) {
-      final value = v(item);
-      final lo = min(item);
-      final hi = max(item);
+    // ignore: prefer_function_declarations_over_variables
+    final result = (T item) {
+      final value = v(item) as Comparable;
+      final lo = min(item) as Comparable;
+      final hi = max(item) as Comparable;
 
-      return (lo <= value && value <= hi) as R;
+      return (lo.compareTo(value) <= 0 && value.compareTo(hi) <= 0) as R;
     };
+
+    return result;
   }
 
   /// 包含チェックノードを処理します。

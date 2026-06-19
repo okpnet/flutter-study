@@ -3,14 +3,14 @@ import 'package:test/test.dart';
 
 class NumericFieldVisitor extends FieldVisitor {
   @override
-  R Function(T) visitAnd<T, R>(AndExpression<R> ex) {
+  R Function(T) visitAnd<T, R>(AndExpression<T, R> ex) {
     final l = ex.left.accept(this);
     final r = ex.right.accept(this);
     return (T v) => ((l(v) as int) + (r(v) as int)) as R;
   }
 
   @override
-  R Function(T) visitOr<T, R>(OrExpression ex) {
+  R Function(T) visitOr<T, R>(OrExpression<T, R> ex) {
     final l = ex.left.accept(this);
     final r = ex.right.accept(this);
     return (T v) => ((l(v) as int) - (r(v) as int)) as R;
@@ -103,17 +103,88 @@ void main() {
       expect(op2Sql, equals('((a = b) > \'x\')'));
     });
   });
-  group('DSL', () {
-    test('List visitor DSL', () {
-      final builder =
-          ExpressionBuilder<
-            Map<String, dynamic>,
-            bool Function(Map<String, dynamic>)
-          >(converter: FieldConvertter(fieldVisitor: ListVisitor()));
+  group('DSL list', () {
+    test('List visitor DSL operater > and like', () {
+      final builder = ExpressionBuilder<Map<String, dynamic>, bool>(
+        converter: FieldConvertter(fieldVisitor: ListVisitor()),
+      );
       final expr = builder.build(
         builder: (t) =>
-            t.field((map) => map!['name']).like('e') &
-            t.field((map) => map!['age']).gt(25),
+            t.like('e', (map) => map['name']) & t.gt(25, (map) => map['age']),
+      );
+      final result = map.where(expr);
+      final value = result.join(',');
+      print(value);
+      expect(value, equals('{name: Berry, age: 40},{name: Chery, age: 30}'));
+    });
+    test('List visitor DSL >= and like', () {
+      final builder = ExpressionBuilder<Map<String, dynamic>, bool>(
+        converter: FieldConvertter(fieldVisitor: ListVisitor()),
+      );
+      final expr = builder.build(
+        builder: (t) =>
+            t.like('e', (map) => map['name']) & t.ge(30, (map) => map['age']),
+      );
+      final result = map.where(expr);
+      final value = result.join(',');
+      print(value);
+      expect(value, equals('{name: Berry, age: 40},{name: Chery, age: 30}'));
+    });
+    test('List visitor DSL < and start with', () {
+      final builder = ExpressionBuilder<Map<String, dynamic>, bool>(
+        converter: FieldConvertter(fieldVisitor: ListVisitor()),
+      );
+      final expr = builder.build(
+        builder: (t) =>
+            t.startsWith('E', (map) => map['name']) &
+            t.lt(20, (map) => map['age']),
+      );
+      final result = map.where(expr);
+      final value = result.join(',');
+      print(value);
+      expect(value, equals('{name: Epon, age: 10}'));
+    });
+    test('List visitor DSL <= and end with', () {
+      final builder = ExpressionBuilder<Map<String, dynamic>, bool>(
+        converter: FieldConvertter(fieldVisitor: ListVisitor()),
+      );
+      final expr = builder.build(
+        builder: (helper) =>
+            helper.endWith('y', (map) => map['name']) &
+            helper.le(30, (map) => map['age']),
+      );
+      final result = map.where(expr);
+      final value = result.join(',');
+      print(value);
+      expect(value, equals('{name: Chery, age: 30},{name: Denny, age: 20}'));
+    });
+    test('List visitor DSL between', () {
+      final builder = ExpressionBuilder<Map<String, dynamic>, bool>(
+        converter: FieldConvertter(fieldVisitor: ListVisitor()),
+      );
+      final expr = builder.build(
+        builder: (helper) =>
+            helper.between(20, 40, (t) => t['age']), //.inList(map),
+      );
+      final result = map.where(expr);
+      final value = result.join(',');
+      print(value);
+      expect(
+        value,
+        equals(
+          '{name: Berry, age: 40},{name: Chery, age: 30},{name: Denny, age: 20}',
+        ),
+      );
+    });
+  });
+  group('DSL', () {
+    test('List visitor DSL', () {
+      final builder = ExpressionBuilder<Map<String, dynamic>, bool>(
+        converter: FieldConvertter(fieldVisitor: ListVisitor()),
+      );
+      final expr = builder.build(
+        builder: (t) =>
+            t.like('e', (map) => map!['name']) & t.gt(25, (map) => map['age']),
       );
       final result = map.where(expr);
       print(result.join(','));

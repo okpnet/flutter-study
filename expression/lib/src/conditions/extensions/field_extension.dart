@@ -1,78 +1,89 @@
 import '../../../expression.dart';
 
-/// フィールド選択や比較を簡潔に書くための DSL 拡張。
-///
-/// `R Function(T)` 型に対して `expr` を取り、さまざまな比較式を生成します。
-extension FieldExpressionDsl<T, R> on FieldExpression<T, R> {
-  /// この関数を `FieldExpression` に変換します。
-  FieldExpression<T, R> get expr => this;
+/// オブジェクトからフィールド選択を簡潔に行うための拡張。
+class ExpressionHelper<T, R> {
+  /// [selector] を使って `FieldExpression` を生成します。
+  FieldExpression<T, V> field<V>(V Function(T) selector) =>
+      FieldExpression<T, V>(field: selector);
 
   /// 等価比較: 左辺が [value] と等しいか。
-  Expression eq(R value) => OperatorExpression.equal(
-    left: expr,
-    right: ValueExpression(value: value),
-  );
+  Expression<T, R> eq<V>(V value, V Function(T) selector) =>
+      OperatorExpression<T, R>.equal(
+        left: field(selector),
+        right: ValueExpression(value: value),
+      );
 
   /// 非等価比較: 左辺が [value] と異なるか。
-  Expression ne(R value) => OperatorExpression.unEqual(
-    left: expr,
-    right: ValueExpression(value: value),
-  );
+  Expression<T, R> ne<V>(V value, V Function(T) selector) =>
+      OperatorExpression<T, R>.unEqual(
+        left: field(selector),
+        right: ValueExpression(value: value),
+      );
 
   /// 小なり比較: 左辺 < [value]
-  Expression lt(R value) => OperatorExpression.lessThan(
-    left: expr,
-    right: ValueExpression(value: value),
-  );
+  Expression<T, R> lt<V>(V value, V Function(T) selector) =>
+      OperatorExpression<T, R>.lessThan(
+        left: field(selector),
+        right: ValueExpression(value: value),
+      );
 
   /// 大なり比較: 左辺 > [value]
-  Expression gt(R value) => OperatorExpression.greaterThan(
-    left: expr,
-    right: ValueExpression(value: value),
-  );
+  Expression<T, R> gt<V>(V value, V Function(T) selector) =>
+      OperatorExpression<T, R>.greaterThan(
+        left: field(selector),
+        right: ValueExpression(value: value),
+      );
 
   /// 小なり比較: 左辺 < [value]
-  Expression le(R value) => OperatorExpression.lessThanEqual(
-    left: expr,
-    right: ValueExpression(value: value),
-  );
+  Expression<T, R> le<V>(V value, V Function(T) selector) =>
+      OperatorExpression<T, R>.lessThanEqual(
+        left: field(selector),
+        right: ValueExpression(value: value),
+      );
 
   /// 大なり比較: 左辺 > [value]
-  Expression ge(R value) => OperatorExpression.greaterThanEqual(
-    left: expr,
-    right: ValueExpression(value: value),
-  );
+  Expression<T, R> ge<V>(V value, V Function(T) selector) =>
+      OperatorExpression<T, R>.greaterThanEqual(
+        left: field(selector),
+        right: ValueExpression(value: value),
+      );
 
   /// 先頭一致: 左辺 が [prefix] で始まるか。
-  Expression startsWith(String prefix) => OperatorExpression.startWith(
-    left: expr,
-    right: ValueExpression(value: prefix),
-  );
+  Expression<T, R> startsWith<V>(String prefix, String Function(T) selector) =>
+      OperatorExpression<T, R>.startWith(
+        left: field(selector),
+        right: ValueExpression(value: prefix),
+      );
+
+  Expression<T, R> endWith<V>(String prefix, Stream Function(T) selector) =>
+      OperatorExpression<T, R>.endWith(
+        left: field(selector),
+        right: ValueExpression(value: prefix),
+      );
 
   /// 部分一致: 左辺 が [pattern] を含むか。
-  Expression like(String pattern) => OperatorExpression.like(
-    left: expr,
-    right: ValueExpression(value: pattern),
-  );
+  Expression<T, R> like<V>(String pattern, String Function(T) selector) =>
+      OperatorExpression<T, R>.like(
+        left: field(selector),
+        right: ValueExpression(value: pattern),
+      );
 
-  /// 範囲チェック: 左辺 が [min] 以上 [max] 以下か。
-  Expression between(R min, R max) => BetweenExpression(
-    value: expr,
-    min: ValueExpression(value: min),
-    max: ValueExpression(value: max),
-  );
+  ///
+  Expression<T, R> between<V>(V min, V max, V Function(T) selector) =>
+      BetweenExpression<T, V, R>(
+        value: selector as Expression<T, V>,
+        min: ValueExpression<V>(value: min),
+        max: ValueExpression<V>(value: max),
+      );
 
-  /// 包含チェック: 左辺 が [list] に含まれるか。
-  Expression inList(List<R> list) => InExpression(
-    value: expr,
-    list: ValueExpression(value: list),
-  );
-}
+  ///
+  Expression<T, R> fieldToFiled<V>({
+    bool isNot = false,
+    required V Function(T) left,
+    required V Function(T) rught,
+  }) => OperatorExpression.equal(left: field(left), right: field(rught));
 
-/// オブジェクトからフィールド選択を簡潔に行うための拡張。
-extension FieldSelector<T> on T {
-  /// [selector] を使って `FieldExpression` を生成します。
-  FieldExpression<T, R> field<R>(R Function(T) selector) {
-    return FieldExpression(field: selector);
-  }
+  ///
+  Expression<T, R> toFiledUnEq<V>(V Function(T) left, V Function(T) rught) =>
+      OperatorExpression.equal(left: field(left), right: field(rught));
 }
