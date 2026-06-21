@@ -4,9 +4,9 @@ import 'field.dart';
 /// 範囲チェックを表す式ノード。
 ///
 /// [value] が [min] 以上 [max] 以下かを評価します。
-class BetweenExpression<T, V, R> extends Expression<T, R> {
+class BetweenExpression<T, R> extends Expression<T, R> {
   /// 比較対象の値を表す式。
-  final Expression<T, V> value;
+  final Expression value;
 
   /// 下限を表す式。
   final Expression min;

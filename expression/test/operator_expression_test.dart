@@ -3,10 +3,10 @@ import 'package:test/test.dart';
 
 class NumericFieldVisitor extends FieldVisitor {
   @override
-  R Function(T) visitAnd<T, R>(AndExpression<T, R> ex) {
+  bool Function(T) visitAnd<T, R>(AndExpression<T> ex) {
     final l = ex.left.accept(this);
     final r = ex.right.accept(this);
-    return (T v) => ((l(v) as int) + (r(v) as int)) as R;
+    return (t) => l(t) && r(t);
   }
 
   @override
@@ -110,7 +110,8 @@ void main() {
       );
       final expr = builder.build(
         builder: (t) =>
-            t.like('e', (map) => map['name']) & t.gt(25, (map) => map['age']),
+            t.field((map) => map['name']).like<bool>('e') &
+            t.field((map) => map['age'] as int).gt<bool>(25),
       );
       final result = map.where(expr);
       final value = result.join(',');
@@ -123,7 +124,8 @@ void main() {
       );
       final expr = builder.build(
         builder: (t) =>
-            t.like('e', (map) => map['name']) & t.ge(30, (map) => map['age']),
+            t.field((map) => map['name'] as String).like<bool>('e') &
+            t.field((map) => map['age'] as int).ge<bool>(30),
       );
       final result = map.where(expr);
       final value = result.join(',');
@@ -136,8 +138,8 @@ void main() {
       );
       final expr = builder.build(
         builder: (t) =>
-            t.startsWith('E', (map) => map['name']) &
-            t.lt(20, (map) => map['age']),
+            t.field((map) => map['name'] as String).startsWith<bool>('E') &
+            t.field((map) => map['age'] as int).lt<bool>(20),
       );
       final result = map.where(expr);
       final value = result.join(',');
@@ -150,10 +152,10 @@ void main() {
       );
       final expr = builder.build(
         builder: (helper) =>
-            helper.endWith('y', (map) => map['name']) &
-            helper.le(30, (map) => map['age']),
+            helper.field((map) => map['name'] as String).startsWith<bool>('y') &
+            helper.field((map) => map['age'] as int).le<bool>(30),
       );
-      final result = map.where(expr);
+      final result = map.where(expr).toList();
       final value = result.join(',');
       print(value);
       expect(value, equals('{name: Chery, age: 30},{name: Denny, age: 20}'));
@@ -163,8 +165,9 @@ void main() {
         converter: FieldConvertter(fieldVisitor: ListVisitor()),
       );
       final expr = builder.build(
-        builder: (helper) =>
-            helper.between(20, 40, (t) => t['age']), //.inList(map),
+        builder: (helper) => helper
+            .field((t) => t['age'] as int)
+            .between<int, bool>(20, 40), //.inList(map),
       );
       final result = map.where(expr);
       final value = result.join(',');
@@ -184,7 +187,8 @@ void main() {
       );
       final expr = builder.build(
         builder: (t) =>
-            t.like('e', (map) => map!['name']) & t.gt(25, (map) => map['age']),
+            t.field((map) => map['name'] as String).like<bool>('e') &
+            t.field((map) => map['age'] as int).gt<bool>(25),
       );
       final result = map.where(expr);
       print(result.join(','));

@@ -3,10 +3,10 @@ import '../../../expression.dart';
 class SqlVisitor extends FieldVisitor {
   // AND
   @override
-  R Function(T) visitAnd<T, R>(AndExpression<T, R> ex) {
+  R Function(T) visitAnd<T, R>(AndExpression<T> ex) {
     final l = ex.left.accept(this);
     final r = ex.right.accept(this);
-    return (dynamic t) => "(${l(t)} AND ${r(t)})" as R;
+    return (T t) => "($l AND $r)" as R;
   }
 
   // OR
@@ -67,7 +67,7 @@ class SqlVisitor extends FieldVisitor {
 
   // BETWEEN
   @override
-  R Function(T) visitBetween<T, V, R>(BetweenExpression<T, V, R> ex) {
+  R Function(T) visitBetween<T, R>(BetweenExpression<T, R> ex) {
     final v = ex.value.accept(this);
     final min = ex.min.accept(this);
     final max = ex.max.accept(this);

@@ -93,7 +93,7 @@ class HasuraGraphqlVisitor extends FieldVisitor {
 
   // BETWEEN
   @override
-  R Function(T) visitBetween<T, V, R>(BetweenExpression<T, V, R> ex) {
+  R Function(T) visitBetween<T, R>(BetweenExpression<T, R> ex) {
     final v = ex.value.accept(this); // フィールド名
     final min = ex.min.accept(this);
     final max = ex.max.accept(this);

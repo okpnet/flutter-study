@@ -4,10 +4,10 @@ import '../visitor/visitor.dart';
 /// 論理 AND を表す式ノード。
 class AndExpression<T, R> extends Expression<T, R> {
   /// 左辺の式。
-  final Expression left;
+  final IExpression left;
 
   /// 右辺の式。
-  final Expression right;
+  final IExpression right;
 
   AndExpression({required this.left, required this.right, super.name});
 
@@ -22,10 +22,10 @@ class AndExpression<T, R> extends Expression<T, R> {
 /// 論理 OR を表す式ノード。
 class OrExpression<T, R> extends Expression<T, R> {
   /// 左辺の式。
-  final Expression left;
+  final IExpression left;
 
   /// 右辺の式。
-  final Expression right;
+  final IExpression right;
 
   OrExpression({required this.left, required this.right, super.name});
 

@@ -31,7 +31,11 @@ abstract class FieldVisitor {
   R Function(T) visitOperator<T, R>(OperatorExpression<T, R> ex) {
     final l = ex.left.accept(this);
     final r = ex.right.accept(this);
-    return (dynamic item) => ex.delegate(l(item) as T, r(item) as T) as R;
+    final lStr = l.toString();
+    final rStr = r.toString();
+    print('l=$lStr r=$rStr');
+    print(ex.delegate.toString());
+    return (T item) => ex.delegate(l(item) as T, r(item) as T) as R;
   }
 
   /// 論理 AND ノードを処理します。
@@ -42,11 +46,10 @@ abstract class FieldVisitor {
     final r = ex.right.accept(this);
 
     return (T item) {
-          final lb = l(item);
-          final rb = r(item);
-          return lb as bool && rb as bool;
-        }
-        as R Function(T);
+      final lb = l(item);
+      final rb = r(item);
+      return (lb && rb) as R;
+    };
   }
 
   /// 論理 OR ノードを処理します。
@@ -67,7 +70,7 @@ abstract class FieldVisitor {
   /// 範囲チェックノードを処理します。
   ///
   /// [ex]: `BetweenExpression` ノード。
-  R Function(T) visitBetween<T, V, R>(BetweenExpression<T, V, R> ex) {
+  R Function(T) visitBetween<T, R>(BetweenExpression<T, R> ex) {
     // if (V is! Comparable) {
     //   throw UnsupportedError(
     //     'The general-purpose V-type  must implement Comparable.',
