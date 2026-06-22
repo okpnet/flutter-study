@@ -2,15 +2,15 @@ import '../../constants/constants.dart';
 import '../../visitors/visitors.dart';
 import '../expressions.dart';
 
-abstract interface class IFieldExpression implements IExpression {
-  ExpresionCallBack get field;
+abstract interface class IFieldExpression<T> implements IExpression {
+  ValueCallBack<T> get field;
 }
 
 ///クラスのプロパティ、文字列など比較フィールド
-class FieldExpression extends Expression implements IFieldExpression {
+class FieldExpression<T> extends Expression implements IFieldExpression<T> {
   ///フィールドへのアクセサ
   @override
-  final ExpresionCallBack field;
+  final ValueCallBack<T> field;
 
   ///コンストラクタ
   FieldExpression(this.field, {super.name});
@@ -20,5 +20,14 @@ class FieldExpression extends Expression implements IFieldExpression {
   @override
   ExpresionCallBack accept(IVisitor visitor) {
     return visitor.fieldVisit(this);
+  }
+
+  @override
+  DebugNode acceptDebug({int? level}) {
+    final fieldStr = field.toString().replaceAll(RegExp('Closure: '), '');
+    final namePrint = name == null ? 'FIELD' : '$name';
+    final debugPrint = '$namePrint $fieldStr';
+    final resultNode = DebugNode(debugPrint);
+    return resultNode;
   }
 }

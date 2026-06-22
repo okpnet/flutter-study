@@ -1,5 +1,6 @@
 import '../expressions.dart';
 
+///左を基準に右を評価する式
 abstract interface class IOperatorExpression implements IExpression {
   ///左側の式
   Expression get left;
@@ -8,7 +9,7 @@ abstract interface class IOperatorExpression implements IExpression {
   Expression get right;
 }
 
-///クラスのプロパティ、文字列など比較フィールド
+///左を基準に右を評価する式
 abstract class OperatorExpression extends Expression
     implements IOperatorExpression {
   ///左側の式

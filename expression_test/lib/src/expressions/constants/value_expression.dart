@@ -1,4 +1,5 @@
 import '../../constants/constants.dart';
+import '../../extensions/extensions.dart';
 import '../../visitors/visitors.dart';
 import '../expressions.dart';
 
@@ -21,5 +22,14 @@ class ValueExpression extends Expression implements IValueExpression {
   @override
   ExpresionCallBack accept(IVisitor visitor) {
     return visitor.valueVisit(this);
+  }
+
+  @override
+  DebugNode acceptDebug({int? level}) {
+    final typeName = value.runtimeType.toString();
+    final namePrint = name == null ? 'VALUE' : '$name';
+    final debugPrint = '$namePrint ($typeName $value)';
+    final resultNode = DebugNode(debugPrint);
+    return resultNode;
   }
 }
