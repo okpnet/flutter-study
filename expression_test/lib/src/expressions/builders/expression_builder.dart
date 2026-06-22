@@ -1,6 +1,14 @@
-import '../expressions.dart';
+import 'package:expression_test/expression_test.dart';
 
 class ExpressionBuilder {
+  R Function(T) build<T, R>(Expression expression, Visitor<T> visitor) {
+    final result = expression.accept(visitor);
+    // if (result is! R Function(T)) {
+    //   AssertionError();
+    // }
+    return (T t) => result(t) as R;
+  }
+
   String buildDebug<T>(Expression expresison) {
     final bufferNode = expresison.acceptDebug();
     final buffer = _formatDebug(bufferNode);
