@@ -1,5 +1,4 @@
 import '../../constants/constants.dart';
-import '../../extensions/extensions.dart';
 import '../../visitors/visitors.dart';
 import '../expressions.dart';
 
@@ -21,7 +20,11 @@ class GreaterExpression extends OperatorExpression
 
   @override
   ExpresionCallBack accept(IVisitor visitor) {
-    return visitor.greaterVisit(this);
+    try {
+      return visitor.greaterVisit(this);
+    } catch (ex) {
+      throw acceptAssertion(ex as Error);
+    }
   }
 
   @override

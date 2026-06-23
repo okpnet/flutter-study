@@ -1,5 +1,4 @@
 import '../../constants/constants.dart';
-import '../../extensions/extensions.dart';
 import '../../visitors/visitors.dart';
 import '../expressions.dart';
 
@@ -21,7 +20,11 @@ class ValueExpression extends Expression implements IValueExpression {
   ///中でVisitorがこのインスタンスを使ってデリゲートを返す
   @override
   ExpresionCallBack accept(IVisitor visitor) {
-    return visitor.valueVisit(this);
+    try {
+      return visitor.valueVisit(this);
+    } catch (ex) {
+      throw acceptAssertion(ex as Error);
+    }
   }
 
   @override

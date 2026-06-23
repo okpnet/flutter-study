@@ -2,11 +2,34 @@ import '../constants/constants.dart';
 import '../expressions/expressions.dart';
 
 abstract interface class IVisitor<T> {
+  ///(T)=>dynamic
   ExpresionCallBack fieldVisit(FieldExpression<T> ex);
+
+  /// dynamic
   ExpresionCallBack valueVisit(ValueExpression ex);
-  ExpresionCallBack equalVisit(OperatorExpression ex);
-  ExpresionCallBack andVisit(OperatorExpression ex);
-  ExpresionCallBack greaterVisit(OperatorExpression ex);
+
+  /// left = right | left != right
+  ExpresionCallBack equalVisit(EquqleExpression ex);
+
+  /// &  AND
+  ExpresionCallBack andVisit(AndExpression ex);
+
+  /// left > right | left>= light
+  ExpresionCallBack greaterVisit(GreaterExpression ex);
+
+  /// | or
+  ExpresionCallBack orVisit(OrExpression ex);
+
+  /// {!}left.contains(right) | left {NOT} LIKE %right%
+  ExpresionCallBack likeVisit(LikeExpression ex);
+
+  /// {!}left.startwith(right) | left {NOT} LIKE 'right%'
+  ExpresionCallBack startWithVisit(StartWithExpression ex);
+
+  /// {!}left.startwith(right) | left {NOT} LIKE '%right'
+  ExpresionCallBack endWithVisit(EndWithExpression ex);
+
+  ExpresionCallBack inVisit(InExpression ex);
 }
 
 abstract class Visitor<T> implements IVisitor<T> {}

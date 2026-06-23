@@ -19,7 +19,11 @@ class FieldExpression<T> extends Expression implements IFieldExpression<T> {
   ///中でVisitorがこのインスタンスを使ってデリゲートを返す
   @override
   ExpresionCallBack accept(IVisitor visitor) {
-    return visitor.fieldVisit(this);
+    try {
+      return visitor.fieldVisit(this);
+    } catch (ex) {
+      throw acceptAssertion(ex as Error);
+    }
   }
 
   @override

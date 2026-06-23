@@ -1,5 +1,4 @@
 import '../../constants/constants.dart';
-import '../../extensions/extensions.dart';
 import '../../visitors/visitors.dart';
 import '../expressions.dart';
 
@@ -20,7 +19,11 @@ class EquqleExpression extends OperatorExpression implements IEquqlExpression {
 
   @override
   ExpresionCallBack accept(IVisitor visitor) {
-    return visitor.equalVisit(this);
+    try {
+      return visitor.equalVisit(this);
+    } catch (ex) {
+      throw acceptAssertion(ex as Error);
+    }
   }
 
   @override

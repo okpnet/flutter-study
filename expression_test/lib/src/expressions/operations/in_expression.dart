@@ -3,17 +3,24 @@ import '../../visitors/visitors.dart';
 import '../expressions.dart';
 
 ///左を基準に右を結合する式
-abstract interface class IAndExpression
-    implements IExpression, IOperatorExpression {}
+abstract interface class IInExpression
+    implements IExpression, IOperatorExpression {
+  bool get isNot;
+}
 
 ///左を基準に右を結合する式
-class AndExpression extends OperatorExpression implements IAndExpression {
-  AndExpression(super.left, super.right, {super.name});
+class InExpression extends OperatorExpression implements IInExpression {
+  ///否定
+  @override
+  final bool isNot;
+
+  InExpression(super.left, super.right, {super.name, bool? isNot})
+    : isNot = isNot ?? false;
 
   @override
   ExpresionCallBack accept(IVisitor visitor) {
     try {
-      return visitor.andVisit(this);
+      return visitor.inVisit(this);
     } catch (ex) {
       throw acceptAssertion(ex as Error);
     }
@@ -21,7 +28,7 @@ class AndExpression extends OperatorExpression implements IAndExpression {
 
   @override
   DebugNode acceptDebug() {
-    final debugPrint = 'AND [${name ?? "no_name"}]';
+    final debugPrint = 'LIKE [${name ?? "no_name"}]';
     final resultNode = DebugNode(debugPrint, [
       left.acceptDebug(),
       right.acceptDebug(),
