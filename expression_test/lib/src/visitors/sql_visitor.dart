@@ -9,61 +9,189 @@ class SqlVisitor<T> extends Visitor<T>
     implements ISqlVisitor<T> {
   @override
   ExpresionCallBack andVisit(AndExpression ex) {
-    // TODO: implement andVisit
-    throw UnimplementedError();
+    return (dynamic t) {
+      typeValidation(ex, t);
+      try {
+        final l = ex.left.accept(this);
+        final r = ex.right.accept(this);
+        final lValue = l(t);
+        final rValue = r(t);
+        return "($lValue AND $rValue)";
+      } catch (exception, trace) {
+        throw AssertionError(
+          '${ex.name ?? ex.toString()} : ${exception.toString()}\n$trace',
+        );
+      }
+    };
   }
 
   @override
   ExpresionCallBack endWithVisit(EndWithExpression ex) {
-    // TODO: implement endWithVisit
-    throw UnimplementedError();
+    return (dynamic t) {
+      typeValidation(ex, t);
+      try {
+        final l = ex.left.accept(this);
+        final r = ex.right.accept(this);
+        final lValue = l(t);
+        final rValue = r(t);
+        final not = ex.isNot ? ' NOT ' : '';
+        return "$lValue $not LIKE '%$rValue'";
+      } catch (exception, trace) {
+        throw AssertionError(
+          '${ex.name ?? ex.toString()} : ${exception.toString()}\n$trace',
+        );
+      }
+    };
   }
 
   @override
   ExpresionCallBack equalVisit(EquqleExpression ex) {
-    // TODO: implement equalVisit
-    throw UnimplementedError();
+    return (dynamic t) {
+      typeValidation(ex, t);
+      try {
+        final l = ex.left.accept(this);
+        final r = ex.right.accept(this);
+        final lValue = l(t);
+        final rValue = r(t);
+        return "$lValue = $rValue";
+      } catch (exception, trace) {
+        throw AssertionError(
+          '${ex.name ?? ex.toString()} : ${exception.toString()}\n$trace',
+        );
+      }
+    };
   }
 
   @override
   ExpresionCallBack fieldVisit(FieldExpression<T> ex) {
-    // TODO: implement fieldVisit
-    throw UnimplementedError();
+    return (dynamic t) {
+      typeValidation(ex, t);
+      try {
+        // ignore: unnecessary_cast
+        final argment = t as T; //変換しないと例外が発生する
+        final filed = ex.field(argment).toString();
+        return filed;
+      } catch (exception, trace) {
+        throw AssertionError(
+          '${ex.name ?? ex.toString()} : ${exception.toString()}\n$trace',
+        );
+      }
+    };
   }
 
   @override
   ExpresionCallBack greaterVisit(GreaterExpression ex) {
-    // TODO: implement greaterVisit
-    throw UnimplementedError();
+    return (dynamic t) {
+      typeValidation(ex, t);
+      try {
+        final l = ex.left.accept(this);
+        final r = ex.right.accept(this);
+        final lValue = l(t);
+        final rValue = r(t);
+        final eq = ex.isEqulity ? '=' : '';
+        return "$lValue >$eq $rValue";
+      } catch (exception, trace) {
+        throw AssertionError(
+          '${ex.name ?? ex.toString()} : ${exception.toString()}\n$trace',
+        );
+      }
+    };
   }
 
   @override
   ExpresionCallBack inVisit(InExpression ex) {
-    // TODO: implement inVisit
-    throw UnimplementedError();
+    return (dynamic t) {
+      typeValidation(ex, t);
+      try {
+        final l = ex.left.accept(this);
+        final r = ex.right.accept(this);
+        final lValue = l(t);
+        final rValue = r(t);
+        final values = changeType(rValue);
+        return "$lValue IN ($values)";
+      } catch (exception, trace) {
+        throw AssertionError(
+          '${ex.name ?? ex.toString()} : ${exception.toString()}\n$trace',
+        );
+      }
+    };
   }
 
   @override
   ExpresionCallBack likeVisit(LikeExpression ex) {
-    // TODO: implement likeVisit
-    throw UnimplementedError();
+    return (dynamic t) {
+      typeValidation(ex, t);
+      try {
+        final l = ex.left.accept(this);
+        final r = ex.right.accept(this);
+        final lValue = l(t);
+        final rValue = r(t);
+        final not = ex.isNot ? ' NOT ' : '';
+        return "$lValue $not LIKE '%$rValue%'";
+      } catch (exception, trace) {
+        throw AssertionError(
+          '${ex.name ?? ex.toString()} : ${exception.toString()}\n$trace',
+        );
+      }
+    };
   }
 
   @override
   ExpresionCallBack orVisit(OrExpression ex) {
-    // TODO: implement orVisit
-    throw UnimplementedError();
+    return (dynamic t) {
+      typeValidation(ex, t);
+      try {
+        final l = ex.left.accept(this);
+        final r = ex.right.accept(this);
+        final lValue = l(t);
+        final rValue = r(t);
+        return "($lValue OR $rValue)";
+      } catch (exception, trace) {
+        throw AssertionError(
+          '${ex.name ?? ex.toString()} : ${exception.toString()}\n$trace',
+        );
+      }
+    };
   }
 
   @override
   ExpresionCallBack startWithVisit(StartWithExpression ex) {
-    // TODO: implement startWithVisit
-    throw UnimplementedError();
+    return (dynamic t) {
+      typeValidation(ex, t);
+      try {
+        final l = ex.left.accept(this);
+        final r = ex.right.accept(this);
+        final lValue = l(t);
+        final rValue = r(t);
+        final not = ex.isNot ? ' NOT ' : '';
+        return "$lValue $not LIKE '$rValue%'";
+      } catch (exception, trace) {
+        throw AssertionError(
+          '${ex.name ?? ex.toString()} : ${exception.toString()}\n$trace',
+        );
+      }
+    };
   }
 
   @override
   ExpresionCallBack valueVisit(ValueExpression ex) {
-    // TODO: implement valueVisit
-    throw UnimplementedError();
+    return (dynamic t) {
+      try {
+        final value = ex.value;
+        return changeType(value);
+      } catch (exception, trace) {
+        throw AssertionError(
+          '${ex.name ?? ex.toString()} : ${exception.toString()}\n$trace',
+        );
+      }
+    };
+  }
+
+  String changeType(dynamic value) {
+    return switch (value) {
+      num num => num.toString(),
+      List list => list.map((t) => changeType(t)).join(','),
+      _ => "'$value'",
+    };
   }
 }
