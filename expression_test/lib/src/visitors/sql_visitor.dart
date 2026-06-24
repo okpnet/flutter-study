@@ -4,6 +4,7 @@ import 'visitors.dart';
 
 abstract interface class ISqlVisitor<T> implements IVisitor<T> {}
 
+///Expressionを巡回して、各Expressionに応じたSQLの条件式に変換する
 class SqlVisitor<T> extends Visitor<T>
     with VisitorMixin
     implements ISqlVisitor<T> {

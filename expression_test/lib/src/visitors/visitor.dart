@@ -29,6 +29,7 @@ abstract interface class IVisitor<T> {
   /// {!}left.startwith(right) | left {NOT} LIKE '%right'
   ExpresionCallBack endWithVisit(EndWithExpression ex);
 
+  // {!}right.contains(right) | left {NOT} IN (right)
   ExpresionCallBack inVisit(InExpression ex);
 }
 

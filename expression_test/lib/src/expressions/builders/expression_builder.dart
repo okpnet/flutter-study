@@ -3,7 +3,7 @@
 import 'package:expression_test/expression_test.dart';
 
 ///Expressionから式を構築する
-final class ExpressionBuilder {
+class ExpressionBuilder {
   static R Function(T) build<T, R>(Expression expression, Visitor<T> visitor) {
     final func = expression.accept(visitor);
     return (T t) {

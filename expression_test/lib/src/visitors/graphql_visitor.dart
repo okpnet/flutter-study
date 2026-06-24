@@ -1,13 +1,13 @@
-import 'package:expression_test/expression_test.dart';
+import '../constants/constants.dart';
+import '../expressions/expressions.dart';
+import 'visitors.dart';
 
-///空のインターフェイス
-abstract interface class IListVisitor {}
+abstract interface class IGraphqlVisitor<T> implements IVisitor<T> {}
 
-///Expressionを巡回して、各Expressionに応じたListの条件式に変換する
-class ListVisitor<T> extends Visitor<T>
+///Expressionを巡回して、各Expressionに応じたGraphQLの条件式に変換する
+class GraphqlVisitor<T> extends Visitor<T>
     with VisitorMixin
-    implements IListVisitor {
-  ///ANDの処理。通常の&で結合
+    implements ISqlVisitor<T> {
   @override
   ExpresionCallBack andVisit(AndExpression ex) {
     return (dynamic t) {
@@ -17,7 +17,9 @@ class ListVisitor<T> extends Visitor<T>
         final r = ex.right.accept(this);
         final lValue = l(t);
         final rValue = r(t);
-        return lValue & rValue;
+        return {
+          '_and': [lValue, rValue],
+        };
       } catch (exception, trace) {
         throw AssertionError(
           '${ex.name ?? ex.toString()} : ${exception.toString()}\n$trace',
@@ -26,7 +28,26 @@ class ListVisitor<T> extends Visitor<T>
     };
   }
 
-  ///=
+  @override
+  ExpresionCallBack endWithVisit(EndWithExpression ex) {
+    return (dynamic t) {
+      typeValidation(ex, t);
+      try {
+        final l = ex.left.accept(this);
+        final r = ex.right.accept(this);
+        final lValue = l(t).toString();
+        final rValue = r(t).toString();
+        return {
+          lValue: {ex.isNot ? '_nlike' : '_like': '%$rValue'},
+        };
+      } catch (exception, trace) {
+        throw AssertionError(
+          '${ex.name ?? ex.toString()} : ${exception.toString()}\n$trace',
+        );
+      }
+    };
+  }
+
   @override
   ExpresionCallBack equalVisit(EquqleExpression ex) {
     return (dynamic t) {
@@ -34,9 +55,11 @@ class ListVisitor<T> extends Visitor<T>
       try {
         final l = ex.left.accept(this);
         final r = ex.right.accept(this);
-        final lValue = l(t);
+        final lValue = l(t).toString();
         final rValue = r(t);
-        return lValue == rValue;
+        return {
+          lValue: {'_eq': rValue},
+        };
       } catch (exception, trace) {
         throw AssertionError(
           '${ex.name ?? ex.toString()} : ${exception.toString()}\n$trace',
@@ -45,7 +68,6 @@ class ListVisitor<T> extends Visitor<T>
     };
   }
 
-  ///インスタンスの値を抽出する
   @override
   ExpresionCallBack fieldVisit(FieldExpression<T> ex) {
     return (dynamic t) {
@@ -53,7 +75,7 @@ class ListVisitor<T> extends Visitor<T>
       try {
         // ignore: unnecessary_cast
         final argment = t as T; //変換しないと例外が発生する
-        final filed = ex.field(argment);
+        final filed = ex.field(argment).toString();
         return filed;
       } catch (exception, trace) {
         throw AssertionError(
@@ -63,7 +85,6 @@ class ListVisitor<T> extends Visitor<T>
     };
   }
 
-  ///以上
   @override
   ExpresionCallBack greaterVisit(GreaterExpression ex) {
     return (dynamic t) {
@@ -71,9 +92,11 @@ class ListVisitor<T> extends Visitor<T>
       try {
         final l = ex.left.accept(this);
         final r = ex.right.accept(this);
-        final lValue = l(t);
+        final lValue = l(t).toString();
         final rValue = r(t);
-        return ex.isEqulity ? lValue >= rValue : lValue > rValue;
+        return {
+          lValue: {ex.isEqulity ? '_gte' : '_gt': rValue},
+        };
       } catch (exception, trace) {
         throw AssertionError(
           '${ex.name ?? ex.toString()} : ${exception.toString()}\n$trace',
@@ -82,13 +105,43 @@ class ListVisitor<T> extends Visitor<T>
     };
   }
 
-  ///コンスタント値
   @override
-  ExpresionCallBack valueVisit(ValueExpression ex) {
+  ExpresionCallBack inVisit(InExpression ex) {
     return (dynamic t) {
+      typeValidation(ex, t);
       try {
-        final value = ex.value;
-        return value;
+        final l = ex.left.accept(this);
+        final r = ex.right.accept(this);
+        final lValue = l(t).toString();
+        final rValue = r(t);
+        if (rValue case List list) {
+          return {
+            lValue: {ex.isNot ? '_nin' : '_in': list},
+          };
+        }
+        throw AssertionError(
+          'Result value type of ${ex.name ?? ex.toString()} is ${rValue.toString()},but right value on InExpression shall List type.',
+        );
+      } catch (exception, trace) {
+        throw AssertionError(
+          '${ex.name ?? ex.toString()} : ${exception.toString()}\n$trace',
+        );
+      }
+    };
+  }
+
+  @override
+  ExpresionCallBack likeVisit(LikeExpression ex) {
+    return (dynamic t) {
+      typeValidation(ex, t);
+      try {
+        final l = ex.left.accept(this);
+        final r = ex.right.accept(this);
+        final lValue = l(t).toString();
+        final rValue = r(t).toString();
+        return {
+          lValue: {ex.isNot ? '_nlike' : '_like': '%$rValue%'},
+        };
       } catch (exception, trace) {
         throw AssertionError(
           '${ex.name ?? ex.toString()} : ${exception.toString()}\n$trace',
@@ -106,27 +159,9 @@ class ListVisitor<T> extends Visitor<T>
         final r = ex.right.accept(this);
         final lValue = l(t);
         final rValue = r(t);
-        return lValue | rValue;
-      } catch (exception, trace) {
-        throw AssertionError(
-          '${ex.name ?? ex.toString()} : ${exception.toString()}\n$trace',
-        );
-      }
-    };
-  }
-
-  @override
-  ExpresionCallBack likeVisit(LikeExpression ex) {
-    return (dynamic t) {
-      typeValidation(ex, t);
-      try {
-        final l = ex.left.accept(this);
-        final r = ex.right.accept(this);
-        final lValue = l(t);
-        final rValue = r(t);
-        return ex.isNot
-            ? !lValue.toString().contains(rValue.toString())
-            : lValue.toString().contains(rValue.toString());
+        return {
+          '_or': [lValue, rValue],
+        };
       } catch (exception, trace) {
         throw AssertionError(
           '${ex.name ?? ex.toString()} : ${exception.toString()}\n$trace',
@@ -142,11 +177,11 @@ class ListVisitor<T> extends Visitor<T>
       try {
         final l = ex.left.accept(this);
         final r = ex.right.accept(this);
-        final lValue = l(t);
-        final rValue = r(t);
-        return ex.isNot
-            ? !lValue.toString().startsWith(rValue.toString())
-            : lValue.toString().startsWith(rValue.toString());
+        final lValue = l(t).toString();
+        final rValue = r(t).toString();
+        return {
+          lValue: {ex.isNot ? '_nlike' : '_like': '$rValue%'},
+        };
       } catch (exception, trace) {
         throw AssertionError(
           '${ex.name ?? ex.toString()} : ${exception.toString()}\n$trace',
@@ -156,40 +191,11 @@ class ListVisitor<T> extends Visitor<T>
   }
 
   @override
-  ExpresionCallBack endWithVisit(EndWithExpression ex) {
+  ExpresionCallBack valueVisit(ValueExpression ex) {
     return (dynamic t) {
-      typeValidation(ex, t);
       try {
-        final l = ex.left.accept(this);
-        final r = ex.right.accept(this);
-        final lValue = l(t);
-        final rValue = r(t);
-        return ex.isNot
-            ? !lValue.toString().endsWith(rValue.toString())
-            : lValue.toString().endsWith(rValue.toString());
-      } catch (exception, trace) {
-        throw AssertionError(
-          '${ex.name ?? ex.toString()} : ${exception.toString()}\n$trace',
-        );
-      }
-    };
-  }
-
-  @override
-  ExpresionCallBack inVisit(InExpression ex) {
-    return (dynamic t) {
-      typeValidation(ex, t);
-      try {
-        final l = ex.left.accept(this);
-        final r = ex.right.accept(this);
-        final lValue = l(t);
-        final rValue = r(t);
-        if (rValue case List list) {
-          return ex.isNot ? !list.contains(lValue) : list.contains(rValue);
-        }
-        throw AssertionError(
-          'Result value type of ${ex.name ?? ex.toString()} is ${rValue.toString()},but right value on InExpression shall List type.',
-        );
+        final value = ex.value;
+        return value;
       } catch (exception, trace) {
         throw AssertionError(
           '${ex.name ?? ex.toString()} : ${exception.toString()}\n$trace',
