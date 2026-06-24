@@ -3,9 +3,9 @@
 /// More dartdocs go here.
 library;
 
-export 'src/constants/constants.dart';
-export 'src/expressions/expressions.dart';
-export 'src/extensions/extensions.dart';
-export 'src/visitors/visitors.dart';
+export 'src/condisiton/constants/constants.dart';
+export 'src/condisiton/expressions/expressions.dart';
+export 'src/condisiton/extensions/extensions.dart';
+export 'src/condisiton/visitors/visitors.dart';
 
 // TODO: Export any libraries intended for clients of this package.
