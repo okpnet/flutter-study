@@ -147,6 +147,41 @@ void main() {
       print(result);
       expect(result, equals('Berry,Chery'));
     });
+    test('list expression', () {
+      final fieldAge = FieldExpression<Map<String, dynamic>>(
+        (t) => t['age'],
+        name: 'f_age1',
+      );
+      final fieldName = FieldExpression<Map<String, dynamic>>(
+        (t) => t['name'],
+        name: 'f_name1',
+      );
+      final and = AndExpression(
+        InExpression(
+          fieldAge,
+          ValueExpression(<int>[18, 19, 20, 30]),
+          name: 'aray_age',
+        ),
+        InExpression(
+          fieldName,
+          ValueExpression(<String>['Epton', 'Chery', 'Berry', 'Ansony']),
+          isNot: true,
+          name: 'narray_name',
+        ),
+      );
+      print(ExpressionBuilder.buildDebug(and));
+      final whereFuction = ExpressionBuilder.build<Map<String, dynamic>, bool>(
+        and,
+        ListVisitor(),
+      );
+      final result = map
+          .where(whereFuction)
+          .toList()
+          .map((t) => t['name'])
+          .join(',');
+      print(result);
+      expect(result, equals('Denny'));
+    });
     test('First Test', () {
       final expression = AndExpression(
         AndExpression(
