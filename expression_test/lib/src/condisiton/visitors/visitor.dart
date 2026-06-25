@@ -1,4 +1,4 @@
-import '../constants/constants.dart';
+import '../../constants/constants.dart';
 import '../expressions/expressions.dart';
 
 abstract interface class IVisitor<T> {

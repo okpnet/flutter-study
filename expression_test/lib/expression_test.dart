@@ -3,7 +3,7 @@
 /// More dartdocs go here.
 library;
 
-export 'src/condisiton/constants/constants.dart';
+export 'src/constants/constants.dart';
 export 'src/condisiton/expressions/expressions.dart';
 export 'src/condisiton/extensions/extensions.dart';
 export 'src/condisiton/visitors/visitors.dart';
