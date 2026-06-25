@@ -28,7 +28,7 @@ class InExpression extends OperatorExpression implements IInExpression {
 
   @override
   DebugNode acceptDebug() {
-    final debugPrint = 'LIKE [${name ?? "no_name"}]';
+    final debugPrint = 'IN [${name ?? "no_name"}]';
     final resultNode = DebugNode(debugPrint, [
       left.acceptDebug(),
       right.acceptDebug(),

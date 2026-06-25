@@ -1,3 +1,5 @@
+import 'dart:mirrors';
+
 import 'package:expression_test/expression_test.dart';
 
 ///空のインターフェイス
@@ -185,7 +187,7 @@ class ListVisitor<T> extends Visitor<T>
         final lValue = l(t);
         final rValue = r(t);
         if (rValue case List list) {
-          return ex.isNot ? !list.contains(lValue) : list.contains(rValue);
+          return ex.isNot ? !list.contains(lValue) : list.contains(lValue);
         }
         throw AssertionError(
           'Result value type of ${ex.name ?? ex.toString()} is ${rValue.toString()},but right value on InExpression shall List type.',
@@ -196,5 +198,15 @@ class ListVisitor<T> extends Visitor<T>
         );
       }
     };
+  }
+
+  @override
+  ExpresionCallBack nameFieldVisit(NameFieldExpression ex) {
+    throw ExpressionError(
+      ex,
+      AssertionError(
+        'The ${ex.name ?? ex.toString()} cannot be used for a function that has arguments of unknown type.',
+      ),
+    );
   }
 }

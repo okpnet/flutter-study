@@ -203,4 +203,20 @@ class GraphqlVisitor<T> extends Visitor<T>
       }
     };
   }
+
+  @override
+  ExpresionCallBack nameFieldVisit(NameFieldExpression ex) {
+    return (dynamic t) {
+      //typeValidation(ex, t);
+      try {
+        // ignore: unnecessary_cast
+        final filed = ex.name;
+        return filed;
+      } catch (exception, trace) {
+        throw AssertionError(
+          '${ex.name ?? ex.toString()} : ${exception.toString()}\n$trace',
+        );
+      }
+    };
+  }
 }

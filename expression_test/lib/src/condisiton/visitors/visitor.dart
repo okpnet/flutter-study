@@ -31,6 +31,9 @@ abstract interface class IVisitor<T> {
 
   // {!}right.contains(right) | left {NOT} IN (right)
   ExpresionCallBack inVisit(InExpression ex);
+
+  // String
+  ExpresionCallBack nameFieldVisit(NameFieldExpression ex);
 }
 
 abstract class Visitor<T> implements IVisitor<T> {}

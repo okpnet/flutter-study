@@ -83,12 +83,12 @@ class SqlVisitor<T> extends Visitor<T>
   @override
   ExpresionCallBack greaterVisit(GreaterExpression ex) {
     return (dynamic t) {
-      typeValidation(ex, t);
+      //typeValidation(ex, t);
       try {
         final l = ex.left.accept(this);
         final r = ex.right.accept(this);
-        final lValue = l(t);
-        final rValue = r(t);
+        final lValue = l(t).toString();
+        final rValue = r(t).toString();
         final eq = ex.isEqulity ? '=' : '';
         return "$lValue >$eq $rValue";
       } catch (exception, trace) {
@@ -165,7 +165,7 @@ class SqlVisitor<T> extends Visitor<T>
         final lValue = l(t);
         final rValue = r(t);
         final not = ex.isNot ? ' NOT ' : '';
-        return "$lValue $not LIKE '$rValue%'";
+        return "$lValue $not LIKE \'$rValue\%\'";
       } catch (exception, trace) {
         throw AssertionError(
           '${ex.name ?? ex.toString()} : ${exception.toString()}\n$trace',
@@ -188,9 +188,25 @@ class SqlVisitor<T> extends Visitor<T>
     };
   }
 
+  @override
+  ExpresionCallBack nameFieldVisit(NameFieldExpression ex) {
+    return (dynamic t) {
+      //typeValidation(ex, t);
+      try {
+        // ignore: unnecessary_cast
+        final filed = ex.value;
+        return filed;
+      } catch (exception, trace) {
+        throw AssertionError(
+          '${ex.name ?? ex.toString()} : ${exception.toString()}\n$trace',
+        );
+      }
+    };
+  }
+
   String changeType(dynamic value) {
     return switch (value) {
-      num num => num.toString(),
+      num number => number.toString(),
       List list => list.map((t) => changeType(t)).join(','),
       _ => "'$value'",
     };

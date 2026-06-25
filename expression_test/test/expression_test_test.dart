@@ -9,7 +9,7 @@ final map = <Map<String, dynamic>>[
   {'name': 'Epon', 'age': 10},
 ];
 void main() {
-  group('debug group of tests', () {
+  group('list debug group of tests', () {
     test('age equal 20', () {
       final age20Ex = EquqleExpression(
         FieldExpression<Map<String, dynamic>>((t) => t['age'], name: 'f1'),
@@ -216,6 +216,97 @@ void main() {
           .toList()
           .map((t) => t['name'])
           .join(',');
+      print(result);
+      expect(result, equals('Denny'));
+    });
+  });
+
+  group('group sql test', () {
+    test('age equal 20', () {
+      final age20Ex = EquqleExpression(
+        FieldExpression<Map<String, dynamic>>((t) => 'age', name: 'f1'),
+        ValueExpression(20, name: 'v1'),
+        isNot: true,
+        name: 'eq1',
+      );
+      print(ExpressionBuilder.buildDebug(age20Ex));
+      final query = ExpressionBuilder.build<Map<String, dynamic>, String>(
+        age20Ex,
+        SqlVisitor(),
+      );
+      final result = query({'name': '', 'age': 0});
+      print(result);
+      expect(result, equals('Denny'));
+    });
+    test('age le 40', () {
+      final age40Ex = GreaterExpression(
+        ValueExpression(40, name: 'v2'),
+        NameFieldExpression('age', name: 'f2'),
+        isEqulity: true,
+        name: 'g1',
+      );
+      print(ExpressionBuilder.buildDebug(age40Ex));
+      final query = ExpressionBuilder.build<Map<String, dynamic>, String>(
+        age40Ex,
+        SqlVisitor(),
+      );
+      final result = query({'name': '', 'age': 0});
+      print(result);
+      expect(result, equals('40 >= age'));
+    });
+    test('and age eq 20 and le 40', () {
+      final ageField = NameFieldExpression('age', name: 'f1');
+      final age20Ex = EquqleExpression(
+        ageField,
+        ValueExpression(20, name: 'v1'),
+        isNot: true,
+        name: 'eq1',
+      );
+      final age40Ex = GreaterExpression(
+        ValueExpression(40, name: 'v2'),
+        ageField,
+        isEqulity: true,
+        name: 'g1',
+      );
+      final and = AndExpression(age20Ex, age40Ex, name: 'and1');
+      print(ExpressionBuilder.buildDebug(and));
+      final query = ExpressionBuilder.build<Map<String, dynamic>, String>(
+        and,
+        SqlVisitor(),
+      );
+      final result = query({'name': '', 'age': 0});
+      print(result);
+      expect(result, equals('(age = 20 AND 40 >= age)'));
+    });
+    test('and name contain start and end with ', () {
+      final nameField = NameFieldExpression('name', name: 'f1');
+      final likeEx = LikeExpression(
+        nameField,
+        ValueExpression('e', name: 'v1'),
+        // isNot: true,
+        name: 'like1',
+      );
+      final startEx = StartWithExpression(
+        nameField,
+        ValueExpression('D', name: 'v2'),
+        name: 'st1',
+      );
+      final endEx = EndWithExpression(
+        nameField,
+        ValueExpression('y', name: 'v2'),
+        name: 'en1',
+      );
+      final and = AndExpression(
+        likeEx,
+        AndExpression(startEx, endEx, name: 'and2'),
+        name: 'and1',
+      );
+      print(ExpressionBuilder.buildDebug(and));
+      final query = ExpressionBuilder.build<Map<String, dynamic>, String>(
+        and,
+        SqlVisitor(),
+      );
+      final result = query({'name': '', 'age': 0});
       print(result);
       expect(result, equals('Denny'));
     });
