@@ -3,12 +3,10 @@ import '../../visitors/visitors.dart';
 import '../expressions.dart';
 
 ///値
-abstract interface class INameFieldExpression implements IExpression {
-  String get value;
-}
+abstract interface class INameFieldExpression implements IValueExpression {}
 
 ///値
-class NameFieldExpression extends Expression implements IValueExpression {
+class NameFieldExpression extends Expression implements INameFieldExpression {
   ///フィールドへのアクセサ
   @override
   final String value;

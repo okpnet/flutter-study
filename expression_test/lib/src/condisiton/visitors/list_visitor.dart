@@ -1,5 +1,3 @@
-import 'dart:mirrors';
-
 import 'package:expression_test/expression_test.dart';
 
 ///空のインターフェイス
@@ -204,7 +202,7 @@ class ListVisitor<T> extends Visitor<T>
   ExpresionCallBack nameFieldVisit(NameFieldExpression ex) {
     throw ExpressionError(
       ex,
-      AssertionError(
+      UnsupportedError(
         'The ${ex.name ?? ex.toString()} cannot be used for a function that has arguments of unknown type.',
       ),
     );

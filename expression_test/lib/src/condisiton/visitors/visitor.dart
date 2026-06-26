@@ -1,6 +1,7 @@
 import '../../constants/constants.dart';
 import '../expressions/expressions.dart';
 
+///Expressionの巡回する抽象化インターフェイス
 abstract interface class IVisitor<T> {
   ///(T)=>dynamic
   ExpresionCallBack fieldVisit(FieldExpression<T> ex);
@@ -36,4 +37,5 @@ abstract interface class IVisitor<T> {
   ExpresionCallBack nameFieldVisit(NameFieldExpression ex);
 }
 
+///Expressionを巡回する抽象化クラス
 abstract class Visitor<T> implements IVisitor<T> {}
