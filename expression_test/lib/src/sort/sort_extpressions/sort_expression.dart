@@ -1,5 +1,5 @@
 import '../../constants/constants.dart';
-import '../../debugs/debug.dart';
+import '../../debugs/debugs.dart';
 import '../sort_visitors/sort_visitors.dart';
 
 ///ソート条件の抽象化インターフェイス

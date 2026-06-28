@@ -17,7 +17,7 @@ void main() {
         isNot: true,
         name: 'eq1',
       );
-      print(ExpressionBuilder.buildDebug(age20Ex));
+      print(age20Ex.buildDebug<Map<String, dynamic>>());
       final whereFuction = ExpressionBuilder.build<Map<String, dynamic>, bool>(
         age20Ex,
         ListVisitor(),
@@ -37,7 +37,7 @@ void main() {
         isEqulity: true,
         name: 'g1',
       );
-      print(ExpressionBuilder.buildDebug(age40Ex));
+      print(age40Ex.buildDebug<Map<String, dynamic>>());
       final whereFuction = ExpressionBuilder.build<Map<String, dynamic>, bool>(
         age40Ex,
         ListVisitor(),
@@ -64,7 +64,7 @@ void main() {
         name: 'g1',
       );
       final and = AndExpression(age20Ex, age40Ex, name: 'and1');
-      print(ExpressionBuilder.buildDebug(and));
+      print(and.buildDebug<Map<String, dynamic>>());
       final whereFuction = ExpressionBuilder.build<Map<String, dynamic>, bool>(
         and,
         ListVisitor(),
@@ -99,7 +99,7 @@ void main() {
         AndExpression(startEx, endEx, name: 'and2'),
         name: 'and1',
       );
-      print(ExpressionBuilder.buildDebug(and));
+      print(and.buildDebug<Map<String, dynamic>>());
       final whereFuction = ExpressionBuilder.build<Map<String, dynamic>, bool>(
         and,
         ListVisitor(),
@@ -134,7 +134,7 @@ void main() {
         OrExpression(startEx, endEx, name: 'or1'),
         name: 'and1',
       );
-      print(ExpressionBuilder.buildDebug(and));
+      print(and.buildDebug<Map<String, dynamic>>());
       final whereFuction = ExpressionBuilder.build<Map<String, dynamic>, bool>(
         and,
         ListVisitor(),
@@ -169,7 +169,7 @@ void main() {
           name: 'narray_name',
         ),
       );
-      print(ExpressionBuilder.buildDebug(and));
+      print(and.buildDebug<Map<String, dynamic>>());
       final whereFuction = ExpressionBuilder.build<Map<String, dynamic>, bool>(
         and,
         ListVisitor(),
@@ -206,7 +206,7 @@ void main() {
         ),
         name: 'top',
       );
-      print(ExpressionBuilder.buildDebug(expression));
+      print(expression.buildDebug<Map<String, dynamic>>());
       final whereFuction = ExpressionBuilder.build<Map<String, dynamic>, bool>(
         expression,
         ListVisitor(),
@@ -229,14 +229,14 @@ void main() {
         isNot: true,
         name: 'eq1',
       );
-      print(ExpressionBuilder.buildDebug(age20Ex));
+      print(age20Ex.buildDebug<Map<String, dynamic>>());
       final query = ExpressionBuilder.build<Map<String, dynamic>, String>(
         age20Ex,
         SqlVisitor(),
       );
       final result = query({'name': '', 'age': 0});
       print(result);
-      expect(result, equals('Denny'));
+      expect(result, equals('age = 20'));
     });
     test('age le 40', () {
       final age40Ex = GreaterExpression(
@@ -245,7 +245,7 @@ void main() {
         isEqulity: true,
         name: 'g1',
       );
-      print(ExpressionBuilder.buildDebug(age40Ex));
+      print(age40Ex.buildDebug<Map<String, dynamic>>());
       final query = ExpressionBuilder.build<Map<String, dynamic>, String>(
         age40Ex,
         SqlVisitor(),
@@ -269,7 +269,7 @@ void main() {
         name: 'g1',
       );
       final and = AndExpression(age20Ex, age40Ex, name: 'and1');
-      print(ExpressionBuilder.buildDebug(and));
+      print(and.buildDebug<Map<String, dynamic>>());
       final query = ExpressionBuilder.build<Map<String, dynamic>, String>(
         and,
         SqlVisitor(),
@@ -301,14 +301,14 @@ void main() {
         AndExpression(startEx, endEx, name: 'and2'),
         name: 'and1',
       );
-      print(ExpressionBuilder.buildDebug(and));
-      final query = ExpressionBuilder.build<Map<String, dynamic>, String>(
-        and,
-        SqlVisitor(),
-      );
+      print(and.buildDebug<Map<String, dynamic>>());
+      final query = SqlExpressionBuilder<Map<String, dynamic>>().build(and);
       final result = query({'name': '', 'age': 0});
       print(result);
-      expect(result, equals('Denny'));
+      expect(
+        result,
+        equals("(name LIKE '%e%' AND (name LIKE 'D%' AND name LIKE '%y'))"),
+      );
     });
   });
 }

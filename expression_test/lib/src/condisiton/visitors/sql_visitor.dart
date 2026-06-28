@@ -35,8 +35,7 @@ class SqlVisitor<T> extends Visitor<T>
         final r = ex.right.accept(this);
         final lValue = l(t);
         final rValue = r(t);
-        final not = ex.isNot ? ' NOT ' : '';
-        return "$lValue $not LIKE '%$rValue'";
+        return "$lValue ${ex.isNot ? 'NOT LIKE' : 'LIKE'} '%$rValue'";
       } catch (exception, trace) {
         throw AssertionError(
           '${ex.name ?? ex.toString()} : ${exception.toString()}\n$trace',
@@ -54,7 +53,8 @@ class SqlVisitor<T> extends Visitor<T>
         final r = ex.right.accept(this);
         final lValue = l(t);
         final rValue = r(t);
-        return "$lValue = $rValue";
+        final values = changeType(rValue);
+        return "$lValue = $values";
       } catch (exception, trace) {
         throw AssertionError(
           '${ex.name ?? ex.toString()} : ${exception.toString()}\n$trace',
@@ -127,8 +127,7 @@ class SqlVisitor<T> extends Visitor<T>
         final r = ex.right.accept(this);
         final lValue = l(t);
         final rValue = r(t);
-        final not = ex.isNot ? ' NOT ' : '';
-        return "$lValue $not LIKE '%$rValue%'";
+        return "$lValue ${ex.isNot ? 'NOT LIKE' : 'LIKE'} '%$rValue%'";
       } catch (exception, trace) {
         throw AssertionError(
           '${ex.name ?? ex.toString()} : ${exception.toString()}\n$trace',
@@ -164,8 +163,7 @@ class SqlVisitor<T> extends Visitor<T>
         final r = ex.right.accept(this);
         final lValue = l(t);
         final rValue = r(t);
-        final not = ex.isNot ? ' NOT ' : '';
-        return "$lValue $not LIKE \'$rValue\%\'";
+        return "$lValue ${ex.isNot ? 'NOT LIKE' : 'LIKE'} '$rValue%'";
       } catch (exception, trace) {
         throw AssertionError(
           '${ex.name ?? ex.toString()} : ${exception.toString()}\n$trace',
@@ -179,7 +177,7 @@ class SqlVisitor<T> extends Visitor<T>
     return (dynamic t) {
       try {
         final value = ex.value;
-        return changeType(value);
+        return value;
       } catch (exception, trace) {
         throw AssertionError(
           '${ex.name ?? ex.toString()} : ${exception.toString()}\n$trace',
