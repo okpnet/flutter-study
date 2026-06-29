@@ -1,10 +1,10 @@
 import 'package:expression_test/expression_test.dart';
 
 ///Expressionから式を構築する
-class ListSortExpressionBuilder<T> {
+class SortListExpressionBuilder<T> {
   final SortListVisitor<T> visitor;
 
-  ListSortExpressionBuilder() : visitor = SortListVisitor<T>();
+  SortListExpressionBuilder() : visitor = SortListVisitor<T>();
 
   ListCallBack build(SortExpression expression) {
     final result = expression.accept(visitor);

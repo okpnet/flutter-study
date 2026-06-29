@@ -200,7 +200,7 @@ void main() {
         (t) => t['age'],
         name: 'ascEx',
       );
-      final sortBuilder = ListSortExpressionBuilder<Map<String, dynamic>>();
+      final sortBuilder = SortListExpressionBuilder<Map<String, dynamic>>();
       final func = sortBuilder.build(ascEx);
       map.sort(func);
       print(map.map((t) => t['name']).toList().join(','));
@@ -215,13 +215,49 @@ void main() {
         name: 'descEx',
         isDesc: true,
       );
-      final sortBuilder = ListSortExpressionBuilder<Map<String, dynamic>>();
+      final sortBuilder = SortListExpressionBuilder<Map<String, dynamic>>();
       final func = sortBuilder.build(descEx);
       map.sort(func);
       print(map.map((t) => t['name']).toList().join(','));
       final result = map.first['name'];
       print('${descEx.name} : $result');
       expect(result, equals('Epon'));
+    });
+  });
+  group('sort sql', () {
+    test('asc age', () {
+      final ascEx = SortNameFieldExpression('age', name: 'ascEx');
+      final sortBuilder = SortSqlExpressionBuilder<Map<String, dynamic>>();
+      final func = sortBuilder.build(ascEx);
+      final result = func(fourmura);
+      print(result);
+      expect(result, equals('age ASC'));
+    });
+    test('desc name', () {
+      final descEx = SortNameFieldExpression(
+        'name',
+        name: 'descEx',
+        isDesc: true,
+      );
+      final sortBuilder = SortSqlExpressionBuilder<Map<String, dynamic>>();
+      final func = sortBuilder.build(descEx);
+      final result = func(fourmura);
+      print(result);
+      expect(result, equals('name DESC'));
+    });
+    test('sql list expression', () {
+      final ascEx = SortNameFieldExpression('age', name: 'ascEx');
+      final descEx = SortNameFieldExpression(
+        'name',
+        name: 'descEx',
+        isDesc: true,
+      );
+      final list = SortListExpression(sortOrderList: [ascEx, descEx]);
+      final sortBuilder = SortSqlExpressionBuilder<Map<String, dynamic>>();
+      final func = sortBuilder.build(list);
+      final result = func(fourmura);
+      print(result);
+      expect(result, equals('age ASC,name DESC'));
     });
   });
 }
