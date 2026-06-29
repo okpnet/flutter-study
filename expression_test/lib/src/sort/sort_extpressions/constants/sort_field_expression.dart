@@ -27,7 +27,7 @@ class SortFieldExpression<T> extends SortExpression
   ///Visitorが巡回にきたときの処置。
   ///中でVisitorがこのインスタンスを使ってデリゲートを返す
   @override
-  ExpresionCallBack accept(ISortVisitor visitor) {
+  dynamic accept(ISortVisitor visitor) {
     try {
       return visitor.fieldVisit(this);
     } catch (ex) {

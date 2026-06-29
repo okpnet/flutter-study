@@ -1,4 +1,3 @@
-import '../../../constants/constants.dart';
 import '../../../debugs/debugs.dart';
 import '../../sort_visitors/sort_visitors.dart';
 import '../sort_expressions.dart';
@@ -8,7 +7,7 @@ abstract interface class ISortListExpression implements ISortExpression {
 }
 
 class SortListExpression extends SortExpression implements ISortListExpression {
-  ///フィールドへのアクセサ
+  ///ソートするExpressionの配列
   @override
   final List<ISortDirectionExpression> sortOrderList;
 
@@ -18,7 +17,7 @@ class SortListExpression extends SortExpression implements ISortListExpression {
   ///Visitorが巡回にきたときの処置。
   ///中でVisitorがこのインスタンスを使ってデリゲートを返す
   @override
-  ExpresionCallBack accept(ISortVisitor visitor) {
+  dynamic accept(ISortVisitor visitor) {
     try {
       return visitor.sortListVisit(this);
     } catch (ex) {

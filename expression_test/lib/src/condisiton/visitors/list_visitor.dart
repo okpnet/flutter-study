@@ -36,7 +36,7 @@ class ListVisitor<T> extends Visitor<T>
         final r = ex.right.accept(this);
         final lValue = l(t);
         final rValue = r(t);
-        return lValue == rValue;
+        return ex.isNot ? lValue != rValue : lValue == rValue;
       } catch (exception, trace) {
         throw AssertionError(
           '${ex.name ?? ex.toString()} : ${exception.toString()}\n$trace',
