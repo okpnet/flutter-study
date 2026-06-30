@@ -14,6 +14,7 @@ class SortExpressionBuilder {
           'The ${func.toString()} result obtained from constructing ${expression.name ?? expression.toString()} cannot be cast to type R:${R.toString()}, because it was of type${result.toString()}.',
         );
       }
+      // ignore: unnecessary_cast
       return result as R;
     };
   }

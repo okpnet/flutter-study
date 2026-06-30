@@ -1,4 +1,5 @@
 import 'package:expression_test/expression_test.dart';
+import 'package:expression_test/src/condisiton/expressions/builders/graphql_expression_builder.dart';
 import 'package:test/test.dart';
 
 final ansony = {'name': 'Ansony', 'age': 50};
@@ -40,6 +41,18 @@ final notEqAge20Ex = EquqleExpression(
   name: 'notEqAge20Ex',
 );
 
+final eqNameAge20Ex = EquqleExpression(
+  nameFieldAgeEx,
+  age20ValEx,
+  name: 'eqNameAge20Ex',
+);
+final notNameEqAge20Ex = EquqleExpression(
+  nameFieldAgeEx,
+  age20ValEx,
+  isNot: true,
+  name: 'notNameEqAge20Ex',
+);
+
 final gtAge20Ex = GreaterExpression(fieldAgeEx, age20ValEx, name: 'gtAge20Ex');
 final geAge20Ex = GreaterExpression(
   fieldAgeEx,
@@ -48,8 +61,21 @@ final geAge20Ex = GreaterExpression(
   isEqulity: true,
 );
 
+final gtNameAge20Ex = GreaterExpression(
+  nameFieldAgeEx,
+  age20ValEx,
+  name: 'gtNameAge20Ex',
+);
+final geNameAge20Ex = GreaterExpression(
+  nameFieldAgeEx,
+  age20ValEx,
+  name: 'geNameAge20Ex',
+  isEqulity: true,
+);
+
 final listBuilder = ListExpressionBuilder<Map<String, dynamic>>();
 final sqlBuilder = SqlExpressionBuilder<Map<String, dynamic>>();
+final graphqlBuilder = GraphqlExpressionBuilder<Map<String, dynamic>>();
 
 final arg = {'name': 'test1', 'age': 99};
 
@@ -96,7 +122,7 @@ void main() {
     });
   });
 
-  group('operator expression test', () {
+  group('list to operator expression test', () {
     test('equal test', () {
       final func1 = listBuilder.build(eqAge20Ex);
       final func2 = listBuilder.build(notEqAge20Ex);
@@ -193,6 +219,216 @@ void main() {
     });
   });
 
+  group('SQL to operator expression test', () {
+    test('equal test', () {
+      final func1 = sqlBuilder.build(eqNameAge20Ex);
+      final func2 = sqlBuilder.build(notNameEqAge20Ex);
+
+      final result1 = func1(denny);
+      final result2 = func2(epon);
+
+      final result = '$result1 $result2';
+
+      print(result);
+      expect(result, equals('age = 20 age <> 20'));
+    });
+
+    test('greater test', () {
+      final func1 = sqlBuilder.build(gtNameAge20Ex);
+      final func2 = sqlBuilder.build(geNameAge20Ex);
+
+      final result1 = func1(chery);
+      final result2 = func2(denny);
+
+      final result = '$result1 $result2';
+
+      print(result);
+      expect(result, equals('age > 20 age >= 20'));
+    });
+
+    test('startwith test', () {
+      final startNameE = StartWithExpression(
+        nameFieleNamedEx,
+        nameEEx,
+        name: 'startNameE',
+      );
+      final func = sqlBuilder.build(startNameE);
+      final result = func(epon);
+      print(result);
+      expect(result, equals("name LIKE 'E%'"));
+    });
+
+    test('endwith test', () {
+      final endNameRy = EndWithExpression(
+        nameFieleNamedEx,
+        nameRyEx,
+        name: 'endNameRy',
+      );
+      final func = sqlBuilder.build(endNameRy);
+      final result = func(chery);
+      print(result);
+      expect(result, equals("name LIKE '%ry'"));
+    });
+
+    test('like test', () {
+      final likeNameRy = LikeExpression(
+        nameFieleNamedEx,
+        nameoEx,
+        name: 'likeNameRy',
+      );
+      final func = sqlBuilder.build(likeNameRy);
+      final result = func(ansony);
+      print(result);
+      expect(result, equals("name LIKE '%o%'"));
+    });
+
+    test('in tests', () {
+      final inEx = InExpression(
+        nameFieleNamedEx,
+        ValueExpression(map.map((t) => t['name']).toList()),
+        name: 'inEx',
+      );
+      final func = sqlBuilder.build(inEx);
+      final result = func(fourmura);
+      print(result);
+      expect(
+        result,
+        equals("name IN ('Ansony','Berry','Chery','Denny','Epon')"),
+      );
+    });
+
+    test('and tests', () {
+      final endNameRy = EndWithExpression(
+        nameFieleNamedEx,
+        nameRyEx,
+        name: 'endNameRy',
+      );
+      final andEx = AndExpression(gtNameAge20Ex, endNameRy, name: 'andEx');
+      final func = sqlBuilder.build(andEx);
+      final result = func(chery);
+      print(result);
+      expect(result, equals("(age > 20 AND name LIKE '%ry')"));
+    });
+
+    test('or test', () {
+      final startNameE = StartWithExpression(
+        nameFieleNamedEx,
+        nameEEx,
+        name: 'startNameE',
+      );
+      final orEx = OrExpression(startNameE, gtNameAge20Ex, name: 'orEx');
+      final func = sqlBuilder.build(orEx);
+      final result = func(chery);
+      print(result);
+      expect(result, equals("(name LIKE 'E%' OR age > 20)"));
+    });
+  });
+
+  group('GraphQL to operator expression test', () {
+    test('equal test', () {
+      final func1 = graphqlBuilder.build(eqNameAge20Ex);
+      final func2 = graphqlBuilder.build(notNameEqAge20Ex);
+
+      final result1 = func1(denny);
+      final result2 = func2(epon);
+
+      final result = '$result1 $result2';
+
+      print(result);
+      expect(result, equals('{age: {_eq: 20}} {age: {_neq: 20}}'));
+    });
+
+    test('greater test', () {
+      final func1 = sqlBuilder.build(gtNameAge20Ex);
+      final func2 = sqlBuilder.build(geNameAge20Ex);
+
+      final result1 = func1(chery);
+      final result2 = func2(denny);
+
+      final result = '$result1 $result2';
+
+      print(result);
+      expect(result, equals('age > 20 age >= 20'));
+    });
+
+    test('startwith test', () {
+      final startNameE = StartWithExpression(
+        nameFieleNamedEx,
+        nameEEx,
+        name: 'startNameE',
+      );
+      final func = sqlBuilder.build(startNameE);
+      final result = func(epon);
+      print(result);
+      expect(result, equals("name LIKE 'E%'"));
+    });
+
+    test('endwith test', () {
+      final endNameRy = EndWithExpression(
+        nameFieleNamedEx,
+        nameRyEx,
+        name: 'endNameRy',
+      );
+      final func = sqlBuilder.build(endNameRy);
+      final result = func(chery);
+      print(result);
+      expect(result, equals("name LIKE '%ry'"));
+    });
+
+    test('like test', () {
+      final likeNameRy = LikeExpression(
+        nameFieleNamedEx,
+        nameoEx,
+        name: 'likeNameRy',
+      );
+      final func = sqlBuilder.build(likeNameRy);
+      final result = func(ansony);
+      print(result);
+      expect(result, equals("name LIKE '%o%'"));
+    });
+
+    test('in tests', () {
+      final inEx = InExpression(
+        nameFieleNamedEx,
+        ValueExpression(map.map((t) => t['name']).toList()),
+        name: 'inEx',
+      );
+      final func = sqlBuilder.build(inEx);
+      final result = func(fourmura);
+      print(result);
+      expect(
+        result,
+        equals("name IN ('Ansony','Berry','Chery','Denny','Epon')"),
+      );
+    });
+
+    test('and tests', () {
+      final endNameRy = EndWithExpression(
+        nameFieleNamedEx,
+        nameRyEx,
+        name: 'endNameRy',
+      );
+      final andEx = AndExpression(gtNameAge20Ex, endNameRy, name: 'andEx');
+      final func = sqlBuilder.build(andEx);
+      final result = func(chery);
+      print(result);
+      expect(result, equals("(age > 20 AND name LIKE '%ry')"));
+    });
+
+    test('or test', () {
+      final startNameE = StartWithExpression(
+        nameFieleNamedEx,
+        nameEEx,
+        name: 'startNameE',
+      );
+      final orEx = OrExpression(startNameE, gtNameAge20Ex, name: 'orEx');
+      final func = sqlBuilder.build(orEx);
+      final result = func(chery);
+      print(result);
+      expect(result, equals("(name LIKE 'E%' OR age > 20)"));
+    });
+  });
+
   group('list sort expression  test', () {
     test('asc name', () {
       print(map.map((t) => t['name']).toList().join(','));
@@ -224,6 +460,7 @@ void main() {
       expect(result, equals('Epon'));
     });
   });
+
   group('sort sql', () {
     test('asc age', () {
       final ascEx = SortNameFieldExpression('age', name: 'ascEx');

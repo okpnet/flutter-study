@@ -54,7 +54,7 @@ class SqlVisitor<T> extends Visitor<T>
         final lValue = l(t);
         final rValue = r(t);
         final values = changeType(rValue);
-        return "$lValue = $values";
+        return '$lValue ${ex.isNot ? '<>' : '='} $values';
       } catch (exception, trace) {
         throw AssertionError(
           '${ex.name ?? ex.toString()} : ${exception.toString()}\n$trace',

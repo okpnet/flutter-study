@@ -7,7 +7,7 @@ abstract interface class IGraphqlVisitor<T> implements IVisitor<T> {}
 ///Expressionを巡回して、各Expressionに応じたGraphQLの条件式に変換する
 class GraphqlVisitor<T> extends Visitor<T>
     with VisitorMixin
-    implements ISqlVisitor<T> {
+    implements IGraphqlVisitor<T> {
   @override
   ExpresionCallBack andVisit(AndExpression ex) {
     return (dynamic t) {
@@ -58,7 +58,7 @@ class GraphqlVisitor<T> extends Visitor<T>
         final lValue = l(t).toString();
         final rValue = r(t);
         return {
-          lValue: {'_eq': rValue},
+          lValue: {ex.isNot ? '_neq' : '_eq': rValue},
         };
       } catch (exception, trace) {
         throw AssertionError(
@@ -210,7 +210,7 @@ class GraphqlVisitor<T> extends Visitor<T>
       //typeValidation(ex, t);
       try {
         // ignore: unnecessary_cast
-        final filed = ex.name;
+        final filed = ex.value;
         return filed;
       } catch (exception, trace) {
         throw AssertionError(

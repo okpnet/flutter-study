@@ -6,6 +6,7 @@ typedef InnerListCallBack<T> = int Function(T, T);
 
 abstract interface class ISortListVisitor {}
 
+///SortExpresssionを巡回してListのソート条件に変換する
 class SortListVisitor<T> extends SortVisitor<T, ListCallBack>
     with SortVisitorMixin
     implements ISortVisitor<T>, ISortListVisitor {

@@ -20,6 +20,7 @@ class ListExpressionBuilder<T> extends IBuilderExpression<T>
           'The [${func.toString()}] result obtained from constructing ${expression.name ?? expression.toString()} cannot be cast to type bool, because it was of type${result.toString()}.',
         );
       }
+      // ignore: unnecessary_cast
       return result as bool;
     };
   }
