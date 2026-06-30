@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:expression_test/expression_test.dart';
 import 'package:expression_test/src/condisiton/expressions/builders/graphql_expression_builder.dart';
 import 'package:test/test.dart';
@@ -339,8 +341,8 @@ void main() {
     });
 
     test('greater test', () {
-      final func1 = sqlBuilder.build(gtNameAge20Ex);
-      final func2 = sqlBuilder.build(geNameAge20Ex);
+      final func1 = graphqlBuilder.build(gtNameAge20Ex);
+      final func2 = graphqlBuilder.build(geNameAge20Ex);
 
       final result1 = func1(chery);
       final result2 = func2(denny);
@@ -348,7 +350,7 @@ void main() {
       final result = '$result1 $result2';
 
       print(result);
-      expect(result, equals('age > 20 age >= 20'));
+      expect(result, equals('{age: {_gt: 20}} {age: {_gte: 20}}'));
     });
 
     test('startwith test', () {
@@ -357,10 +359,10 @@ void main() {
         nameEEx,
         name: 'startNameE',
       );
-      final func = sqlBuilder.build(startNameE);
-      final result = func(epon);
+      final func = graphqlBuilder.build(startNameE);
+      final result = func(epon).toString();
       print(result);
-      expect(result, equals("name LIKE 'E%'"));
+      expect(result, equals('{name: {_like: E%}}'));
     });
 
     test('endwith test', () {
@@ -369,10 +371,10 @@ void main() {
         nameRyEx,
         name: 'endNameRy',
       );
-      final func = sqlBuilder.build(endNameRy);
-      final result = func(chery);
+      final func = graphqlBuilder.build(endNameRy);
+      final result = func(chery).toString();
       print(result);
-      expect(result, equals("name LIKE '%ry'"));
+      expect(result, equals("{name: {_like: %ry}}"));
     });
 
     test('like test', () {
@@ -381,10 +383,10 @@ void main() {
         nameoEx,
         name: 'likeNameRy',
       );
-      final func = sqlBuilder.build(likeNameRy);
-      final result = func(ansony);
+      final func = graphqlBuilder.build(likeNameRy);
+      final result = func(ansony).toString();
       print(result);
-      expect(result, equals("name LIKE '%o%'"));
+      expect(result, equals("{name: {_like: %o%}}"));
     });
 
     test('in tests', () {
@@ -393,12 +395,12 @@ void main() {
         ValueExpression(map.map((t) => t['name']).toList()),
         name: 'inEx',
       );
-      final func = sqlBuilder.build(inEx);
-      final result = func(fourmura);
+      final func = graphqlBuilder.build(inEx);
+      final result = func(fourmura).toString();
       print(result);
       expect(
         result,
-        equals("name IN ('Ansony','Berry','Chery','Denny','Epon')"),
+        equals("{name: {_in: [Ansony, Berry, Chery, Denny, Epon]}}"),
       );
     });
 
@@ -409,10 +411,13 @@ void main() {
         name: 'endNameRy',
       );
       final andEx = AndExpression(gtNameAge20Ex, endNameRy, name: 'andEx');
-      final func = sqlBuilder.build(andEx);
-      final result = func(chery);
+      final func = graphqlBuilder.build(andEx);
+      final result = func(chery).toString();
       print(result);
-      expect(result, equals("(age > 20 AND name LIKE '%ry')"));
+      expect(
+        result,
+        equals("{_and: [{age: {_gt: 20}}, {name: {_like: %ry}}]}"),
+      );
     });
 
     test('or test', () {
@@ -422,10 +427,13 @@ void main() {
         name: 'startNameE',
       );
       final orEx = OrExpression(startNameE, gtNameAge20Ex, name: 'orEx');
-      final func = sqlBuilder.build(orEx);
-      final result = func(chery);
+      final func = graphqlBuilder.build(orEx);
+      final result = jsonEncode(func(chery));
       print(result);
-      expect(result, equals("(name LIKE 'E%' OR age > 20)"));
+      expect(
+        result,
+        equals('{"_or":[{"name":{"_like":"E%"}},{"age":{"_gt":20}}]}'),
+      );
     });
   });
 
@@ -495,6 +503,43 @@ void main() {
       final result = func(fourmura);
       print(result);
       expect(result, equals('age ASC,name DESC'));
+    });
+  });
+
+  group('sort graphQL', () {
+    test('asc age', () {
+      final ascEx = SortNameFieldExpression('age', name: 'ascEx');
+      final sortBuilder = SortGraphqlExpressionBuilder<Map<String, dynamic>>();
+      final func = sortBuilder.build(ascEx);
+      final result = jsonEncode(func(fourmura));
+      print(result);
+      expect(result, equals('{"order_by":{"age":"asc"}}'));
+    });
+    test('desc name', () {
+      final descEx = SortNameFieldExpression(
+        'name',
+        name: 'descEx',
+        isDesc: true,
+      );
+      final sortBuilder = SortGraphqlExpressionBuilder<Map<String, dynamic>>();
+      final func = sortBuilder.build(descEx);
+      final result = jsonEncode(func(fourmura));
+      print(result);
+      expect(result, equals('{"order_by":{"name":"desc"}}'));
+    });
+    test('sql list expression', () {
+      final ascEx = SortNameFieldExpression('age', name: 'ascEx');
+      final descEx = SortNameFieldExpression(
+        'name',
+        name: 'descEx',
+        isDesc: true,
+      );
+      final list = SortListExpression(sortOrderList: [ascEx, descEx]);
+      final sortBuilder = SortGraphqlExpressionBuilder<Map<String, dynamic>>();
+      final func = sortBuilder.build(list);
+      final result = jsonEncode(func(fourmura));
+      print(result);
+      expect(result, equals('{"order_by":{"age":"asc","name":"desc"}}'));
     });
   });
 }

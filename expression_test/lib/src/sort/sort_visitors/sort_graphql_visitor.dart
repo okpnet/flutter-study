@@ -34,7 +34,7 @@ class SortGraphQLVisitor<T> extends SortVisitor<T, MapCallBack>
     final result = <String, dynamic>{};
     return (T t) {
       for (final sortExp in ex.sortOrderList) {
-        final map = (sortExp as SortExpression).accept(this);
+        final map = (sortExp as SortExpression).accept(this)(t);
         result.addAll(map); // Map をマージ
       }
       return result;

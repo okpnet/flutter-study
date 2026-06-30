@@ -12,13 +12,15 @@ class SortGraphqlExpressionBuilder<T> extends ISortExpressionBuilder<T>
   SortGraphqlExpressionBuilder() : visitor = SortGraphQLVisitor<T>();
 
   MapCallBack<T> build(SortExpression expression) {
-    final result = expression.accept(visitor);
-    if (result is! MapCallBack<T>) {
-      throw AssertionError(
-        'The ${result.toString()} result obtained from constructing ${expression.name ?? expression.toString()} cannot be cast to type ${ListCallBack.toString()}, because it was of type${result.toString()}.',
-      );
-    }
-    // ignore: unnecessary_cast
-    return result as MapCallBack<T>;
+    final func = expression.accept(visitor);
+    return (T t) {
+      final result = func(t);
+      if (result is! Map<String, dynamic>) {
+        throw AssertionError(
+          'The ${result.toString()} result obtained from constructing ${expression.name ?? expression.toString()} cannot be cast to type ${ListCallBack.toString()}, because it was of type${result.toString()}.',
+        );
+      }
+      return {ORDER_BY.split(' ').join('_').toLowerCase(): result};
+    };
   }
 }
