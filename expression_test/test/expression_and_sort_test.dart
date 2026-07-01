@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:expression_test/expression_test.dart';
-import 'package:expression_test/src/condisiton/expressions/builders/graphql_expression_builder.dart';
+import 'package:expression_test/src/predicates/expressions/builders/graphql_expression_builder.dart';
 import 'package:test/test.dart';
 
 final ansony = {'name': 'Ansony', 'age': 50};
@@ -334,10 +334,13 @@ void main() {
       final result1 = func1(denny);
       final result2 = func2(epon);
 
-      final result = '$result1 $result2';
+      final result = '${result1.toJson()} ${result2.toJson()}';
 
       print(result);
-      expect(result, equals('{age: {_eq: 20}} {age: {_neq: 20}}'));
+      expect(
+        result,
+        equals('{"where":{"age":{"_eq":20}}} {"where":{"age":{"_neq":20}}}'),
+      );
     });
 
     test('greater test', () {
@@ -347,10 +350,13 @@ void main() {
       final result1 = func1(chery);
       final result2 = func2(denny);
 
-      final result = '$result1 $result2';
+      final result = '${result1.toJson()} ${result2.toJson()}';
 
       print(result);
-      expect(result, equals('{age: {_gt: 20}} {age: {_gte: 20}}'));
+      expect(
+        result,
+        equals('{"where":{"age":{"_gt":20}}} {"where":{"age":{"_gte":20}}}'),
+      );
     });
 
     test('startwith test', () {
@@ -360,9 +366,9 @@ void main() {
         name: 'startNameE',
       );
       final func = graphqlBuilder.build(startNameE);
-      final result = func(epon).toString();
+      final result = func(epon).toJson();
       print(result);
-      expect(result, equals('{name: {_like: E%}}'));
+      expect(result, equals('{"where":{"name":{"_like":"E%"}}}'));
     });
 
     test('endwith test', () {
@@ -372,9 +378,9 @@ void main() {
         name: 'endNameRy',
       );
       final func = graphqlBuilder.build(endNameRy);
-      final result = func(chery).toString();
+      final result = func(chery).toJson();
       print(result);
-      expect(result, equals("{name: {_like: %ry}}"));
+      expect(result, equals('{"where":{"name":{"_like":"%ry"}}}'));
     });
 
     test('like test', () {
@@ -384,9 +390,9 @@ void main() {
         name: 'likeNameRy',
       );
       final func = graphqlBuilder.build(likeNameRy);
-      final result = func(ansony).toString();
+      final result = func(ansony).toJson();
       print(result);
-      expect(result, equals("{name: {_like: %o%}}"));
+      expect(result, equals('{"where":{"name":{"_like":"%o%"}}}'));
     });
 
     test('in tests', () {
@@ -396,11 +402,13 @@ void main() {
         name: 'inEx',
       );
       final func = graphqlBuilder.build(inEx);
-      final result = func(fourmura).toString();
+      final result = func(fourmura).toJson();
       print(result);
       expect(
         result,
-        equals("{name: {_in: [Ansony, Berry, Chery, Denny, Epon]}}"),
+        equals(
+          '{"where":{"name":{"_in":["Ansony","Berry","Chery","Denny","Epon"]}}}',
+        ),
       );
     });
 
@@ -412,11 +420,13 @@ void main() {
       );
       final andEx = AndExpression(gtNameAge20Ex, endNameRy, name: 'andEx');
       final func = graphqlBuilder.build(andEx);
-      final result = func(chery).toString();
+      final result = func(chery).toJson();
       print(result);
       expect(
         result,
-        equals("{_and: [{age: {_gt: 20}}, {name: {_like: %ry}}]}"),
+        equals(
+          '{"where":{"_and":[{"age":{"_gt":20}},{"name":{"_like":"%ry"}}]}}',
+        ),
       );
     });
 
@@ -428,11 +438,13 @@ void main() {
       );
       final orEx = OrExpression(startNameE, gtNameAge20Ex, name: 'orEx');
       final func = graphqlBuilder.build(orEx);
-      final result = jsonEncode(func(chery));
+      final result = func(chery).toJson();
       print(result);
       expect(
         result,
-        equals('{"_or":[{"name":{"_like":"E%"}},{"age":{"_gt":20}}]}'),
+        equals(
+          '{"where":{"_or":[{"name":{"_like":"E%"}},{"age":{"_gt":20}}]}}',
+        ),
       );
     });
   });
@@ -542,4 +554,8 @@ void main() {
       expect(result, equals('{"order_by":{"age":"asc","name":"desc"}}'));
     });
   });
+}
+
+extension MapEx on Map {
+  String toJson() => jsonEncode(this);
 }
